@@ -325,22 +325,18 @@ class MediaController extends BaseController
         $uploaded = [];
         $errors   = [];
 
-        // Handle multiple file uploads
+        // Handle multiple file uploads — files[] always produces arrays in $_FILES
         $files = $_FILES['files'];
         $count = is_array($files['name']) ? count($files['name']) : 1;
 
         for ($i = 0; $i < $count; $i++) {
-            if ($count > 1) {
-                $file = [
-                    'name'     => $files['name'][$i],
-                    'type'     => $files['type'][$i],
-                    'tmp_name' => $files['tmp_name'][$i],
-                    'error'    => $files['error'][$i],
-                    'size'     => $files['size'][$i],
-                ];
-            } else {
-                $file = $files;
-            }
+            $file = [
+                'name'     => is_array($files['name'])     ? $files['name'][$i]     : $files['name'],
+                'type'     => is_array($files['type'])     ? $files['type'][$i]     : $files['type'],
+                'tmp_name' => is_array($files['tmp_name']) ? $files['tmp_name'][$i] : $files['tmp_name'],
+                'error'    => is_array($files['error'])    ? $files['error'][$i]    : $files['error'],
+                'size'     => is_array($files['size'])     ? $files['size'][$i]     : $files['size'],
+            ];
 
             if ($file['error'] !== UPLOAD_ERR_OK) {
                 $errors[] = $file['name'] . ': Upload error.';
