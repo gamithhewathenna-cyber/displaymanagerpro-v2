@@ -261,6 +261,51 @@ class AdminController extends BaseController
         $this->redirect('/admin/settings#' . $group);
     }
 
+    // ── Test Email ─────────────────────────────────────────────────────────
+
+    public function testEmail(): void
+    {
+        $this->requireAdmin();
+        $this->validateCsrf();
+
+        $to = Helpers::sanitize($_POST['test_email'] ?? '');
+        if (!filter_var($to, FILTER_VALIDATE_EMAIL)) {
+            Session::flash('error', 'Please enter a valid email address.');
+            $this->redirect('/admin/settings#mail');
+        }
+
+        $host = Settings::get('smtp_host', '');
+        $user = Settings::get('smtp_user', '');
+        $pass = Settings::get('smtp_pass', '');
+        $port = (int) Settings::get('smtp_port', 587);
+        $enc  = Settings::get('smtp_encryption', 'tls');
+        $from = Settings::get('smtp_from_email', '');
+
+        if (!$host || !$user || !$from) {
+            Session::flash('error', 'SMTP settings are incomplete. Fill in Host, Username, and From Email first.');
+            $this->redirect('/admin/settings#mail');
+        }
+
+        $company = Settings::get('company_name', APP_NAME);
+
+        try {
+            $smtp = new SmtpClient($host, $port, $enc, $user, $pass);
+            $smtp->sendMail(
+                $from, $company,
+                $to, $to,
+                "Test Email from $company",
+                "<p>This is a test email sent from <strong>$company</strong> via your SMTP settings.</p>
+                 <p>If you received this, your email configuration is working correctly.</p>
+                 <p style='color:#6b7280;font-size:13px'>Host: $host &nbsp;|&nbsp; Port: $port &nbsp;|&nbsp; Encryption: $enc</p>"
+            );
+            Session::flash('success', "Test email sent successfully to $to. Check your inbox.");
+        } catch (Exception $e) {
+            Session::flash('error', 'SMTP error: ' . $e->getMessage());
+        }
+
+        $this->redirect('/admin/settings#mail');
+    }
+
     // ── Logo ───────────────────────────────────────────────────────────────
 
     public function uploadLogo(): void

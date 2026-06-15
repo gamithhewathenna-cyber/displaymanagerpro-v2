@@ -148,9 +148,9 @@
       <input type="hidden" name="group" value="mail">
       <div class="grid grid-cols-2 gap-4">
         <div><label class="block text-xs font-medium text-gray-500 mb-1">SMTP Host</label>
-          <input type="text" name="smtp_host" value="<?= Helpers::e($g['mail']['smtp_host'] ?? '') ?>" placeholder="smtp.mailgun.org" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"></div>
+          <input type="text" name="smtp_host" value="<?= Helpers::e($g['mail']['smtp_host'] ?? '') ?>" placeholder="mail.yourdomain.com" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"></div>
         <div><label class="block text-xs font-medium text-gray-500 mb-1">Port</label>
-          <input type="number" name="smtp_port" value="<?= Helpers::e($g['mail']['smtp_port'] ?? '587') ?>" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"></div>
+          <input type="number" name="smtp_port" value="<?= Helpers::e($g['mail']['smtp_port'] ?? '465') ?>" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"></div>
         <div><label class="block text-xs font-medium text-gray-500 mb-1">Username</label>
           <input type="text" name="smtp_user" value="<?= Helpers::e($g['mail']['smtp_user'] ?? '') ?>" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"></div>
         <div><label class="block text-xs font-medium text-gray-500 mb-1">Password</label>
@@ -159,16 +159,32 @@
           <input type="email" name="smtp_from_email" value="<?= Helpers::e($g['mail']['smtp_from_email'] ?? '') ?>" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"></div>
         <div><label class="block text-xs font-medium text-gray-500 mb-1">From Name</label>
           <input type="text" name="smtp_from_name" value="<?= Helpers::e($g['mail']['smtp_from_name'] ?? '') ?>" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"></div>
-        <div><label class="block text-xs font-medium text-gray-500 mb-1">Encryption</label>
+        <div class="col-span-2"><label class="block text-xs font-medium text-gray-500 mb-1">Encryption</label>
           <select name="smtp_encryption" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500">
-            <option value="tls" <?= ($g['mail']['smtp_encryption']??'tls')==='tls'?'selected':'' ?>>TLS (port 587)</option>
-            <option value="ssl" <?= ($g['mail']['smtp_encryption']??'')==='ssl'?'selected':'' ?>>SSL (port 465)</option>
-            <option value="none" <?= ($g['mail']['smtp_encryption']??'')==='none'?'selected':'' ?>>None</option>
+            <option value="ssl" <?= ($g['mail']['smtp_encryption']??'ssl')==='ssl'?'selected':'' ?>>SSL (port 465) — recommended for cPanel/shared hosting</option>
+            <option value="tls" <?= ($g['mail']['smtp_encryption']??'')==='tls'?'selected':'' ?>>STARTTLS (port 587)</option>
+            <option value="none" <?= ($g['mail']['smtp_encryption']??'')==='none'?'selected':'' ?>>None (not recommended)</option>
           </select>
         </div>
       </div>
       <button type="submit" class="bg-primary-500 hover:bg-primary-600 text-white font-semibold px-5 py-2.5 rounded-xl text-sm transition-colors">Save SMTP</button>
     </form>
+
+    <!-- Test Email -->
+    <div class="mt-5 pt-5 border-t border-gray-100">
+      <h3 class="text-sm font-semibold text-gray-700 mb-1">Send Test Email</h3>
+      <p class="text-xs text-gray-400 mb-3">Save your settings first, then send a test to verify the connection works.</p>
+      <form method="POST" action="/admin/settings/test-email" class="flex items-center gap-3">
+        <input type="hidden" name="_csrf_token" value="<?= Csrf::token() ?>">
+        <input type="email" name="test_email"
+          value="<?= Helpers::e(Session::get('user')['email'] ?? '') ?>"
+          placeholder="you@example.com" required
+          class="flex-1 border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500">
+        <button type="submit" class="border border-primary-300 text-primary-600 hover:bg-primary-50 font-semibold px-5 py-2.5 rounded-xl text-sm transition-colors whitespace-nowrap">
+          Send Test
+        </button>
+      </form>
+    </div>
   </div>
 
   <!-- Storage -->

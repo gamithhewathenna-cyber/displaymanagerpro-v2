@@ -152,46 +152,171 @@ class StripeService
 }
 
 /**
- * Mailer Service using PHPMailer
- * Falls back gracefully if PHPMailer is not available
+ * Lightweight SMTP client — no external dependencies required.
+ * Supports SSL (port 465) and STARTTLS (port 587).
+ */
+class SmtpClient
+{
+    private $sock;
+
+    public function __construct(
+        private string $host,
+        private int    $port,
+        private string $enc,   // 'ssl' | 'tls' | 'none'
+        private string $user,
+        private string $pass
+    ) {}
+
+    public function sendMail(
+        string $fromEmail, string $fromName,
+        string $toEmail,   string $toName,
+        string $subject,   string $html,   string $text = ''
+    ): void {
+        $this->connect();
+        $this->authenticate();
+
+        $this->put('MAIL FROM:<' . $fromEmail . '>');  $this->expect(250);
+        $this->put('RCPT TO:<' . $toEmail . '>');       $this->expect(250);
+        $this->put('DATA');                              $this->expect(354);
+
+        $boundary = 'b_' . bin2hex(random_bytes(8));
+        $plain    = $text ?: strip_tags(str_replace(['<br>', '<br/>', '<br />'], "\n", $html));
+
+        $headers  = 'From: =?UTF-8?B?' . base64_encode($fromName) . '?= <' . $fromEmail . ">\r\n";
+        $headers .= 'To: =?UTF-8?B?' . base64_encode($toName) . '?= <' . $toEmail . ">\r\n";
+        $headers .= 'Subject: =?UTF-8?B?' . base64_encode($subject) . "?=\r\n";
+        $headers .= 'MIME-Version: 1.0' . "\r\n";
+        $headers .= 'Content-Type: multipart/alternative; boundary="' . $boundary . '"' . "\r\n";
+        $headers .= 'Date: ' . date('r') . "\r\n";
+
+        $body  = "\r\n--" . $boundary . "\r\n";
+        $body .= "Content-Type: text/plain; charset=UTF-8\r\nContent-Transfer-Encoding: base64\r\n\r\n";
+        $body .= chunk_split(base64_encode($plain));
+        $body .= '--' . $boundary . "\r\n";
+        $body .= "Content-Type: text/html; charset=UTF-8\r\nContent-Transfer-Encoding: base64\r\n\r\n";
+        $body .= chunk_split(base64_encode($html));
+        $body .= '--' . $boundary . "--\r\n";
+
+        // Dot-stuffing: escape lines that are just a dot
+        $message = preg_replace('/^\.$/m', '..', $headers . $body);
+        fwrite($this->sock, $message);
+
+        $this->put('.');       $this->expect(250);
+        $this->put('QUIT');
+        fclose($this->sock);
+    }
+
+    private function connect(): void
+    {
+        $transport = ($this->enc === 'ssl') ? 'ssl' : 'tcp';
+        $ctx = stream_context_create(['ssl' => [
+            'verify_peer'      => false,
+            'verify_peer_name' => false,
+        ]]);
+        $this->sock = @stream_socket_client(
+            $transport . '://' . $this->host . ':' . $this->port,
+            $errno, $errstr, 15, STREAM_CLIENT_CONNECT, $ctx
+        );
+        if (!$this->sock) {
+            throw new Exception("Cannot connect to {$this->host}:{$this->port} — $errstr ($errno)");
+        }
+        stream_set_timeout($this->sock, 15);
+
+        $this->expect(220); // server greeting
+
+        $ehlo = gethostname() ?: 'localhost';
+        $this->put('EHLO ' . $ehlo);
+        $this->readLines(250);
+
+        if ($this->enc === 'tls') {
+            $this->put('STARTTLS');
+            $this->expect(220);
+            if (!stream_socket_enable_crypto($this->sock, true, STREAM_CRYPTO_METHOD_TLS_CLIENT)) {
+                throw new Exception('STARTTLS negotiation failed');
+            }
+            $this->put('EHLO ' . $ehlo);
+            $this->readLines(250);
+        }
+    }
+
+    private function authenticate(): void
+    {
+        $this->put('AUTH LOGIN');          $this->expect(334);
+        $this->put(base64_encode($this->user)); $this->expect(334);
+        $this->put(base64_encode($this->pass)); $this->expect(235);
+    }
+
+    private function put(string $cmd): void
+    {
+        fwrite($this->sock, $cmd . "\r\n");
+    }
+
+    private function expect(int $code): string
+    {
+        return $this->readLines($code);
+    }
+
+    private function readLines(int $expected): string
+    {
+        $response = '';
+        while (($line = fgets($this->sock, 4096)) !== false) {
+            $response .= $line;
+            if (strlen($line) >= 4 && $line[3] === ' ') break; // final line of multi-line reply
+        }
+        $actual = (int) substr($response, 0, 3);
+        if ($actual !== $expected) {
+            throw new Exception("SMTP: expected $expected, got $actual — " . trim($response));
+        }
+        return $response;
+    }
+}
+
+/**
+ * Mailer Service — uses built-in SmtpClient; falls back to PHPMailer if installed.
  */
 class Mailer
 {
     public static function send(string $toEmail, string $toName, string $subject, string $htmlBody): bool
     {
         try {
-            // Check if PHPMailer is available
             $phpmailerPath = ROOT_PATH . '/vendor/phpmailer/phpmailer/src/PHPMailer.php';
-            if (!file_exists($phpmailerPath)) {
-                // Fallback to PHP mail()
-                $headers  = "MIME-Version: 1.0\r\n";
-                $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
-                $headers .= "From: " . Settings::get('smtp_from_name') . " <" . Settings::get('smtp_from_email') . ">\r\n";
-                return mail($toEmail, $subject, $htmlBody, $headers);
+            if (file_exists($phpmailerPath)) {
+                require_once $phpmailerPath;
+                require_once ROOT_PATH . '/vendor/phpmailer/phpmailer/src/SMTP.php';
+                require_once ROOT_PATH . '/vendor/phpmailer/phpmailer/src/Exception.php';
+
+                $mail = new PHPMailer\PHPMailer\PHPMailer(true);
+                $mail->isSMTP();
+                $mail->Host       = Settings::get('smtp_host', 'localhost');
+                $mail->SMTPAuth   = true;
+                $mail->Username   = Settings::get('smtp_user');
+                $mail->Password   = Settings::get('smtp_pass');
+                $mail->SMTPSecure = Settings::get('smtp_encryption', 'tls');
+                $mail->Port       = (int) Settings::get('smtp_port', 587);
+                $mail->CharSet    = 'UTF-8';
+                $mail->setFrom(Settings::get('smtp_from_email', 'noreply@localhost'), Settings::get('smtp_from_name', APP_NAME));
+                $mail->addAddress($toEmail, $toName);
+                $mail->isHTML(true);
+                $mail->Subject = $subject;
+                $mail->Body    = $htmlBody;
+                $mail->AltBody = strip_tags($htmlBody);
+                return $mail->send();
             }
 
-            require_once $phpmailerPath;
-            require_once ROOT_PATH . '/vendor/phpmailer/phpmailer/src/SMTP.php';
-            require_once ROOT_PATH . '/vendor/phpmailer/phpmailer/src/Exception.php';
-
-            $mail = new PHPMailer\PHPMailer\PHPMailer(true);
-            $mail->isSMTP();
-            $mail->Host       = Settings::get('smtp_host', 'localhost');
-            $mail->SMTPAuth   = true;
-            $mail->Username   = Settings::get('smtp_user');
-            $mail->Password   = Settings::get('smtp_pass');
-            $mail->SMTPSecure = Settings::get('smtp_encryption', 'tls');
-            $mail->Port       = (int) Settings::get('smtp_port', 587);
-            $mail->CharSet    = 'UTF-8';
-
-            $mail->setFrom(Settings::get('smtp_from_email', 'noreply@localhost'), Settings::get('smtp_from_name', APP_NAME));
-            $mail->addAddress($toEmail, $toName);
-            $mail->isHTML(true);
-            $mail->Subject = $subject;
-            $mail->Body    = $htmlBody;
-            $mail->AltBody = strip_tags($htmlBody);
-
-            return $mail->send();
+            // Built-in SMTP client
+            $smtp = new SmtpClient(
+                Settings::get('smtp_host', 'localhost'),
+                (int) Settings::get('smtp_port', 587),
+                Settings::get('smtp_encryption', 'tls'),
+                Settings::get('smtp_user', ''),
+                Settings::get('smtp_pass', '')
+            );
+            $smtp->sendMail(
+                Settings::get('smtp_from_email', 'noreply@localhost'),
+                Settings::get('smtp_from_name', APP_NAME),
+                $toEmail, $toName, $subject, $htmlBody
+            );
+            return true;
         } catch (Exception $e) {
             error_log('Mailer error: ' . $e->getMessage());
             return false;
