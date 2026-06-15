@@ -147,7 +147,7 @@ class Helpers
         return $bytes . ' B';
     }
 
-    public static function formatMoney(float $amount, string $currency = 'AUD'): string
+    public static function formatMoney(float $amount, string $currency = 'USD'): string
     {
         return '$' . number_format($amount, 2) . ' ' . $currency;
     }

@@ -63,7 +63,7 @@
         <h2 class="font-semibold text-gray-900">Maintenance Mode</h2>
         <p class="text-sm text-gray-400 mt-0.5">When enabled, only admins can access the site.</p>
       </div>
-      <?php $maintOn = ($g['maintenance']['maintenance_mode'] ?? '0') === '1'; ?>
+      <?php $maintOn = Settings::get('maintenance_mode', '0') === '1'; ?>
       <span class="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full <?= $maintOn ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700' ?>">
         <span class="w-2 h-2 rounded-full <?= $maintOn ? 'bg-red-500' : 'bg-green-500' ?>"></span>
         <?= $maintOn ? 'Maintenance ON' : 'Site Live' ?>
@@ -85,7 +85,7 @@
       <div>
         <label class="block text-sm font-medium text-gray-700 mb-1.5">Maintenance Message</label>
         <textarea name="maintenance_message" rows="3" placeholder="We are currently performing scheduled maintenance. We'll be back shortly."
-          class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none"><?= htmlspecialchars($g['maintenance']['maintenance_message'] ?? '') ?></textarea>
+          class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none"><?= htmlspecialchars(Settings::get('maintenance_message', '')) ?></textarea>
       </div>
       <button type="submit" class="bg-primary-500 hover:bg-primary-600 text-white font-semibold px-5 py-2.5 rounded-xl text-sm transition-colors">Save Maintenance Settings</button>
     </form>
@@ -107,36 +107,33 @@
     </form>
   </div>
 
-  <!-- Stripe -->
-  <div class="bg-white rounded-xl border border-gray-100 p-6" id="stripe">
-    <h2 class="font-semibold text-gray-900 mb-1">Stripe</h2>
-    <p class="text-sm text-gray-400 mb-4">Toggle between test and live mode without touching code.</p>
+  <!-- PayPal -->
+  <div class="bg-white rounded-xl border border-gray-100 p-6" id="paypal">
+    <h2 class="font-semibold text-gray-900 mb-1">PayPal</h2>
+    <p class="text-sm text-gray-400 mb-4">Connect PayPal to accept subscription payments. Create billing plans at <a href="https://developer.paypal.com" target="_blank" class="text-primary-600">developer.paypal.com</a>, then paste the Plan IDs into each plan's edit page.</p>
     <form method="POST" action="/admin/settings" class="space-y-4">
       <input type="hidden" name="_csrf_token" value="<?= Csrf::token() ?>">
-      <input type="hidden" name="group" value="stripe">
+      <input type="hidden" name="group" value="paypal">
       <div>
         <label class="block text-sm font-medium text-gray-700 mb-1">Mode</label>
-        <select name="stripe_mode" class="border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500">
-          <option value="test" <?= ($g['stripe']['stripe_mode']??'test')==='test'?'selected':'' ?>>Test Mode</option>
-          <option value="live" <?= ($g['stripe']['stripe_mode']??'test')==='live'?'selected':'' ?>>Live Mode</option>
+        <select name="paypal_mode" class="border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500">
+          <option value="sandbox" <?= (Settings::get('paypal_mode','sandbox'))==='sandbox'?'selected':'' ?>>Sandbox (Testing)</option>
+          <option value="live" <?= (Settings::get('paypal_mode','sandbox'))==='live'?'selected':'' ?>>Live (Production)</option>
         </select>
       </div>
       <div class="grid grid-cols-2 gap-4">
-        <div><label class="block text-xs font-medium text-gray-500 mb-1">Test Publishable Key</label>
-          <input type="text" name="stripe_test_pk" value="<?= Helpers::e($g['stripe']['stripe_test_pk'] ?? '') ?>" placeholder="pk_test_…" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary-500"></div>
-        <div><label class="block text-xs font-medium text-gray-500 mb-1">Test Secret Key</label>
-          <input type="text" name="stripe_test_sk" value="<?= Helpers::e($g['stripe']['stripe_test_sk'] ?? '') ?>" placeholder="sk_test_…" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary-500"></div>
-        <div><label class="block text-xs font-medium text-gray-500 mb-1">Live Publishable Key</label>
-          <input type="text" name="stripe_live_pk" value="<?= Helpers::e($g['stripe']['stripe_live_pk'] ?? '') ?>" placeholder="pk_live_…" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary-500"></div>
-        <div><label class="block text-xs font-medium text-gray-500 mb-1">Live Secret Key</label>
-          <input type="text" name="stripe_live_sk" value="<?= Helpers::e($g['stripe']['stripe_live_sk'] ?? '') ?>" placeholder="sk_live_…" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary-500"></div>
-        <div class="col-span-2"><label class="block text-xs font-medium text-gray-500 mb-1">Webhook Signing Secret</label>
-          <input type="text" name="stripe_webhook_secret" value="<?= Helpers::e($g['stripe']['stripe_webhook_secret'] ?? '') ?>" placeholder="whsec_…" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary-500"></div>
+        <div class="col-span-2"><label class="block text-xs font-medium text-gray-500 mb-1">Client ID</label>
+          <input type="text" name="paypal_client_id" value="<?= Helpers::e(Settings::get('paypal_client_id','')) ?>" placeholder="AXxx…" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary-500"></div>
+        <div class="col-span-2"><label class="block text-xs font-medium text-gray-500 mb-1">Secret Key</label>
+          <input type="password" name="paypal_secret" value="<?= Helpers::e(Settings::get('paypal_secret','')) ?>" placeholder="EXxx…" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary-500"></div>
+        <div class="col-span-2"><label class="block text-xs font-medium text-gray-500 mb-1">Webhook ID <span class="text-gray-400 font-normal">(from PayPal developer dashboard)</span></label>
+          <input type="text" name="paypal_webhook_id" value="<?= Helpers::e(Settings::get('paypal_webhook_id','')) ?>" placeholder="1AB23456CD789012E" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary-500"></div>
       </div>
-      <div class="bg-blue-50 border border-blue-200 rounded-xl p-3 text-xs text-blue-700">
-        Stripe webhook URL: <code class="font-mono font-bold"><?= Helpers::baseUrl('billing/webhook') ?></code>
+      <div class="bg-blue-50 border border-blue-200 rounded-xl p-3 text-xs text-blue-700 space-y-1">
+        <div>Webhook URL: <code class="font-mono font-bold"><?= Helpers::baseUrl('billing/paypal/webhook') ?></code></div>
+        <div>Return URL: <code class="font-mono font-bold"><?= Helpers::baseUrl('billing/paypal/return') ?></code></div>
       </div>
-      <button type="submit" class="bg-primary-500 hover:bg-primary-600 text-white font-semibold px-5 py-2.5 rounded-xl text-sm transition-colors">Save Stripe</button>
+      <button type="submit" class="bg-primary-500 hover:bg-primary-600 text-white font-semibold px-5 py-2.5 rounded-xl text-sm transition-colors">Save PayPal</button>
     </form>
   </div>
 

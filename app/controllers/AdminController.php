@@ -174,6 +174,90 @@ class AdminController extends BaseController
         $this->redirect('/admin/plans');
     }
 
+    public function createPlan(): void
+    {
+        $this->requireAdmin();
+        $this->view('admin/plan-create', ['title' => 'Create Plan'], 'admin');
+    }
+
+    public function storePlan(): void
+    {
+        $this->requireAdmin();
+        $this->validateCsrf();
+
+        $name = trim(Helpers::sanitize($_POST['name'] ?? ''));
+        if ($name === '') {
+            Session::flash('error', 'Plan name is required.');
+            $this->redirect('/admin/plans/create');
+        }
+
+        $hasMaxSlides = (bool) Database::fetchOne("SHOW COLUMNS FROM plans LIKE 'max_slides'");
+
+        $slug = strtolower(preg_replace('/[^a-z0-9]+/i', '-', $name));
+
+        if ($hasMaxSlides) {
+            Database::insert(
+                'INSERT INTO plans (name, slug, price_monthly, price_annual, max_screens, max_slides,
+                 stripe_price_id_monthly, stripe_price_id_annual, is_active)
+                 VALUES (?,?,?,?,?,?,?,?,?)',
+                [
+                    $name,
+                    $slug,
+                    (float)($_POST['price_monthly'] ?? 0),
+                    (float)($_POST['price_annual'] ?? 0),
+                    (int)($_POST['max_screens'] ?? 1),
+                    max(1, min(50, (int)($_POST['max_slides'] ?? 15))),
+                    Helpers::sanitize($_POST['stripe_price_id_monthly'] ?? ''),
+                    Helpers::sanitize($_POST['stripe_price_id_annual'] ?? ''),
+                    isset($_POST['is_active']) ? 1 : 0,
+                ]
+            );
+        } else {
+            Database::insert(
+                'INSERT INTO plans (name, slug, price_monthly, price_annual, max_screens,
+                 stripe_price_id_monthly, stripe_price_id_annual, is_active)
+                 VALUES (?,?,?,?,?,?,?,?)',
+                [
+                    $name,
+                    $slug,
+                    (float)($_POST['price_monthly'] ?? 0),
+                    (float)($_POST['price_annual'] ?? 0),
+                    (int)($_POST['max_screens'] ?? 1),
+                    Helpers::sanitize($_POST['stripe_price_id_monthly'] ?? ''),
+                    Helpers::sanitize($_POST['stripe_price_id_annual'] ?? ''),
+                    isset($_POST['is_active']) ? 1 : 0,
+                ]
+            );
+        }
+
+        ActivityLog::log('admin_create_plan', "Created plan: $name");
+        Session::flash('success', 'Plan created successfully.');
+        $this->redirect('/admin/plans');
+    }
+
+    public function deletePlan(string $id): void
+    {
+        $this->requireAdmin();
+        $this->validateCsrf();
+
+        $plan = Plan::find((int)$id);
+        if (!$plan) $this->abort(404);
+
+        $activeSubscribers = Database::fetchOne(
+            "SELECT COUNT(*) as cnt FROM subscriptions WHERE plan_id = ? AND status = 'active'",
+            [(int)$id]
+        );
+        if ($activeSubscribers && $activeSubscribers['cnt'] > 0) {
+            Session::flash('error', 'Cannot delete a plan with active subscribers. Deactivate it instead.');
+            $this->redirect('/admin/plans');
+        }
+
+        Database::execute('DELETE FROM plans WHERE id = ?', [(int)$id]);
+        ActivityLog::log('admin_delete_plan', "Deleted plan #{$id}: {$plan['name']}");
+        Session::flash('success', 'Plan deleted.');
+        $this->redirect('/admin/plans');
+    }
+
     // ── Support ────────────────────────────────────────────────────────────
 
     public function tickets(): void
@@ -218,12 +302,12 @@ class AdminController extends BaseController
     {
         $this->requireAdmin();
         $settings = [
-            'general' => Settings::getGroup('general'),
-            'mail'    => Settings::getGroup('mail'),
-            'stripe'  => Settings::getGroup('stripe'),
-            'storage' => Settings::getGroup('storage'),
+            'general'     => Settings::getGroup('general'),
+            'mail'        => Settings::getGroup('mail'),
+            'paypal'      => Settings::getGroup('paypal'),
+            'storage'     => Settings::getGroup('storage'),
             'maintenance' => Settings::getGroup('maintenance'),
-            'media'   => Settings::getGroup('media'),
+            'media'       => Settings::getGroup('media'),
         ];
         $this->view('admin/settings', ['title' => 'System Settings', 'settings' => $settings], 'admin');
     }
@@ -235,12 +319,12 @@ class AdminController extends BaseController
         $group = Helpers::sanitize($_POST['group'] ?? 'general');
 
         $allowed = [
-            'general' => ['company_name','company_url','app_env'],
-            'mail'    => ['smtp_host','smtp_port','smtp_user','smtp_pass','smtp_from_email','smtp_from_name','smtp_encryption'],
-            'stripe'  => ['stripe_mode','stripe_test_pk','stripe_test_sk','stripe_live_pk','stripe_live_sk','stripe_webhook_secret'],
-            'storage' => ['storage_driver','s3_bucket','s3_region','s3_access_key','s3_secret_key','s3_url',
-                          'r2_bucket','r2_account_id','r2_access_key','r2_secret_key','r2_url'],
-            'media'   => ['max_upload_size_kb'],
+            'general'     => ['company_name','company_url','app_env'],
+            'mail'        => ['smtp_host','smtp_port','smtp_user','smtp_pass','smtp_from_email','smtp_from_name','smtp_encryption'],
+            'paypal'      => ['paypal_mode','paypal_client_id','paypal_secret','paypal_webhook_id'],
+            'storage'     => ['storage_driver','s3_bucket','s3_region','s3_access_key','s3_secret_key','s3_url',
+                              'r2_bucket','r2_account_id','r2_access_key','r2_secret_key','r2_url'],
+            'media'       => ['max_upload_size_kb'],
             'maintenance' => ['maintenance_mode','maintenance_message'],
         ];
 

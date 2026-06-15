@@ -44,7 +44,7 @@ define('MAX_LOGIN_ATTEMPTS',    5);
 define('LOGIN_LOCKOUT_MINUTES', 15);
 
 // ── Media ─────────────────────────────────────────────────────────────────────
-define('MAX_UPLOAD_BYTES',   512000);
+define('MAX_UPLOAD_BYTES',   5242880); // 5 MB
 define('ALLOWED_MIME_TYPES', ['image/jpeg', 'image/png', 'image/webp']);
 define('ALLOWED_EXTENSIONS', ['jpg', 'jpeg', 'png', 'webp']);
 

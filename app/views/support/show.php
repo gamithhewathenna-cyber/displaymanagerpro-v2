@@ -55,7 +55,7 @@
   <?php if ($ticket['status'] !== 'closed'): ?>
   <div class="bg-white rounded-2xl border border-gray-100 p-6">
     <h3 class="font-semibold text-gray-900 mb-4 text-sm">Add Reply</h3>
-    <form method="POST" action="/<?= $isAdmin?'admin':'support' ?>/<?= $ticket['id'] ?>/reply" class="space-y-4">
+    <form method="POST" action="/<?= $isAdmin?'admin/tickets':'support' ?>/<?= $ticket['id'] ?>/reply" class="space-y-4">
       <input type="hidden" name="_csrf_token" value="<?= Csrf::token() ?>">
       <textarea name="message" required rows="5" placeholder="Type your reply…"
         class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none"></textarea>

@@ -21,151 +21,187 @@ class BillingController extends BaseController
         ]);
     }
 
-    public function checkout(): void
+    public function subscribe(): void
     {
         $this->requireAuth();
         $this->validateCsrf();
-        $user    = $this->currentUser();
-        $planId  = (int)($_POST['plan_id'] ?? 0);
-        $cycle   = ($_POST['billing_cycle'] ?? 'monthly') === 'annual' ? 'annual' : 'monthly';
-        $plan    = Plan::find($planId);
+        $user   = $this->currentUser();
+        $planId = (int)($_POST['plan_id'] ?? 0);
+        $cycle  = ($_POST['billing_cycle'] ?? 'monthly') === 'annual' ? 'annual' : 'monthly';
+        $plan   = Plan::find($planId);
 
         if (!$plan || !$plan['is_active']) {
             Session::flash('error', 'Plan not found.');
             $this->redirect('/billing');
         }
 
-        $priceId = $cycle === 'annual'
+        $paypalPlanId = $cycle === 'annual'
             ? $plan['stripe_price_id_annual']
             : $plan['stripe_price_id_monthly'];
 
-        if (!$priceId) {
+        if (!$paypalPlanId) {
             Session::flash('error', 'This plan is not available for billing yet. Please contact support.');
             $this->redirect('/billing');
         }
 
+        // Store pending info in session so return URL can link it to the user
+        Session::set('paypal_pending', [
+            'plan_id'  => $planId,
+            'cycle'    => $cycle,
+            'user_id'  => $user['id'],
+        ]);
+
         try {
-            $stripe   = new StripeService();
-            $fullUser = User::find($user['id']);
+            $paypal      = new PayPalService();
+            $fullUser    = User::find($user['id']);
+            $approvalUrl = $paypal->createSubscription(
+                $paypalPlanId,
+                $fullUser,
+                Helpers::baseUrl('billing/paypal/return'),
+                Helpers::baseUrl('billing/paypal/cancel')
+            );
+            $this->redirect($approvalUrl);
+        } catch (Exception $e) {
+            error_log('PayPal subscribe error: ' . $e->getMessage());
+            Session::flash('error', 'Could not connect to PayPal. Please try again or contact support.');
+            $this->redirect('/billing');
+        }
+    }
 
-            // Create or retrieve customer
-            $sub = Subscription::forUser($user['id']);
-            $customerId = $sub['stripe_customer_id'] ?? null;
+    public function paypalReturn(): void
+    {
+        $this->requireAuth();
+        $subId = Helpers::sanitize($_GET['subscription_id'] ?? '');
 
-            if (!$customerId) {
-                $customer   = $stripe->createCustomer($fullUser['email'], $fullUser['name']);
-                $customerId = $customer['id'];
+        if (!$subId) {
+            Session::flash('error', 'PayPal returned an incomplete response. Please try again.');
+            $this->redirect('/billing');
+        }
+
+        $pending = Session::get('paypal_pending');
+        Session::forget('paypal_pending');
+
+        try {
+            $paypal  = new PayPalService();
+            $ppSub   = $paypal->getSubscription($subId);
+            $status  = strtolower($ppSub['status'] ?? 'pending');
+            $planId  = $pending['plan_id'] ?? null;
+            $userId  = $pending['user_id'] ?? $this->currentUser()['id'];
+            $cycle   = $pending['cycle'] ?? 'monthly';
+
+            // Resolve plan from PayPal plan_id if session lost
+            if (!$planId) {
+                $ppPlanId = $ppSub['plan_id'] ?? '';
+                $dbPlan   = $ppPlanId ? Plan::findByStripePrice($ppPlanId) : null;
+                $planId   = $dbPlan['id'] ?? 1;
             }
 
-            $session = $stripe->createCheckoutSession([
-                'customer'                   => $customerId,
-                'payment_method_types[]'     => 'card',
-                'mode'                       => 'subscription',
-                'line_items[0][price]'       => $priceId,
-                'line_items[0][quantity]'    => '1',
-                'subscription_data[trial_period_days]' => TRIAL_DAYS,
-                'success_url'                => Helpers::baseUrl('billing/success?session_id={CHECKOUT_SESSION_ID}'),
-                'cancel_url'                 => Helpers::baseUrl('billing'),
-                'client_reference_id'        => $user['id'],
-            ]);
+            $nextBillingTime = $ppSub['billing_info']['next_billing_time'] ?? null;
+            $periodEnd       = $nextBillingTime ? date('Y-m-d H:i:s', strtotime($nextBillingTime)) : null;
 
-            $this->redirect($session['url']);
+            $existingSub = Subscription::forUser($userId);
+            $data = [
+                'plan_id'               => $planId,
+                'stripe_subscription_id'=> $subId,
+                'stripe_price_id'       => $ppSub['plan_id'] ?? '',
+                'stripe_customer_id'    => $ppSub['subscriber']['payer_id'] ?? '',
+                'status'                => in_array($status, ['active','approved']) ? 'active' : $status,
+                'billing_cycle'         => $cycle,
+                'current_period_start'  => date('Y-m-d H:i:s'),
+                'current_period_end'    => $periodEnd,
+            ];
+
+            if ($existingSub) {
+                Subscription::update($existingSub['id'], $data);
+            } else {
+                Subscription::create(array_merge($data, ['user_id' => $userId]));
+            }
+
+            ActivityLog::log('subscription_activated', "PayPal subscription $subId activated");
+            Session::flash('success', 'Subscription activated! Welcome aboard.');
         } catch (Exception $e) {
-            error_log('Checkout error: ' . $e->getMessage());
-            Session::flash('error', 'Could not start checkout. Please try again.');
-            $this->redirect('/billing');
+            error_log('PayPal return error: ' . $e->getMessage());
+            Session::flash('error', 'Subscription may not have activated — please check your billing page or contact support.');
         }
+
+        $this->redirect('/billing');
     }
 
-    public function checkoutSuccess(): void
+    public function paypalCancel(): void
     {
         $this->requireAuth();
-        Session::flash('success', 'Subscription activated! Welcome aboard.');
-        $this->redirect('/dashboard');
+        Session::forget('paypal_pending');
+        Session::flash('error', 'PayPal subscription was cancelled. You can try again any time.');
+        $this->redirect('/billing');
     }
 
-    public function portal(): void
-    {
-        $this->requireAuth();
-        $user = $this->currentUser();
-        $sub  = Subscription::forUser($user['id']);
-
-        if (!$sub || !$sub['stripe_customer_id']) {
-            Session::flash('error', 'No billing account found. Please subscribe first.');
-            $this->redirect('/billing');
-        }
-
-        try {
-            $stripe  = new StripeService();
-            $session = $stripe->createBillingPortalSession(
-                $sub['stripe_customer_id'],
-                Helpers::baseUrl('billing')
-            );
-            $this->redirect($session['url']);
-        } catch (Exception $e) {
-            error_log('Portal error: ' . $e->getMessage());
-            Session::flash('error', 'Could not open billing portal. Please contact support.');
-            $this->redirect('/billing');
-        }
-    }
-
-    public function cancel(): void
+    public function cancelSubscription(): void
     {
         $this->requireAuth();
         $this->validateCsrf();
         $user = $this->currentUser();
         $sub  = Subscription::forUser($user['id']);
 
-        if (!$sub || !$sub['stripe_subscription_id']) {
+        if (!$sub || empty($sub['stripe_subscription_id'])) {
             Session::flash('error', 'No active subscription found.');
             $this->redirect('/billing');
         }
 
         try {
-            $stripe = new StripeService();
-            $stripe->cancelSubscription($sub['stripe_subscription_id'], true);
-            Subscription::update($sub['id'], ['canceled_at' => date('Y-m-d H:i:s')]);
-            ActivityLog::log('subscription_canceled', 'Subscription canceled');
-            Session::flash('success', 'Your subscription has been canceled. Access continues until the end of your billing period.');
+            $paypal = new PayPalService();
+            $paypal->cancelSubscription($sub['stripe_subscription_id']);
+            Subscription::update($sub['id'], [
+                'status'      => 'canceled',
+                'canceled_at' => date('Y-m-d H:i:s'),
+            ]);
+            ActivityLog::log('subscription_canceled', 'PayPal subscription canceled');
+            Session::flash('success', 'Your subscription has been canceled.');
         } catch (Exception $e) {
-            error_log('Cancel error: ' . $e->getMessage());
-            Session::flash('error', 'Could not cancel subscription. Please contact support.');
+            error_log('PayPal cancel error: ' . $e->getMessage());
+            Session::flash('error', 'Could not cancel via PayPal API. Contact support if needed.');
         }
 
         $this->redirect('/billing');
     }
 
-    public function webhook(): void
+    public function paypalWebhook(): void
     {
-        $payload    = file_get_contents('php://input');
-        $sigHeader  = $_SERVER['HTTP_STRIPE_SIGNATURE'] ?? '';
-        $secret     = Settings::get('stripe_webhook_secret');
+        $payload = file_get_contents('php://input');
+        if (!$payload) { http_response_code(400); return; }
 
-        try {
-            $stripe = new StripeService();
-            $event  = $stripe->constructWebhookEvent($payload, $sigHeader, $secret);
-        } catch (Exception $e) {
-            error_log('Webhook verification failed: ' . $e->getMessage());
-            http_response_code(400);
-            echo json_encode(['error' => $e->getMessage()]);
-            return;
+        // Collect PayPal headers
+        $ppHeaders = [];
+        foreach ($_SERVER as $k => $v) {
+            if (str_starts_with($k, 'HTTP_PAYPAL_')) {
+                $header = strtolower(str_replace('HTTP_', '', $k));
+                $header = str_replace('_', '-', $header);
+                $ppHeaders[$header] = $v;
+            }
         }
 
-        $data   = $event['data']['object'];
-        $type   = $event['type'];
-
         try {
+            $paypal = new PayPalService();
+            if (!$paypal->verifyWebhook($payload, $ppHeaders)) {
+                error_log('PayPal webhook: signature verification failed');
+                http_response_code(400);
+                echo json_encode(['error' => 'Signature verification failed']);
+                return;
+            }
+
+            $event    = json_decode($payload, true);
+            $type     = $event['event_type'] ?? '';
+            $resource = $event['resource'] ?? [];
+
             match($type) {
-                'checkout.session.completed'       => $this->handleCheckoutCompleted($data),
-                'customer.subscription.created'    => $this->handleSubscriptionCreated($data),
-                'customer.subscription.updated'    => $this->handleSubscriptionUpdated($data),
-                'customer.subscription.deleted'    => $this->handleSubscriptionDeleted($data),
-                'invoice.paid'                     => $this->handleInvoicePaid($data),
-                'invoice.payment_failed'           => $this->handleInvoicePaymentFailed($data),
-                default                            => null,
+                'BILLING.SUBSCRIPTION.ACTIVATED'  => $this->ppHandleActivated($resource),
+                'BILLING.SUBSCRIPTION.UPDATED'    => $this->ppHandleUpdated($resource),
+                'BILLING.SUBSCRIPTION.CANCELLED'  => $this->ppHandleCancelled($resource),
+                'BILLING.SUBSCRIPTION.EXPIRED'    => $this->ppHandleCancelled($resource),
+                'PAYMENT.SALE.COMPLETED'          => $this->ppHandlePayment($resource),
+                default                           => null,
             };
         } catch (Exception $e) {
-            error_log("Webhook handler error [$type]: " . $e->getMessage());
+            error_log('PayPal webhook error: ' . $e->getMessage());
             http_response_code(500);
             echo json_encode(['error' => 'Handler error']);
             return;
@@ -175,126 +211,61 @@ class BillingController extends BaseController
         echo json_encode(['received' => true]);
     }
 
-    private function handleCheckoutCompleted(array $data): void
+    private function ppHandleActivated(array $res): void
     {
-        $userId     = (int)($data['client_reference_id'] ?? 0);
-        $customerId = $data['customer'] ?? '';
-        $subStripeId = $data['subscription'] ?? '';
-        if (!$userId || !$customerId || !$subStripeId) return;
-
-        $stripe = new StripeService();
-        $stripeSub = $stripe->retrieveSubscription($subStripeId);
-        $priceId   = $stripeSub['items']['data'][0]['price']['id'] ?? null;
-        $plan      = $priceId ? Plan::findByStripePrice($priceId) : null;
-
-        $existingSub = Subscription::forUser($userId);
-        if ($existingSub) {
-            Subscription::update($existingSub['id'], [
-                'plan_id'              => $plan['id'] ?? $existingSub['plan_id'],
-                'stripe_customer_id'   => $customerId,
-                'stripe_subscription_id' => $subStripeId,
-                'stripe_price_id'      => $priceId,
-                'status'               => $stripeSub['status'],
-                'trial_ends_at'        => isset($stripeSub['trial_end']) ? date('Y-m-d H:i:s', $stripeSub['trial_end']) : null,
-                'current_period_start' => date('Y-m-d H:i:s', $stripeSub['current_period_start']),
-                'current_period_end'   => date('Y-m-d H:i:s', $stripeSub['current_period_end']),
-            ]);
-        } else {
-            Subscription::create([
-                'user_id'              => $userId,
-                'plan_id'              => $plan['id'] ?? 1,
-                'stripe_customer_id'   => $customerId,
-                'stripe_subscription_id' => $subStripeId,
-                'stripe_price_id'      => $priceId,
-                'status'               => $stripeSub['status'],
-                'trial_ends_at'        => isset($stripeSub['trial_end']) ? date('Y-m-d H:i:s', $stripeSub['trial_end']) : null,
-                'current_period_start' => date('Y-m-d H:i:s', $stripeSub['current_period_start']),
-                'current_period_end'   => date('Y-m-d H:i:s', $stripeSub['current_period_end']),
-            ]);
+        $subId = $res['id'] ?? '';
+        if (!$subId) return;
+        $sub = Subscription::findByStripeId($subId);
+        if ($sub) {
+            Subscription::update($sub['id'], ['status' => 'active']);
         }
     }
 
-    private function handleSubscriptionCreated(array $data): void
+    private function ppHandleUpdated(array $res): void
     {
-        $this->syncSubscription($data);
+        $subId = $res['id'] ?? '';
+        if (!$subId) return;
+        $sub = Subscription::findByStripeId($subId);
+        if (!$sub) return;
+
+        $status = strtolower($res['status'] ?? 'active');
+        $nextBilling = $res['billing_info']['next_billing_time'] ?? null;
+        $updates = ['status' => $status];
+        if ($nextBilling) $updates['current_period_end'] = date('Y-m-d H:i:s', strtotime($nextBilling));
+        Subscription::update($sub['id'], $updates);
     }
 
-    private function handleSubscriptionUpdated(array $data): void
+    private function ppHandleCancelled(array $res): void
     {
-        $this->syncSubscription($data);
-    }
-
-    private function handleSubscriptionDeleted(array $data): void
-    {
-        $sub = Subscription::findByStripeId($data['id'] ?? '');
+        $subId = $res['id'] ?? '';
+        if (!$subId) return;
+        $sub = Subscription::findByStripeId($subId);
         if ($sub) {
             Subscription::update($sub['id'], [
-                'status'   => 'canceled',
-                'ends_at'  => date('Y-m-d H:i:s', $data['ended_at'] ?? time()),
+                'status'      => 'canceled',
+                'canceled_at' => date('Y-m-d H:i:s'),
             ]);
         }
     }
 
-    private function handleInvoicePaid(array $data): void
+    private function ppHandlePayment(array $res): void
     {
-        $customerId = $data['customer'] ?? '';
-        $sub = Subscription::findByStripeCustomer($customerId);
+        $billingAgreementId = $res['billing_agreement_id'] ?? '';
+        if (!$billingAgreementId) return;
+        $sub = Subscription::findByStripeId($billingAgreementId);
         if (!$sub) return;
 
+        $amount = $res['amount']['total'] ?? '0';
         Payment::create([
-            'user_id'                 => $sub['user_id'],
-            'subscription_id'         => $sub['id'],
-            'stripe_invoice_id'       => $data['id'] ?? null,
-            'stripe_payment_intent_id'=> $data['payment_intent'] ?? null,
-            'amount'                  => ($data['amount_paid'] ?? 0) / 100,
-            'currency'                => strtoupper($data['currency'] ?? 'aud'),
-            'status'                  => 'succeeded',
-            'description'             => $data['description'] ?? 'Subscription payment',
-            'invoice_url'             => $data['hosted_invoice_url'] ?? null,
-            'invoice_pdf'             => $data['invoice_pdf'] ?? null,
-            'paid_at'                 => date('Y-m-d H:i:s', $data['status_transitions']['paid_at'] ?? time()),
+            'user_id'         => $sub['user_id'],
+            'subscription_id' => $sub['id'],
+            'stripe_invoice_id' => $res['id'] ?? null,
+            'amount'          => (float)$amount,
+            'currency'        => strtoupper($res['amount']['currency'] ?? 'USD'),
+            'status'          => 'succeeded',
+            'description'     => 'PayPal subscription payment',
+            'paid_at'         => date('Y-m-d H:i:s'),
         ]);
-    }
-
-    private function handleInvoicePaymentFailed(array $data): void
-    {
-        $customerId = $data['customer'] ?? '';
-        $sub = Subscription::findByStripeCustomer($customerId);
-        if ($sub) {
-            Subscription::update($sub['id'], ['status' => 'past_due']);
-            Payment::create([
-                'user_id'           => $sub['user_id'],
-                'subscription_id'   => $sub['id'],
-                'stripe_invoice_id' => $data['id'] ?? null,
-                'amount'            => ($data['amount_due'] ?? 0) / 100,
-                'currency'          => strtoupper($data['currency'] ?? 'aud'),
-                'status'            => 'failed',
-                'description'       => 'Payment failed',
-            ]);
-        }
-    }
-
-    private function syncSubscription(array $data): void
-    {
-        $sub = Subscription::findByStripeId($data['id'] ?? '');
-        if (!$sub) return;
-
-        $priceId = $data['items']['data'][0]['price']['id'] ?? null;
-        $plan    = $priceId ? Plan::findByStripePrice($priceId) : null;
-
-        $updates = [
-            'status'               => $data['status'],
-            'current_period_start' => date('Y-m-d H:i:s', $data['current_period_start'] ?? time()),
-            'current_period_end'   => date('Y-m-d H:i:s', $data['current_period_end'] ?? time()),
-        ];
-        if ($plan) $updates['plan_id'] = $plan['id'];
-        if (isset($data['trial_end'])) {
-            $updates['trial_ends_at'] = date('Y-m-d H:i:s', $data['trial_end']);
-        }
-        if ($data['cancel_at_period_end'] ?? false) {
-            $updates['canceled_at'] = date('Y-m-d H:i:s');
-        }
-        Subscription::update($sub['id'], $updates);
     }
 }
 
@@ -367,6 +338,7 @@ class DisplayController extends BaseController
                 'url'      => $s['public_url'],
                 'duration' => $s['duration_override'] ?? $channel['slide_duration'],
                 'name'     => $s['original_name'],
+                'rotation' => (int)($s['rotation'] ?? 0),
             ], $slides),
             'updated_at' => date('c'),
         ]);

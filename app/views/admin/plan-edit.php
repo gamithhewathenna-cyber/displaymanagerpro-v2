@@ -14,19 +14,19 @@
       <div class="grid grid-cols-2 gap-4">
         <div class="col-span-2"><label class="block text-sm font-medium text-gray-700 mb-1">Plan Name</label>
           <input type="text" name="name" value="<?= Helpers::e($plan['name']) ?>" required class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"></div>
-        <div><label class="block text-sm font-medium text-gray-700 mb-1">Price Monthly (AUD)</label>
+        <div><label class="block text-sm font-medium text-gray-700 mb-1">Price Monthly (USD)</label>
           <input type="number" name="price_monthly" step="0.01" value="<?= $plan['price_monthly'] ?>" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"></div>
-        <div><label class="block text-sm font-medium text-gray-700 mb-1">Price Annual (AUD)</label>
+        <div><label class="block text-sm font-medium text-gray-700 mb-1">Price Annual (USD)</label>
           <input type="number" name="price_annual" step="0.01" value="<?= $plan['price_annual'] ?>" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"></div>
         <div><label class="block text-sm font-medium text-gray-700 mb-1">Max Screens</label>
           <input type="number" name="max_screens" value="<?= $plan['max_screens'] ?>" min="1" max="100" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"></div>
         <div><label class="block text-sm font-medium text-gray-700 mb-1">Max Slides per Screen</label>
           <input type="number" name="max_slides" value="<?= $plan['max_slides'] ?? 15 ?>" min="1" max="50" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500">
           <p class="text-xs text-gray-400 mt-1">Max images per TV channel (1–50)</p></div>
-        <div class="col-span-2"><label class="block text-sm font-medium text-gray-700 mb-1">Stripe Price ID (Monthly)</label>
-          <input type="text" name="stripe_price_id_monthly" value="<?= Helpers::e($plan['stripe_price_id_monthly']) ?>" placeholder="price_xxxxx" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary-500"></div>
-        <div class="col-span-2"><label class="block text-sm font-medium text-gray-700 mb-1">Stripe Price ID (Annual)</label>
-          <input type="text" name="stripe_price_id_annual" value="<?= Helpers::e($plan['stripe_price_id_annual']) ?>" placeholder="price_xxxxx" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary-500"></div>
+        <div class="col-span-2"><label class="block text-sm font-medium text-gray-700 mb-1">PayPal Plan ID (Monthly)</label>
+          <input type="text" name="stripe_price_id_monthly" value="<?= Helpers::e($plan['stripe_price_id_monthly']) ?>" placeholder="P-XXXXXXXXXXXXXXXXXXXX" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary-500"></div>
+        <div class="col-span-2"><label class="block text-sm font-medium text-gray-700 mb-1">PayPal Plan ID (Annual)</label>
+          <input type="text" name="stripe_price_id_annual" value="<?= Helpers::e($plan['stripe_price_id_annual']) ?>" placeholder="P-XXXXXXXXXXXXXXXXXXXX" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary-500"></div>
         <div class="col-span-2"><label class="flex items-center gap-2 cursor-pointer">
           <input type="checkbox" name="is_active" value="1" <?= $plan['is_active']?'checked':'' ?> class="rounded text-primary-500">
           <span class="text-sm font-medium text-gray-700">Plan is active (shown to customers)</span>

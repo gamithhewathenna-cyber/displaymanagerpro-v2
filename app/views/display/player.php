@@ -42,8 +42,10 @@ html, body { width:100%; height:100%; overflow:hidden; background:<?= Helpers::e
 <body>
 <div id="player" class="fx-<?= Helpers::e($channel['transition_effect']) ?>">
   <?php foreach ($slides as $i => $slide): ?>
+  <?php $rot = (int)($slide['rotation'] ?? 0); ?>
   <div class="slide <?= $i === 0 ? 'active' : '' ?>" data-duration="<?= $slide['duration_override'] ?? $channel['slide_duration'] ?>">
-    <img src="<?= Helpers::e($slide['public_url']) ?>" alt="" loading="<?= $i === 0 ? 'eager' : 'lazy' ?>">
+    <img src="<?= Helpers::e($slide['public_url']) ?>" alt="" loading="<?= $i === 0 ? 'eager' : 'lazy' ?>"
+         <?= $rot ? 'style="transform:rotate(' . $rot . 'deg);max-width:' . ($rot===90||$rot===270?'100vh':'100%') . ';max-height:' . ($rot===90||$rot===270?'100vw':'100%') . '"' : '' ?>>
   </div>
   <?php endforeach; ?>
 </div>

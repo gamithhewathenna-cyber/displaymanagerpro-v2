@@ -88,12 +88,24 @@
         <div class="slide-item flex items-center gap-3 p-3 bg-gray-50 rounded-xl group cursor-grab active:cursor-grabbing" data-id="<?= $slide['id'] ?>">
           <svg class="w-4 h-4 text-gray-300 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
           <div class="w-14 h-10 rounded-lg overflow-hidden flex-shrink-0 bg-gray-200">
-            <img src="<?= Helpers::e($slide['public_url']) ?>" class="w-full h-full object-cover">
+            <img src="<?= Helpers::e($slide['public_url']) ?>" class="w-full h-full object-cover transition-transform"
+                 id="thumb-<?= $slide['id'] ?>"
+                 style="transform:rotate(<?= (int)($slide['rotation'] ?? 0) ?>deg)<?= in_array((int)($slide['rotation'] ?? 0), [90,270]) ? ';transform-origin:center;scale:0.7' : '' ?>">
           </div>
           <div class="flex-1 min-w-0">
             <div class="text-xs font-medium text-gray-700 truncate"><?= Helpers::e($slide['original_name']) ?></div>
-            <div class="text-xs text-gray-400">Slide <?= $i + 1 ?></div>
+            <div class="text-xs text-gray-400">Slide <?= $i + 1 ?>
+              <?php if ((int)($slide['rotation'] ?? 0) > 0): ?>
+              · <span id="rot-label-<?= $slide['id'] ?>"><?= (int)($slide['rotation'] ?? 0) ?>° rotated</span>
+              <?php else: ?>
+              · <span id="rot-label-<?= $slide['id'] ?>"></span>
+              <?php endif; ?>
+            </div>
           </div>
+          <button onclick="rotateSlide(<?= $slide['id'] ?>, this)" title="Rotate 90°"
+            class="opacity-0 group-hover:opacity-100 text-indigo-400 hover:text-indigo-600 p-1.5 hover:bg-indigo-50 rounded-lg transition-all">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+          </button>
           <button onclick="removeSlide(<?= $slide['id'] ?>, this)" class="opacity-0 group-hover:opacity-100 text-red-400 hover:text-red-600 p-1.5 hover:bg-red-50 rounded-lg transition-all">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
           </button>
@@ -192,6 +204,27 @@ async function addSlide(mediaId, el) {
   const d = await r.json();
   if (d.success) { location.reload(); }
   else { el.style.opacity='1'; alert(d.error || 'Failed to add slide'); }
+}
+
+async function rotateSlide(slideId, btn) {
+  btn.disabled = true;
+  const r = await fetch(`/channels/${channelId}/slides/${slideId}/rotate`, {
+    method:'POST',
+    headers:{'Content-Type':'application/x-www-form-urlencoded'},
+    body:`_csrf_token=${encodeURIComponent(csrf)}`
+  });
+  const d = await r.json();
+  btn.disabled = false;
+  if (d.success) {
+    const thumb = document.getElementById('thumb-' + slideId);
+    const label = document.getElementById('rot-label-' + slideId);
+    const deg   = d.rotation;
+    if (thumb) {
+      const scale = (deg === 90 || deg === 270) ? ';transform-origin:center;scale:0.7' : '';
+      thumb.style = `transform:rotate(${deg}deg)${scale}`;
+    }
+    if (label) label.textContent = deg > 0 ? `${deg}° rotated` : '';
+  } else { alert(d.error || 'Rotation failed'); }
 }
 
 async function removeSlide(slideId, btn) {

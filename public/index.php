@@ -37,7 +37,7 @@ Session::start();
 $_skipMaint = in_array($uriPath, ['/login', '/logout'])
     || strpos($uriPath, '/admin')   === 0
     || strpos($uriPath, '/display') === 0
-    || $uriPath === '/billing/webhook'
+    || $uriPath === '/billing/paypal/webhook'
     || $isInstallRoute;
 
 if (!$_skipMaint && file_exists($lockFile)) {
@@ -97,18 +97,19 @@ $router->post('/channels/{id}',                     'ChannelController', 'update
 $router->post('/channels/{id}/delete',              'ChannelController', 'delete');
 $router->post('/channels/{id}/slides',              'ChannelController', 'addSlide');
 $router->post('/channels/{id}/slides/{sid}/delete', 'ChannelController', 'removeSlide');
+$router->post('/channels/{id}/slides/{sid}/rotate', 'ChannelController', 'rotateSlide');
 $router->post('/channels/{id}/reorder',             'ChannelController', 'reorderSlides');
 
 $router->get('/media',              'MediaController', 'index');
 $router->post('/media/upload',      'MediaController', 'upload');
 $router->post('/media/{id}/delete', 'MediaController', 'delete');
 
-$router->get('/billing',           'BillingController', 'index');
-$router->post('/billing/checkout', 'BillingController', 'checkout');
-$router->get('/billing/success',   'BillingController', 'checkoutSuccess');
-$router->get('/billing/portal',    'BillingController', 'portal');
-$router->post('/billing/cancel',   'BillingController', 'cancel');
-$router->post('/billing/webhook',  'BillingController', 'webhook');
+$router->get('/billing',                    'BillingController', 'index');
+$router->post('/billing/subscribe',         'BillingController', 'subscribe');
+$router->get('/billing/paypal/return',      'BillingController', 'paypalReturn');
+$router->get('/billing/paypal/cancel',      'BillingController', 'paypalCancel');
+$router->post('/billing/paypal/webhook',    'BillingController', 'paypalWebhook');
+$router->post('/billing/cancel',            'BillingController', 'cancelSubscription');
 
 $router->get('/support',             'SupportController', 'index');
 $router->get('/support/create',      'SupportController', 'create');
@@ -127,8 +128,11 @@ $router->post('/admin/customers/{id}/activate',       'AdminController', 'activa
 $router->post('/admin/customers/{id}/delete',         'AdminController', 'deleteCustomer');
 $router->post('/admin/customers/{id}/reset-password', 'AdminController', 'resetCustomerPassword');
 $router->get('/admin/plans',                          'AdminController', 'plans');
+$router->get('/admin/plans/create',                   'AdminController', 'createPlan');
+$router->post('/admin/plans',                         'AdminController', 'storePlan');
 $router->get('/admin/plans/{id}/edit',                'AdminController', 'editPlan');
 $router->post('/admin/plans/{id}',                    'AdminController', 'updatePlan');
+$router->post('/admin/plans/{id}/delete',             'AdminController', 'deletePlan');
 $router->get('/admin/tickets',                        'AdminController', 'tickets');
 $router->get('/admin/tickets/{id}',                   'SupportController', 'show');
 $router->post('/admin/tickets/{id}/reply',            'SupportController', 'reply');

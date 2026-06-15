@@ -23,10 +23,8 @@ $trialDaysLeft= Subscription::trialDaysLeft($sub);
             </span>
           </div>
         </div>
-        <?php if ($sub['stripe_subscription_id']): ?>
-        <a href="/billing/portal" class="border border-gray-200 hover:border-gray-300 text-gray-600 text-sm font-medium px-4 py-2 rounded-xl transition-colors flex-shrink-0">
-          Manage Billing →
-        </a>
+        <?php if (!empty($sub['stripe_subscription_id'])): ?>
+        <span class="text-xs text-gray-400 font-mono mt-1">ID: <?= Helpers::e(substr($sub['stripe_subscription_id'], 0, 20)) ?>…</span>
         <?php endif; ?>
       </div>
       <div class="grid grid-cols-2 gap-4">
@@ -52,9 +50,9 @@ $trialDaysLeft= Subscription::trialDaysLeft($sub);
         <?php endif; ?>
       </div>
 
-      <?php if ($sub['stripe_subscription_id'] && ($sub['status'] === 'active' || $sub['status'] === 'trialing')): ?>
+      <?php if (!empty($sub['stripe_subscription_id']) && in_array($sub['status'], ['active','trialing'])): ?>
       <div class="mt-5 pt-5 border-t border-gray-50">
-        <form method="POST" action="/billing/cancel" onsubmit="return confirm('Cancel your subscription? You\'ll keep access until the end of your billing period.')">
+        <form method="POST" action="/billing/cancel" onsubmit="return confirm('Cancel your subscription?')">
           <input type="hidden" name="_csrf_token" value="<?= Csrf::token() ?>">
           <button type="submit" class="text-sm text-red-500 hover:text-red-700 font-medium transition-colors">Cancel subscription</button>
         </form>
@@ -71,12 +69,12 @@ $trialDaysLeft= Subscription::trialDaysLeft($sub);
     </div>
 
     <!-- Upgrade plans -->
-    <?php if (!$sub || !$sub['stripe_subscription_id'] || $isTrialing): ?>
+    <?php if (!$sub || empty($sub['stripe_subscription_id']) || $isTrialing): ?>
     <div class="bg-white rounded-2xl border border-gray-100 p-6">
       <h2 class="font-semibold text-gray-900 mb-1"><?= $isTrialing ? 'Activate your subscription' : 'Choose a plan' ?></h2>
       <p class="text-sm text-gray-400 mb-5">Select a plan below, then click <strong>Continue to Payment</strong>.</p>
 
-      <form method="POST" action="/billing/checkout" id="plan-form">
+      <form method="POST" action="/billing/subscribe" id="plan-form">
         <input type="hidden" name="_csrf_token" value="<?= Csrf::token() ?>">
         <input type="hidden" name="billing_cycle" value="monthly">
         <input type="hidden" name="plan_id" id="selected-plan-id" value="">
@@ -87,7 +85,7 @@ $trialDaysLeft= Subscription::trialDaysLeft($sub);
           <label class="plan-card flex items-center gap-4 border-2 rounded-xl p-4 cursor-pointer transition-all
             <?= $isCurrent ? 'border-primary-400 bg-primary-50' : 'border-gray-100 hover:border-primary-200' ?>"
             data-plan-id="<?= $plan['id'] ?>"
-            data-has-stripe="<?= $plan['stripe_price_id_monthly'] ? '1' : '0' ?>">
+            data-has-paypal="<?= $plan['stripe_price_id_monthly'] ? '1' : '0' ?>">
 
             <!-- Radio dot -->
             <div class="w-5 h-5 rounded-full border-2 flex-shrink-0 flex items-center justify-center transition-all
@@ -102,7 +100,7 @@ $trialDaysLeft= Subscription::trialDaysLeft($sub);
                 <span class="bg-primary-100 text-primary-700 text-xs font-semibold px-2 py-0.5 rounded-full">Current</span>
                 <?php endif; ?>
                 <?php if (!$plan['stripe_price_id_monthly']): ?>
-                <span class="bg-gray-100 text-gray-500 text-xs px-2 py-0.5 rounded-full">Setup required</span>
+                <span class="bg-amber-50 text-amber-600 text-xs px-2 py-0.5 rounded-full">PayPal not configured</span>
                 <?php endif; ?>
               </div>
               <div class="text-xs text-gray-400 mt-0.5">
@@ -113,18 +111,18 @@ $trialDaysLeft= Subscription::trialDaysLeft($sub);
 
             <div class="flex items-baseline gap-0.5 flex-shrink-0 text-right">
               <span class="text-xl font-bold text-gray-900">$<?= number_format($plan['price_monthly'],0) ?></span>
-              <span class="text-xs text-gray-400 ml-0.5">AUD/mo</span>
+              <span class="text-xs text-gray-400 ml-0.5">USD/mo</span>
             </div>
           </label>
           <?php endforeach; ?>
         </div>
 
-        <!-- Continue button -->
+        <!-- Subscribe button -->
         <button type="submit" id="continue-btn" disabled
-          class="w-full flex items-center justify-center gap-2 bg-primary-500 text-white font-semibold py-3 rounded-xl text-sm transition-colors
-                 disabled:opacity-40 disabled:cursor-not-allowed hover:enabled:bg-primary-600">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
-          Continue to Payment
+          class="w-full flex items-center justify-center gap-2 bg-[#0070ba] hover:bg-[#005ea6] text-white font-semibold py-3 rounded-xl text-sm transition-colors
+                 disabled:opacity-40 disabled:cursor-not-allowed">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M7.076 21.337H4.25a.641.641 0 0 1-.632-.712l1.562-9.888a.641.641 0 0 1 .632-.566h3.584c1.64 0 2.944.444 3.673 1.285.687.8.876 1.903.565 3.108-.603 2.366-2.445 3.773-5.558 3.773h-.73L7.076 21.337zm4.84-8.93c-.248.97-.96 1.59-2.2 1.59H8.6l.488-3.1h1.116c1.094 0 1.712.38 1.712 1.51zM19.97 12.407H17.144a.641.641 0 0 0-.632.566l-1.562 9.888a.641.641 0 0 0 .632.712h2.826a.641.641 0 0 0 .632-.712l1.562-9.888a.641.641 0 0 0-.632-.566z"/></svg>
+          Subscribe with PayPal
         </button>
         <p id="continue-hint" class="text-xs text-center text-gray-400 mt-2">Select a plan above to continue.</p>
       </form>
@@ -184,8 +182,8 @@ $trialDaysLeft= Subscription::trialDaysLeft($sub);
 
     cards.forEach(card => {
       card.addEventListener('click', () => {
-        const id       = card.dataset.planId;
-        const hasStripe = card.dataset.hasStripe === '1';
+        const id        = card.dataset.planId;
+        const hasStripe = card.dataset.hasPaypal === '1';
 
         // Reset all cards
         cards.forEach(c => {
@@ -208,10 +206,10 @@ $trialDaysLeft= Subscription::trialDaysLeft($sub);
 
         if (hasStripe) {
           btn.disabled = false;
-          hint.textContent = 'You\'ll be taken to a secure payment page.';
+          hint.textContent = 'You\'ll be redirected to PayPal to complete payment.';
         } else {
           btn.disabled = true;
-          hint.textContent = 'This plan\'s payment is not configured yet. Contact the site admin.';
+          hint.textContent = 'PayPal Plan ID not configured for this plan. Contact the site admin.';
         }
       });
     });

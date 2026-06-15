@@ -152,6 +152,148 @@ class StripeService
 }
 
 /**
+ * PayPal Subscriptions REST API — no SDK required.
+ * Stores PayPal IDs in stripe_* columns to avoid DB migration.
+ */
+class PayPalService
+{
+    private string $clientId;
+    private string $secret;
+    private string $base;
+    private ?string $accessToken = null;
+
+    public function __construct()
+    {
+        $this->clientId = Settings::get('paypal_client_id', '');
+        $this->secret   = Settings::get('paypal_secret', '');
+        $mode           = Settings::get('paypal_mode', 'sandbox');
+        $this->base     = $mode === 'live'
+            ? 'https://api-m.paypal.com'
+            : 'https://api-m.sandbox.paypal.com';
+    }
+
+    private function token(): string
+    {
+        if ($this->accessToken) return $this->accessToken;
+
+        $ch = curl_init($this->base . '/v1/oauth2/token');
+        curl_setopt_array($ch, [
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_POST           => true,
+            CURLOPT_POSTFIELDS     => 'grant_type=client_credentials',
+            CURLOPT_USERPWD        => $this->clientId . ':' . $this->secret,
+            CURLOPT_HTTPHEADER     => ['Content-Type: application/x-www-form-urlencoded'],
+            CURLOPT_TIMEOUT        => 20,
+            CURLOPT_SSL_VERIFYPEER => true,
+        ]);
+        $res  = curl_exec($ch);
+        $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        if (!$res) throw new Exception('PayPal token: cURL failed');
+        $data = json_decode($res, true);
+        if (!isset($data['access_token'])) {
+            throw new Exception('PayPal token error: ' . ($data['error_description'] ?? $res));
+        }
+        $this->accessToken = $data['access_token'];
+        return $this->accessToken;
+    }
+
+    private function request(string $method, string $path, array $body = []): array
+    {
+        $ch = curl_init($this->base . $path);
+        $headers = [
+            'Authorization: Bearer ' . $this->token(),
+            'Content-Type: application/json',
+            'Accept: application/json',
+        ];
+        curl_setopt_array($ch, [
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_TIMEOUT        => 30,
+            CURLOPT_SSL_VERIFYPEER => true,
+            CURLOPT_HTTPHEADER     => $headers,
+            CURLOPT_CUSTOMREQUEST  => $method,
+        ]);
+        if ($method !== 'GET' && !empty($body)) {
+            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($body));
+        }
+        $res  = curl_exec($ch);
+        $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        if (!$res) throw new Exception('PayPal API: cURL failed');
+        if ($code === 204) return ['status' => 'ok'];
+
+        $data = json_decode($res, true);
+        if (!is_array($data)) throw new Exception("PayPal API: invalid response ($code)");
+        if (isset($data['name']) && isset($data['message'])) {
+            throw new Exception('PayPal: ' . $data['message']);
+        }
+        return $data;
+    }
+
+    public function createSubscription(string $paypalPlanId, array $user, string $returnUrl, string $cancelUrl): string
+    {
+        $nameParts = explode(' ', $user['name'], 2);
+        $data = $this->request('POST', '/v1/billing/subscriptions', [
+            'plan_id'    => $paypalPlanId,
+            'subscriber' => [
+                'email_address' => $user['email'],
+                'name'          => [
+                    'given_name' => $nameParts[0],
+                    'surname'    => $nameParts[1] ?? '',
+                ],
+            ],
+            'application_context' => [
+                'brand_name'          => Settings::get('company_name', 'SignageCloud'),
+                'locale'              => 'en-US',
+                'shipping_preference' => 'NO_SHIPPING',
+                'user_action'         => 'SUBSCRIBE_NOW',
+                'return_url'          => $returnUrl,
+                'cancel_url'          => $cancelUrl,
+            ],
+        ]);
+
+        foreach ($data['links'] ?? [] as $link) {
+            if ($link['rel'] === 'approve') return $link['href'];
+        }
+        throw new Exception('PayPal: no approval URL in response');
+    }
+
+    public function getSubscription(string $subId): array
+    {
+        return $this->request('GET', '/v1/billing/subscriptions/' . $subId);
+    }
+
+    public function cancelSubscription(string $subId, string $reason = 'Customer requested cancellation'): void
+    {
+        $this->request('POST', '/v1/billing/subscriptions/' . $subId . '/cancel', ['reason' => $reason]);
+    }
+
+    public function verifyWebhook(string $payload, array $headers): bool
+    {
+        $webhookId = Settings::get('paypal_webhook_id', '');
+        if (!$webhookId) return false;
+
+        try {
+            $result = $this->request('POST', '/v1/notifications/verify-webhook-signature', [
+                'auth_algo'         => $headers['paypal-auth-algo']    ?? $headers['PAYPAL-AUTH-ALGO'] ?? '',
+                'cert_url'          => $headers['paypal-cert-url']     ?? $headers['PAYPAL-CERT-URL'] ?? '',
+                'transmission_id'   => $headers['paypal-transmission-id']  ?? $headers['PAYPAL-TRANSMISSION-ID'] ?? '',
+                'transmission_sig'  => $headers['paypal-transmission-sig'] ?? $headers['PAYPAL-TRANSMISSION-SIG'] ?? '',
+                'transmission_time' => $headers['paypal-transmission-time'] ?? $headers['PAYPAL-TRANSMISSION-TIME'] ?? '',
+                'webhook_id'        => $webhookId,
+                'webhook_event'     => json_decode($payload, true),
+            ]);
+            return ($result['verification_status'] ?? '') === 'SUCCESS';
+        } catch (Exception $e) {
+            error_log('PayPal webhook verify error: ' . $e->getMessage());
+            return false;
+        }
+    }
+}
+
+/**
  * Lightweight SMTP client — no external dependencies required.
  * Supports SSL (port 465) and STARTTLS (port 587).
  */

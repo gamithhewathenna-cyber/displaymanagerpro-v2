@@ -4,7 +4,7 @@
 <div id="drop-zone" class="border-2 border-dashed border-gray-200 hover:border-primary-400 rounded-2xl p-10 text-center mb-6 transition-all cursor-pointer bg-white" onclick="document.getElementById('file-input').click()">
   <div class="text-4xl mb-3">☁️</div>
   <div class="font-semibold text-gray-700 mb-1">Drop images here or click to upload</div>
-  <div class="text-sm text-gray-400 mb-4">JPG, PNG, WEBP · Max 500KB per file</div>
+  <div class="text-sm text-gray-400 mb-4">JPG, PNG, WEBP · Max 5MB per file</div>
   <div class="inline-flex items-center gap-2 bg-primary-500 hover:bg-primary-600 text-white font-semibold px-5 py-2.5 rounded-xl text-sm transition-colors">
     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
     Choose Images
@@ -79,8 +79,8 @@ async function handleFiles(files) {
   let validCount = 0;
 
   for (const file of files) {
-    if (file.size > 512000) {
-      addUploadItem(items, file.name, 'error', `Too large (${(file.size/1024).toFixed(0)}KB). Max 500KB.`);
+    if (file.size > 5242880) {
+      addUploadItem(items, file.name, 'error', `Too large (${(file.size/1024/1024).toFixed(1)}MB). Max 5MB.`);
       continue;
     }
     if (!['image/jpeg','image/png','image/webp'].includes(file.type)) {

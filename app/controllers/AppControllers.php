@@ -277,6 +277,35 @@ class ChannelController extends BaseController
         $this->json(['success' => true]);
     }
 
+    public function rotateSlide(string $channelId, string $slideId): void
+    {
+        $this->requireAuth();
+        $this->validateCsrf();
+        $user    = $this->currentUser();
+        $channel = Channel::find((int)$channelId);
+        if (!$channel || !Channel::userOwns((int)$channelId, $user['id'])) $this->json(['error' => 'Not found'], 404);
+
+        $hasRotation = (bool) Database::fetchOne("SHOW COLUMNS FROM slides LIKE 'rotation'");
+        if (!$hasRotation) {
+            // Auto-add the column on first rotate request
+            try {
+                Database::execute('ALTER TABLE slides ADD COLUMN rotation SMALLINT UNSIGNED NOT NULL DEFAULT 0');
+            } catch (Exception $e) {
+                $this->json(['error' => 'Could not add rotation column: ' . $e->getMessage()], 500);
+            }
+        }
+
+        $slide = Database::fetchOne(
+            'SELECT id, rotation FROM slides WHERE id = ? AND channel_id = ?',
+            [(int)$slideId, (int)$channelId]
+        );
+        if (!$slide) $this->json(['error' => 'Slide not found'], 404);
+
+        $next = ((int)($slide['rotation'] ?? 0) + 90) % 360;
+        Database::execute('UPDATE slides SET rotation = ? WHERE id = ?', [$next, (int)$slideId]);
+        $this->json(['success' => true, 'rotation' => $next]);
+    }
+
     public function preview(string $slug): void
     {
         $channel = Channel::findBySlug($slug);

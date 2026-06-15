@@ -26,7 +26,7 @@ class StorageService
             throw new Exception('File type not allowed. Only JPG, PNG, WEBP accepted.');
         }
         if ($file['size'] > MAX_UPLOAD_BYTES) {
-            throw new Exception('File exceeds 500KB maximum size.');
+            throw new Exception('File exceeds 5MB maximum size.');
         }
 
         // Get image dimensions
