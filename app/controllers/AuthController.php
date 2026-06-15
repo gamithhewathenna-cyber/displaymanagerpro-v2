@@ -136,10 +136,18 @@ class AuthController extends BaseController
 
     public function verifyEmail(string $token): void
     {
-        $row = Database::fetchOne(
-            'SELECT * FROM email_verifications WHERE token = ? AND expires_at > NOW() AND used_at IS NULL',
-            [$token]
-        );
+        try {
+            $row = Database::fetchOne(
+                'SELECT * FROM email_verifications WHERE token = ? AND expires_at > NOW() AND used_at IS NULL',
+                [$token]
+            );
+        } catch (Exception $e) {
+            // used_at column missing — run: ALTER TABLE email_verifications ADD COLUMN used_at TIMESTAMP NULL DEFAULT NULL;
+            error_log('verifyEmail query error: ' . $e->getMessage());
+            Session::flash('error', 'Email verification is unavailable due to a database configuration issue. Please contact support.');
+            $this->redirect('/login');
+        }
+
         if (!$row) {
             Session::flash('error', 'Verification link is invalid or has expired.');
             $this->redirect('/login');
@@ -160,6 +168,7 @@ class AuthController extends BaseController
             Session::flash('success', 'Email verified! You can now sign in.');
         } catch (Exception $e) {
             Database::rollback();
+            error_log('verifyEmail transaction error: ' . $e->getMessage());
             Session::flash('error', 'Verification failed. Please try again.');
         }
 

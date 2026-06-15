@@ -51,6 +51,7 @@ CREATE TABLE IF NOT EXISTS `email_verifications` (
   `user_id` INT UNSIGNED NOT NULL,
   `token` VARCHAR(64) NOT NULL,
   `expires_at` TIMESTAMP NOT NULL,
+  `used_at` TIMESTAMP NULL DEFAULT NULL,
   `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `ev_token_unique` (`token`),
