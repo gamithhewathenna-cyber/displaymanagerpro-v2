@@ -141,8 +141,10 @@ $router->post('/admin/settings/logo',                 'AdminController', 'upload
 $router->post('/admin/settings/logo/remove',          'AdminController', 'removeLogo');
 
 // ─ Content Manager (Admin CMS)
-$router->get('/admin/content',              'ContentController', 'index');
-$router->get('/admin/content/{page}',       'ContentController', 'page');
-$router->post('/admin/content/{page}/save', 'ContentController', 'savePage');
+$router->get('/admin/content',                          'ContentController', 'index');
+$router->post('/admin/content/branding/logo',           'ContentController', 'uploadWebsiteLogo');
+$router->post('/admin/content/branding/logo/remove',    'ContentController', 'removeWebsiteLogo');
+$router->get('/admin/content/{page}',                   'ContentController', 'page');
+$router->post('/admin/content/{page}/save',             'ContentController', 'savePage');
 
 $router->dispatch($uri, $method);

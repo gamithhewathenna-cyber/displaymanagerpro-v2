@@ -34,7 +34,7 @@
 <!-- Nav -->
 <nav class="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-100">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between h-16">
-    <?php $__logo = Settings::get('company_logo', ''); ?>
+    <?php $__logo = Settings::get('website_logo', '') ?: Settings::get('company_logo', ''); ?>
     <a href="/" class="flex items-center gap-2 font-bold text-xl min-w-0">
       <?php if ($__logo): ?>
         <img src="<?= Helpers::e($__logo) ?>" alt="<?= Helpers::e(Settings::get('company_name', APP_NAME)) ?>" class="max-h-9 max-w-[180px] object-contain">
@@ -80,7 +80,7 @@
       <div class="col-span-2 md:col-span-1">
         <div class="flex items-center gap-2 text-white font-bold text-lg mb-4">
           <?php if ($__logo): ?>
-            <div class="bg-white rounded-md px-2 py-1">
+            <div class="bg-white rounded-md px-2 py-1 inline-block">
               <img src="<?= Helpers::e($__logo) ?>" alt="<?= Helpers::e(Settings::get('company_name', APP_NAME)) ?>" class="max-h-7 max-w-[140px] object-contain block">
             </div>
           <?php else: ?>

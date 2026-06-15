@@ -4,7 +4,7 @@
  */
 class ContentController extends BaseController
 {
-    private array $pages = ['home', 'features', 'industries', 'faq', 'contact', 'footer'];
+    private array $pages = ['home', 'features', 'industries', 'faq', 'contact', 'footer', 'branding'];
 
     public function index(): void
     {
@@ -51,6 +51,77 @@ class ContentController extends BaseController
         ActivityLog::log('admin_content_saved', "Saved content for $page page");
         Session::flash('success', ucfirst($page) . ' page content saved!');
         $this->redirect("/admin/content/$page");
+    }
+
+    public function uploadWebsiteLogo(): void
+    {
+        $this->requireAdmin();
+        $this->validateCsrf();
+
+        if (empty($_FILES['website_logo']) || $_FILES['website_logo']['error'] === UPLOAD_ERR_NO_FILE) {
+            Session::flash('error', 'No file selected.');
+            $this->redirect('/admin/content/branding');
+        }
+
+        $file = $_FILES['website_logo'];
+        if ($file['error'] !== UPLOAD_ERR_OK) {
+            Session::flash('error', 'Upload failed (error code ' . $file['error'] . ').');
+            $this->redirect('/admin/content/branding');
+        }
+
+        $allowedMimes = ['image/jpeg', 'image/png', 'image/webp'];
+        $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+        $extMap = ['jpg' => true, 'jpeg' => true, 'png' => true, 'webp' => true];
+
+        if (!in_array($file['type'], $allowedMimes) || !isset($extMap[$ext])) {
+            Session::flash('error', 'Only JPG, PNG, and WebP files are allowed.');
+            $this->redirect('/admin/content/branding');
+        }
+
+        if ($file['size'] > 2 * 1024 * 1024) {
+            Session::flash('error', 'Logo must be under 2MB.');
+            $this->redirect('/admin/content/branding');
+        }
+
+        // Delete old website logo file
+        $oldLogo = Settings::get('website_logo', '');
+        if ($oldLogo && str_starts_with($oldLogo, '/uploads/logo/')) {
+            $oldPath = PUBLIC_PATH . $oldLogo;
+            if (file_exists($oldPath)) @unlink($oldPath);
+        }
+
+        $logoDir = UPLOAD_PATH . '/logo/';
+        if (!is_dir($logoDir)) mkdir($logoDir, 0755, true);
+
+        $storedName = 'website_logo_' . time() . '.' . $ext;
+        $dest       = $logoDir . $storedName;
+
+        if (!move_uploaded_file($file['tmp_name'], $dest)) {
+            Session::flash('error', 'Failed to save logo. Check directory permissions.');
+            $this->redirect('/admin/content/branding');
+        }
+
+        Settings::set('website_logo', '/uploads/logo/' . $storedName);
+        ActivityLog::log('admin_content_saved', 'Updated website logo');
+        Session::flash('success', 'Website logo updated successfully.');
+        $this->redirect('/admin/content/branding');
+    }
+
+    public function removeWebsiteLogo(): void
+    {
+        $this->requireAdmin();
+        $this->validateCsrf();
+
+        $oldLogo = Settings::get('website_logo', '');
+        if ($oldLogo && str_starts_with($oldLogo, '/uploads/logo/')) {
+            $oldPath = PUBLIC_PATH . $oldLogo;
+            if (file_exists($oldPath)) @unlink($oldPath);
+        }
+
+        Settings::set('website_logo', '');
+        ActivityLog::log('admin_content_saved', 'Removed website logo');
+        Session::flash('success', 'Website logo removed.');
+        $this->redirect('/admin/content/branding');
     }
 
     public static function get(string $page, string $key, string $default = ''): string
@@ -201,6 +272,7 @@ class ContentController extends BaseController
                 'col3_links' => "Sign In|/login\nStart Free Trial|/register",
                 'copyright'  => '© ' . date('Y') . ' SignageCloud. All rights reserved.',
             ],
+            'branding' => [],
             default => [],
         };
     }
