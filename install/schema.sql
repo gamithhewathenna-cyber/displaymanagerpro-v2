@@ -86,6 +86,7 @@ CREATE TABLE IF NOT EXISTS `plans` (
   `price_annual` DECIMAL(10,2) NOT NULL DEFAULT 0.00,
   `currency` VARCHAR(3) NOT NULL DEFAULT 'AUD',
   `max_screens` TINYINT UNSIGNED NOT NULL DEFAULT 1,
+  `max_slides` TINYINT UNSIGNED NOT NULL DEFAULT 15,
   `max_storage_mb` INT UNSIGNED NOT NULL DEFAULT 1024,
   `stripe_price_id_monthly` VARCHAR(100) NULL DEFAULT NULL,
   `stripe_price_id_annual` VARCHAR(100) NULL DEFAULT NULL,
@@ -290,10 +291,10 @@ SET FOREIGN_KEY_CHECKS = 1;
 -- -----------------------------------------------
 -- Seed: Default Plans
 -- -----------------------------------------------
-INSERT INTO `plans` (`name`, `slug`, `description`, `price_monthly`, `price_annual`, `currency`, `max_screens`, `max_storage_mb`, `features`, `is_active`, `sort_order`) VALUES
-('Starter', 'starter', 'Perfect for single-screen setups', 75.00, 750.00, 'AUD', 1, 2048, '["14-Day Free Trial","1 TV Screen","Unlimited Uploads","Auto Refresh","Cloud Management","Secure Hosting","Software Updates"]', 1, 1),
-('Growth', 'growth', 'Great for small venues with multiple screens', 99.00, 990.00, 'AUD', 2, 5120, '["14-Day Free Trial","Up to 2 TV Screens","Unlimited Uploads","Auto Refresh","Cloud Management","Secure Hosting","Software Updates"]', 1, 2),
-('Pro', 'pro', 'For businesses with multiple display zones', 119.00, 1190.00, 'AUD', 3, 10240, '["14-Day Free Trial","Up to 3 TV Screens","Unlimited Uploads","Auto Refresh","Cloud Management","Secure Hosting","Software Updates","Priority Support"]', 1, 3);
+INSERT INTO `plans` (`name`, `slug`, `description`, `price_monthly`, `price_annual`, `currency`, `max_screens`, `max_slides`, `max_storage_mb`, `features`, `is_active`, `sort_order`) VALUES
+('Starter', 'starter', 'Perfect for single-screen setups', 75.00, 750.00, 'AUD', 1, 15, 2048, '["14-Day Free Trial","1 TV Screen","Up to 15 Slides","Auto Refresh","Cloud Management","Secure Hosting","Software Updates"]', 1, 1),
+('Growth', 'growth', 'Great for small venues with multiple screens', 99.00, 990.00, 'AUD', 2, 15, 5120, '["14-Day Free Trial","Up to 2 TV Screens","Up to 15 Slides","Auto Refresh","Cloud Management","Secure Hosting","Software Updates"]', 1, 2),
+('Pro', 'pro', 'For businesses with multiple display zones', 119.00, 1190.00, 'AUD', 3, 15, 10240, '["14-Day Free Trial","Up to 3 TV Screens","Up to 15 Slides","Auto Refresh","Cloud Management","Secure Hosting","Software Updates","Priority Support"]', 1, 3);
 
 -- -----------------------------------------------
 -- Seed: Default Settings

@@ -159,8 +159,10 @@ class ChannelController extends BaseController
             $this->abort(404, 'Channel not found.');
         }
 
-        $slides = Slide::forChannelAll((int)$id);
-        $media  = Media::forUser($user['id']);
+        $slides    = Slide::forChannelAll((int)$id);
+        $media     = Media::forUser($user['id']);
+        $sub       = Subscription::forUser($user['id']);
+        $maxSlides = (int)($sub['max_slides'] ?? 15);
 
         $this->view('channels/show', [
             'title'      => Helpers::e($channel['name']),
@@ -168,6 +170,7 @@ class ChannelController extends BaseController
             'slides'     => $slides,
             'media'      => $media,
             'displayUrl' => Helpers::displayUrl($channel['slug']),
+            'maxSlides'  => $maxSlides,
         ]);
     }
 
@@ -228,13 +231,23 @@ class ChannelController extends BaseController
         $channel = Channel::find((int)$id);
         if (!$channel || !Channel::userOwns((int)$id, $user['id'])) $this->json(['error' => 'Not found'], 404);
 
+        $sub      = Subscription::forUser($user['id']);
+        $maxSlides = (int)($sub['max_slides'] ?? 15);
+        $current  = (int)(Database::fetchOne(
+            'SELECT COUNT(*) as c FROM slides WHERE channel_id = ?', [(int)$id]
+        )['c'] ?? 0);
+
+        if ($current >= $maxSlides) {
+            $this->json(['error' => "This channel has reached its limit of $maxSlides slides. Remove a slide or upgrade your plan."], 400);
+        }
+
         $mediaId = (int)($_POST['media_id'] ?? 0);
         if (!$mediaId || !Media::userOwns($mediaId, $user['id'])) {
             $this->json(['error' => 'Invalid media'], 400);
         }
 
         $slideId = Slide::addToChannel((int)$id, $mediaId);
-        $this->json(['success' => true, 'slide_id' => $slideId]);
+        $this->json(['success' => true, 'slide_id' => $slideId, 'slide_count' => $current + 1, 'max_slides' => $maxSlides]);
     }
 
     public function removeSlide(string $channelId, string $slideId): void

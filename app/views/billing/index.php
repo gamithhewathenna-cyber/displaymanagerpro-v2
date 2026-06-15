@@ -73,41 +73,61 @@ $trialDaysLeft= Subscription::trialDaysLeft($sub);
     <!-- Upgrade plans -->
     <?php if (!$sub || !$sub['stripe_subscription_id'] || $isTrialing): ?>
     <div class="bg-white rounded-2xl border border-gray-100 p-6">
-      <h2 class="font-semibold text-gray-900 mb-5"><?= $isTrialing ? 'Activate your subscription' : 'Choose a plan' ?></h2>
-      <div class="space-y-3">
-        <?php foreach ($plans as $plan): ?>
-        <?php $isCurrent = ($sub['plan_id'] ?? 0) == $plan['id']; ?>
-        <div class="border-2 <?= $isCurrent ? 'border-primary-400 bg-primary-50' : 'border-gray-100 hover:border-primary-200' ?> rounded-xl p-5 transition-all">
-          <div class="flex items-center justify-between gap-4">
-            <div>
-              <div class="flex items-center gap-2">
-                <div class="font-semibold text-gray-900"><?= Helpers::e($plan['name']) ?></div>
+      <h2 class="font-semibold text-gray-900 mb-1"><?= $isTrialing ? 'Activate your subscription' : 'Choose a plan' ?></h2>
+      <p class="text-sm text-gray-400 mb-5">Select a plan below, then click <strong>Continue to Payment</strong>.</p>
+
+      <form method="POST" action="/billing/checkout" id="plan-form">
+        <input type="hidden" name="_csrf_token" value="<?= Csrf::token() ?>">
+        <input type="hidden" name="billing_cycle" value="monthly">
+        <input type="hidden" name="plan_id" id="selected-plan-id" value="">
+
+        <div class="space-y-3 mb-5" id="plan-cards">
+          <?php foreach ($plans as $plan): ?>
+          <?php $isCurrent = ($sub['plan_id'] ?? 0) == $plan['id']; ?>
+          <label class="plan-card flex items-center gap-4 border-2 rounded-xl p-4 cursor-pointer transition-all
+            <?= $isCurrent ? 'border-primary-400 bg-primary-50' : 'border-gray-100 hover:border-primary-200' ?>"
+            data-plan-id="<?= $plan['id'] ?>"
+            data-has-stripe="<?= $plan['stripe_price_id_monthly'] ? '1' : '0' ?>">
+
+            <!-- Radio dot -->
+            <div class="w-5 h-5 rounded-full border-2 flex-shrink-0 flex items-center justify-center transition-all
+              <?= $isCurrent ? 'border-primary-500 bg-primary-500' : 'border-gray-300' ?>" id="radio-<?= $plan['id'] ?>">
+              <div class="w-2 h-2 rounded-full bg-white <?= $isCurrent ? '' : 'hidden' ?>" id="radio-dot-<?= $plan['id'] ?>"></div>
+            </div>
+
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="font-semibold text-gray-900"><?= Helpers::e($plan['name']) ?></span>
                 <?php if ($isCurrent): ?>
                 <span class="bg-primary-100 text-primary-700 text-xs font-semibold px-2 py-0.5 rounded-full">Current</span>
                 <?php endif; ?>
+                <?php if (!$plan['stripe_price_id_monthly']): ?>
+                <span class="bg-gray-100 text-gray-500 text-xs px-2 py-0.5 rounded-full">Setup required</span>
+                <?php endif; ?>
               </div>
-              <div class="text-sm text-gray-400 mt-0.5">Up to <?= $plan['max_screens'] ?> screen<?= $plan['max_screens']>1?'s':'' ?></div>
+              <div class="text-xs text-gray-400 mt-0.5">
+                Up to <?= $plan['max_screens'] ?> screen<?= $plan['max_screens']>1?'s':'' ?>
+                · <?= $plan['max_slides'] ?? 15 ?> slides per screen
+              </div>
             </div>
-            <div class="flex items-baseline gap-1 flex-shrink-0">
-              <span class="text-2xl font-bold text-gray-900">$<?= number_format($plan['price_monthly'],0) ?></span>
-              <span class="text-sm text-gray-400">AUD/mo</span>
+
+            <div class="flex items-baseline gap-0.5 flex-shrink-0 text-right">
+              <span class="text-xl font-bold text-gray-900">$<?= number_format($plan['price_monthly'],0) ?></span>
+              <span class="text-xs text-gray-400 ml-0.5">AUD/mo</span>
             </div>
-          </div>
-          <?php if (!$isCurrent && $plan['stripe_price_id_monthly']): ?>
-          <form method="POST" action="/billing/checkout" class="mt-4">
-            <input type="hidden" name="_csrf_token" value="<?= Csrf::token() ?>">
-            <input type="hidden" name="plan_id" value="<?= $plan['id'] ?>">
-            <input type="hidden" name="billing_cycle" value="monthly">
-            <button type="submit" class="w-full bg-primary-500 hover:bg-primary-600 text-white font-semibold py-2.5 rounded-xl text-sm transition-colors">
-              <?= $isTrialing ? 'Activate' : 'Switch to' ?> <?= Helpers::e($plan['name']) ?>
-            </button>
-          </form>
-          <?php elseif (!$plan['stripe_price_id_monthly']): ?>
-          <div class="mt-4 text-xs text-center text-gray-400">Stripe price not configured – contact admin</div>
-          <?php endif; ?>
+          </label>
+          <?php endforeach; ?>
         </div>
-        <?php endforeach; ?>
-      </div>
+
+        <!-- Continue button -->
+        <button type="submit" id="continue-btn" disabled
+          class="w-full flex items-center justify-center gap-2 bg-primary-500 text-white font-semibold py-3 rounded-xl text-sm transition-colors
+                 disabled:opacity-40 disabled:cursor-not-allowed hover:enabled:bg-primary-600">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+          Continue to Payment
+        </button>
+        <p id="continue-hint" class="text-xs text-center text-gray-400 mt-2">Select a plan above to continue.</p>
+      </form>
     </div>
     <?php endif; ?>
 
@@ -152,6 +172,51 @@ $trialDaysLeft= Subscription::trialDaysLeft($sub);
     </div>
     <?php endif; ?>
   </div>
+
+  <!-- Plan selection JS -->
+  <script>
+  (function() {
+    const cards  = document.querySelectorAll('.plan-card');
+    const planId = document.getElementById('selected-plan-id');
+    const btn    = document.getElementById('continue-btn');
+    const hint   = document.getElementById('continue-hint');
+    if (!cards.length) return;
+
+    cards.forEach(card => {
+      card.addEventListener('click', () => {
+        const id       = card.dataset.planId;
+        const hasStripe = card.dataset.hasStripe === '1';
+
+        // Reset all cards
+        cards.forEach(c => {
+          c.classList.remove('border-primary-400','bg-primary-50');
+          c.classList.add('border-gray-100');
+          document.getElementById('radio-' + c.dataset.planId)?.classList.replace('border-primary-500','border-gray-300');
+          document.getElementById('radio-' + c.dataset.planId)?.classList.remove('bg-primary-500');
+          document.getElementById('radio-dot-' + c.dataset.planId)?.classList.add('hidden');
+        });
+
+        // Highlight selected
+        card.classList.add('border-primary-400','bg-primary-50');
+        card.classList.remove('border-gray-100');
+        const radio = document.getElementById('radio-' + id);
+        if (radio) { radio.classList.replace('border-gray-300','border-primary-500'); radio.classList.add('bg-primary-500'); }
+        const dot = document.getElementById('radio-dot-' + id);
+        if (dot) dot.classList.remove('hidden');
+
+        planId.value = id;
+
+        if (hasStripe) {
+          btn.disabled = false;
+          hint.textContent = 'You\'ll be taken to a secure payment page.';
+        } else {
+          btn.disabled = true;
+          hint.textContent = 'This plan\'s payment is not configured yet. Contact the site admin.';
+        }
+      });
+    });
+  })();
+  </script>
 
   <!-- Right: Summary -->
   <div class="space-y-5">

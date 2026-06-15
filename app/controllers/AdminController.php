@@ -137,13 +137,14 @@ class AdminController extends BaseController
         if (!$plan) $this->abort(404);
 
         Database::execute(
-            'UPDATE plans SET name=?, price_monthly=?, price_annual=?, max_screens=?,
+            'UPDATE plans SET name=?, price_monthly=?, price_annual=?, max_screens=?, max_slides=?,
              stripe_price_id_monthly=?, stripe_price_id_annual=?, is_active=? WHERE id=?',
             [
                 Helpers::sanitize($_POST['name'] ?? ''),
                 (float)($_POST['price_monthly'] ?? 0),
                 (float)($_POST['price_annual'] ?? 0),
                 (int)($_POST['max_screens'] ?? 1),
+                max(1, min(50, (int)($_POST['max_slides'] ?? 15))),
                 Helpers::sanitize($_POST['stripe_price_id_monthly'] ?? ''),
                 Helpers::sanitize($_POST['stripe_price_id_annual'] ?? ''),
                 isset($_POST['is_active']) ? 1 : 0,

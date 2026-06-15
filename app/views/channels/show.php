@@ -34,8 +34,24 @@
 
     <!-- Add slide -->
     <div class="bg-white rounded-2xl border border-gray-100 p-5">
-      <h3 class="font-semibold text-gray-900 mb-4 text-sm">Add slides from your media library</h3>
-      <div id="media-grid" class="grid grid-cols-4 sm:grid-cols-6 gap-2 max-h-48 overflow-y-auto mb-4">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="font-semibold text-gray-900 text-sm">Add slides from your media library</h3>
+        <span id="slide-limit-badge" class="text-xs font-medium px-2.5 py-1 rounded-full <?= count($slides) >= $maxSlides ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-500' ?>">
+          <span id="slide-current"><?= count($slides) ?></span> / <?= $maxSlides ?> slides
+        </span>
+      </div>
+      <?php if (count($slides) >= $maxSlides): ?>
+      <div id="slide-limit-warning" class="mb-3 flex items-center gap-2 bg-amber-50 border border-amber-200 text-amber-800 text-xs px-3 py-2.5 rounded-xl">
+        <svg class="w-4 h-4 flex-shrink-0 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
+        Slide limit reached (<?= $maxSlides ?>). Remove a slide to add another, or upgrade your plan.
+      </div>
+      <?php else: ?>
+      <div id="slide-limit-warning" class="hidden mb-3 flex items-center gap-2 bg-amber-50 border border-amber-200 text-amber-800 text-xs px-3 py-2.5 rounded-xl">
+        <svg class="w-4 h-4 flex-shrink-0 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
+        Slide limit reached (<?= $maxSlides ?>). Remove a slide to add another, or upgrade your plan.
+      </div>
+      <?php endif; ?>
+      <div id="media-grid" class="grid grid-cols-4 sm:grid-cols-6 gap-2 max-h-48 overflow-y-auto mb-4 <?= count($slides) >= $maxSlides ? 'opacity-50 pointer-events-none' : '' ?>" id="media-grid-wrap">
         <?php foreach ($media as $m): ?>
         <div onclick="addSlide(<?= $m['id'] ?>, this)"
           class="aspect-square rounded-lg overflow-hidden cursor-pointer border-2 border-transparent hover:border-primary-400 transition-all group relative"
@@ -59,7 +75,6 @@
     <div class="bg-white rounded-2xl border border-gray-100 p-5">
       <div class="flex items-center justify-between mb-4">
         <h3 class="font-semibold text-gray-900 text-sm">Slideshow order <span class="text-gray-400 font-normal">(drag to reorder)</span></h3>
-        <span class="text-xs text-gray-400" id="slide-count"><?= count($slides) ?> slide<?= count($slides) != 1 ? 's' : '' ?></span>
       </div>
 
       <?php if (empty($slides)): ?>
@@ -142,8 +157,32 @@
 <script>
 const channelId = <?= $channel['id'] ?>;
 const csrf = '<?= Csrf::token() ?>';
+const maxSlides = <?= $maxSlides ?>;
+let slideCount = <?= count($slides) ?>;
+
+function updateLimitUI() {
+  const badge    = document.getElementById('slide-limit-badge');
+  const warning  = document.getElementById('slide-limit-warning');
+  const grid     = document.getElementById('media-grid');
+  const current  = document.getElementById('slide-current');
+  const atLimit  = slideCount >= maxSlides;
+
+  if (current) current.textContent = slideCount;
+  if (badge) {
+    badge.className = 'text-xs font-medium px-2.5 py-1 rounded-full ' + (atLimit ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-500');
+  }
+  if (warning) warning.classList.toggle('hidden', !atLimit);
+  if (grid) {
+    grid.classList.toggle('opacity-50', atLimit);
+    grid.classList.toggle('pointer-events-none', atLimit);
+  }
+}
 
 async function addSlide(mediaId, el) {
+  if (slideCount >= maxSlides) {
+    alert(`This channel has reached its limit of ${maxSlides} slides. Remove a slide or upgrade your plan.`);
+    return;
+  }
   el.style.opacity = '0.5';
   const r = await fetch(`/channels/${channelId}/slides`, {
     method:'POST',
@@ -164,8 +203,11 @@ async function removeSlide(slideId, btn) {
     body:`_csrf_token=${encodeURIComponent(csrf)}`
   });
   const d = await r.json();
-  if (d.success) { btn.closest('.slide-item').remove(); }
-  else { btn.disabled=false; alert(d.error || 'Failed'); }
+  if (d.success) {
+    btn.closest('.slide-item').remove();
+    slideCount = Math.max(0, slideCount - 1);
+    updateLimitUI();
+  } else { btn.disabled=false; alert(d.error || 'Failed'); }
 }
 
 // Simple drag-to-reorder
