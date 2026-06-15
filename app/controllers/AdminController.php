@@ -241,6 +241,79 @@ class AdminController extends BaseController
         $this->redirect('/admin/settings#' . $group);
     }
 
+    // ── Logo ───────────────────────────────────────────────────────────────
+
+    public function uploadLogo(): void
+    {
+        $this->requireAdmin();
+        $this->validateCsrf();
+
+        if (empty($_FILES['logo']) || $_FILES['logo']['error'] === UPLOAD_ERR_NO_FILE) {
+            Session::flash('error', 'No file selected.');
+            $this->redirect('/admin/settings#branding');
+        }
+
+        $file = $_FILES['logo'];
+        if ($file['error'] !== UPLOAD_ERR_OK) {
+            Session::flash('error', 'Upload failed (error code ' . $file['error'] . ').');
+            $this->redirect('/admin/settings#branding');
+        }
+
+        $allowedMimes = ['image/jpeg', 'image/png', 'image/webp'];
+        $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+        $extMap = ['jpg' => true, 'jpeg' => true, 'png' => true, 'webp' => true];
+
+        if (!in_array($file['type'], $allowedMimes) || !isset($extMap[$ext])) {
+            Session::flash('error', 'Only JPG, PNG, and WebP files are allowed.');
+            $this->redirect('/admin/settings#branding');
+        }
+
+        if ($file['size'] > 2 * 1024 * 1024) {
+            Session::flash('error', 'Logo must be under 2MB.');
+            $this->redirect('/admin/settings#branding');
+        }
+
+        // Delete old logo file
+        $oldLogo = Settings::get('company_logo', '');
+        if ($oldLogo && str_starts_with($oldLogo, '/uploads/logo/')) {
+            $oldPath = PUBLIC_PATH . $oldLogo;
+            if (file_exists($oldPath)) @unlink($oldPath);
+        }
+
+        $logoDir = UPLOAD_PATH . '/logo/';
+        if (!is_dir($logoDir)) mkdir($logoDir, 0755, true);
+
+        $storedName = 'logo_' . time() . '.' . $ext;
+        $dest       = $logoDir . $storedName;
+
+        if (!move_uploaded_file($file['tmp_name'], $dest)) {
+            Session::flash('error', 'Failed to save logo. Check directory permissions.');
+            $this->redirect('/admin/settings#branding');
+        }
+
+        Settings::set('company_logo', '/uploads/logo/' . $storedName);
+        ActivityLog::log('admin_settings_saved', 'Updated company logo');
+        Session::flash('success', 'Logo updated successfully.');
+        $this->redirect('/admin/settings#branding');
+    }
+
+    public function removeLogo(): void
+    {
+        $this->requireAdmin();
+        $this->validateCsrf();
+
+        $oldLogo = Settings::get('company_logo', '');
+        if ($oldLogo && str_starts_with($oldLogo, '/uploads/logo/')) {
+            $oldPath = PUBLIC_PATH . $oldLogo;
+            if (file_exists($oldPath)) @unlink($oldPath);
+        }
+
+        Settings::set('company_logo', '');
+        ActivityLog::log('admin_settings_saved', 'Removed company logo');
+        Session::flash('success', 'Logo removed.');
+        $this->redirect('/admin/settings#branding');
+    }
+
     // ── Revenue ────────────────────────────────────────────────────────────
 
     public function revenue(): void

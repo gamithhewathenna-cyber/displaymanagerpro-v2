@@ -137,6 +137,8 @@ $router->post('/admin/tickets/{id}/reopen',           'AdminController', 'reopen
 $router->get('/admin/revenue',                        'AdminController', 'revenue');
 $router->get('/admin/settings',                       'AdminController', 'settings');
 $router->post('/admin/settings',                      'AdminController', 'saveSettings');
+$router->post('/admin/settings/logo',                 'AdminController', 'uploadLogo');
+$router->post('/admin/settings/logo/remove',          'AdminController', 'removeLogo');
 
 // ─ Content Manager (Admin CMS)
 $router->get('/admin/content',              'ContentController', 'index');

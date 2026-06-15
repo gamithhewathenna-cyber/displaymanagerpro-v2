@@ -3,8 +3,58 @@
   <?php
     $g = $settings;
     function settingVal($s, $key) { foreach ($s as $group) { if (isset($group[$key])) return $group[$key]; } return ''; }
+    $currentLogo = Settings::get('company_logo', '');
   ?>
 
+  <!-- Branding -->
+  <div class="bg-white rounded-xl border border-gray-100 p-6" id="branding">
+    <h2 class="font-semibold text-gray-900 mb-1">Branding</h2>
+    <p class="text-sm text-gray-400 mb-4">Upload a logo to display in the sidebar. JPG, PNG, or WebP, max 2MB.</p>
+
+    <!-- Current logo preview -->
+    <div class="mb-5">
+      <?php if ($currentLogo): ?>
+        <div class="flex items-center gap-4">
+          <div class="border border-gray-200 rounded-xl p-3 bg-gray-50 flex items-center justify-center" style="min-width:120px;height:60px;">
+            <img src="<?= Helpers::e($currentLogo) ?>?v=<?= time() ?>" alt="Current logo" class="max-h-10 max-w-[200px] object-contain">
+          </div>
+          <div class="text-sm text-gray-500">Current logo</div>
+        </div>
+      <?php else: ?>
+        <div class="inline-flex items-center gap-2 px-4 py-3 bg-gray-50 border border-dashed border-gray-300 rounded-xl text-sm text-gray-400">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+          No logo uploaded — the app name is shown instead.
+        </div>
+      <?php endif; ?>
+    </div>
+
+    <!-- Upload form -->
+    <form method="POST" action="/admin/settings/logo" enctype="multipart/form-data" class="space-y-3">
+      <input type="hidden" name="_csrf_token" value="<?= Csrf::token() ?>">
+      <div class="flex items-center gap-3">
+        <label class="block">
+          <span class="sr-only">Choose logo file</span>
+          <input type="file" name="logo" accept="image/jpeg,image/png,image/webp"
+            class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100 cursor-pointer">
+        </label>
+        <button type="submit" class="bg-primary-500 hover:bg-primary-600 text-white font-semibold px-5 py-2.5 rounded-xl text-sm transition-colors whitespace-nowrap">
+          Upload Logo
+        </button>
+      </div>
+    </form>
+
+    <!-- Remove form -->
+    <?php if ($currentLogo): ?>
+      <form method="POST" action="/admin/settings/logo/remove" class="mt-3">
+        <input type="hidden" name="_csrf_token" value="<?= Csrf::token() ?>">
+        <button type="submit"
+          onclick="return confirm('Remove the current logo?')"
+          class="text-sm text-red-500 hover:text-red-700 font-medium transition-colors">
+          Remove logo
+        </button>
+      </form>
+    <?php endif; ?>
+  </div>
 
   <!-- Maintenance Mode -->
   <div class="bg-white rounded-xl border border-gray-100 p-6" id="maintenance">

@@ -26,11 +26,16 @@
   <aside class="w-64 bg-white border-r border-gray-100 flex-shrink-0 fixed top-0 left-0 h-full z-30 flex flex-col">
     <!-- Logo -->
     <div class="h-16 flex items-center px-6 border-b border-gray-100">
-      <a href="/dashboard" class="flex items-center gap-2 font-bold text-lg text-gray-900">
-        <div class="w-8 h-8 bg-primary-500 rounded-lg flex items-center justify-center">
-          <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-        </div>
-        <?= Helpers::e(Settings::get('company_name', APP_NAME)) ?>
+      <?php $__logo = Settings::get('company_logo', ''); ?>
+      <a href="/dashboard" class="flex items-center gap-2 font-bold text-lg text-gray-900 min-w-0">
+        <?php if ($__logo): ?>
+          <img src="<?= Helpers::e($__logo) ?>" alt="<?= Helpers::e(Settings::get('company_name', APP_NAME)) ?>" class="max-h-9 max-w-[160px] object-contain">
+        <?php else: ?>
+          <div class="w-8 h-8 bg-primary-500 rounded-lg flex items-center justify-center flex-shrink-0">
+            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+          </div>
+          <span class="truncate"><?= Helpers::e(Settings::get('company_name', APP_NAME)) ?></span>
+        <?php endif; ?>
       </a>
     </div>
 

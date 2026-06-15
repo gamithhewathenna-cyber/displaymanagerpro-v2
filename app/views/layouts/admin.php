@@ -19,11 +19,16 @@
   <!-- Admin Sidebar -->
   <aside class="w-60 bg-gray-900 fixed top-0 left-0 h-full z-30 flex flex-col">
     <div class="h-16 flex items-center px-5 border-b border-gray-700">
-      <a href="/admin" class="flex items-center gap-2 text-white font-bold">
-        <div class="w-7 h-7 bg-primary-500 rounded-lg flex items-center justify-center">
-          <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-        </div>
-        <span class="text-sm">Admin Panel</span>
+      <?php $__logo = Settings::get('company_logo', ''); ?>
+      <a href="/admin" class="flex items-center gap-2 text-white font-bold min-w-0">
+        <?php if ($__logo): ?>
+          <img src="<?= Helpers::e($__logo) ?>" alt="<?= Helpers::e(Settings::get('company_name', APP_NAME)) ?>" class="max-h-8 max-w-[140px] object-contain brightness-0 invert">
+        <?php else: ?>
+          <div class="w-7 h-7 bg-primary-500 rounded-lg flex items-center justify-center flex-shrink-0">
+            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+          </div>
+          <span class="text-sm truncate">Admin Panel</span>
+        <?php endif; ?>
       </a>
     </div>
     <nav class="flex-1 p-3 space-y-0.5">
