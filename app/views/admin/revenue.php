@@ -1,7 +1,7 @@
 <div class="mb-5 flex items-center justify-between">
   <div class="bg-white rounded-xl border border-gray-100 px-5 py-3 flex items-center gap-3">
     <div class="text-sm text-gray-500">Total Revenue</div>
-    <div class="text-2xl font-bold text-gray-900">$<?= number_format($total, 2) ?> AUD</div>
+    <div class="text-2xl font-bold text-gray-900">$<?= number_format($total, 2) ?> USD</div>
   </div>
 </div>
 <div class="bg-white rounded-xl border border-gray-100 overflow-hidden">

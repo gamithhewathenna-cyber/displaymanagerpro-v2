@@ -513,6 +513,105 @@ class Mailer
         return self::send($user['email'], $user['name'], "Welcome to $company", $body);
     }
 
+    public static function sendTicketCreated(array $user, array $ticket, string $message): bool
+    {
+        $company   = Settings::get('company_name', APP_NAME);
+        $ticketUrl = Helpers::baseUrl('support/' . $ticket['id']);
+        $subject   = htmlspecialchars($ticket['subject']);
+        $msgHtml   = nl2br(htmlspecialchars($message));
+
+        // Notify the user
+        $userBody = self::emailTemplate(
+            "Support Ticket #{$ticket['ticket_number']} Created",
+            "<p>Hi {$user['name']},</p>
+             <p>Your support ticket has been received. We'll get back to you as soon as possible.</p>
+             <div style='background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:16px;margin:24px 0'>
+               <div style='font-weight:600;color:#111827;margin-bottom:8px'>{$subject}</div>
+               <div style='color:#4b5563;font-size:14px'>{$msgHtml}</div>
+             </div>
+             <p style='text-align:center;margin:24px 0'>
+               <a href='{$ticketUrl}' style='background:#6366f1;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:600;display:inline-block'>View Ticket</a>
+             </p>"
+        );
+        self::send($user['email'], $user['name'], "Support ticket received – #{$ticket['ticket_number']}", $userBody);
+
+        // Notify admin
+        $admin = Database::fetchOne("SELECT email, name FROM users WHERE role = 'admin' ORDER BY id ASC LIMIT 1");
+        if ($admin) {
+            $adminBody = self::emailTemplate(
+                "New Support Ticket #{$ticket['ticket_number']}",
+                "<p>A new support ticket has been submitted.</p>
+                 <table style='width:100%;font-size:14px;border-collapse:collapse;margin:16px 0'>
+                   <tr><td style='padding:6px 0;color:#6b7280;width:120px'>Ticket #</td><td style='padding:6px 0;font-weight:600'>{$ticket['ticket_number']}</td></tr>
+                   <tr><td style='padding:6px 0;color:#6b7280'>Customer</td><td style='padding:6px 0'>{$user['name']} &lt;{$user['email']}&gt;</td></tr>
+                   <tr><td style='padding:6px 0;color:#6b7280'>Subject</td><td style='padding:6px 0'>{$subject}</td></tr>
+                   <tr><td style='padding:6px 0;color:#6b7280'>Priority</td><td style='padding:6px 0'>" . ucfirst($ticket['priority'] ?? 'medium') . "</td></tr>
+                 </table>
+                 <div style='background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:16px;margin:16px 0'>
+                   <div style='color:#4b5563;font-size:14px'>{$msgHtml}</div>
+                 </div>
+                 <p style='text-align:center;margin:24px 0'>
+                   <a href='" . Helpers::baseUrl("admin/tickets/{$ticket['id']}") . "' style='background:#6366f1;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:600;display:inline-block'>Reply in Admin Panel</a>
+                 </p>"
+            );
+            self::send($admin['email'], $admin['name'], "New ticket #{$ticket['ticket_number']}: {$subject}", $adminBody);
+        }
+
+        return true;
+    }
+
+    public static function sendTicketReply(array $ticket, array $author, string $message, bool $isAdminReply): bool
+    {
+        $company = Settings::get('company_name', APP_NAME);
+        $msgHtml = nl2br(htmlspecialchars($message));
+        $subject = htmlspecialchars($ticket['subject']);
+
+        if ($isAdminReply) {
+            // Admin replied → notify the customer
+            $customer = Database::fetchOne('SELECT email, name FROM users WHERE id = ? LIMIT 1', [$ticket['user_id']]);
+            if (!$customer) return false;
+
+            $ticketUrl = Helpers::baseUrl('support/' . $ticket['id']);
+            $body = self::emailTemplate(
+                "Reply to Ticket #{$ticket['ticket_number']}",
+                "<p>Hi {$customer['name']},</p>
+                 <p>The support team has replied to your ticket.</p>
+                 <div style='background:#eef2ff;border:1px solid #c7d2fe;border-radius:8px;padding:16px;margin:24px 0'>
+                   <div style='font-size:12px;color:#6366f1;font-weight:600;margin-bottom:8px'>SUPPORT TEAM REPLY</div>
+                   <div style='color:#1e1b4b;font-size:14px'>{$msgHtml}</div>
+                 </div>
+                 <p style='text-align:center;margin:24px 0'>
+                   <a href='{$ticketUrl}' style='background:#6366f1;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:600;display:inline-block'>View &amp; Reply</a>
+                 </p>"
+            );
+            return self::send($customer['email'], $customer['name'], "Reply on ticket #{$ticket['ticket_number']}: {$subject}", $body);
+        } else {
+            // Customer replied → notify admin
+            $admin = Database::fetchOne("SELECT email, name FROM users WHERE role = 'admin' ORDER BY id ASC LIMIT 1");
+            if (!$admin) return false;
+
+            $customer = Database::fetchOne('SELECT email, name FROM users WHERE id = ? LIMIT 1', [$ticket['user_id']]);
+            $customerName = $customer['name'] ?? 'Customer';
+
+            $body = self::emailTemplate(
+                "Customer Reply – Ticket #{$ticket['ticket_number']}",
+                "<p>A customer has replied to a support ticket.</p>
+                 <table style='width:100%;font-size:14px;border-collapse:collapse;margin:16px 0'>
+                   <tr><td style='padding:6px 0;color:#6b7280;width:120px'>Ticket #</td><td style='padding:6px 0;font-weight:600'>{$ticket['ticket_number']}</td></tr>
+                   <tr><td style='padding:6px 0;color:#6b7280'>From</td><td style='padding:6px 0'>{$customerName}</td></tr>
+                   <tr><td style='padding:6px 0;color:#6b7280'>Subject</td><td style='padding:6px 0'>{$subject}</td></tr>
+                 </table>
+                 <div style='background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:16px;margin:16px 0'>
+                   <div style='color:#4b5563;font-size:14px'>{$msgHtml}</div>
+                 </div>
+                 <p style='text-align:center;margin:24px 0'>
+                   <a href='" . Helpers::baseUrl("admin/tickets/{$ticket['id']}") . "' style='background:#6366f1;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:600;display:inline-block'>Reply in Admin Panel</a>
+                 </p>"
+            );
+            return self::send($admin['email'], $admin['name'], "Customer reply on ticket #{$ticket['ticket_number']}: {$subject}", $body);
+        }
+    }
+
     private static function emailTemplate(string $title, string $content): string
     {
         $company  = Settings::get('company_name', APP_NAME);

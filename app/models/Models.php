@@ -34,16 +34,30 @@ class Subscription extends BaseModel
 
     public static function forUser(int $userId): ?array
     {
-        return Database::fetchOne(
-            'SELECT s.*, p.name as plan_name, p.max_screens,
-                    p.max_storage_mb, p.slug as plan_slug
-             FROM subscriptions s
-             JOIN plans p ON p.id = s.plan_id
-             WHERE s.user_id = ?
-             ORDER BY s.id DESC
-             LIMIT 1',
-            [$userId]
-        );
+        try {
+            return Database::fetchOne(
+                'SELECT s.*, p.name as plan_name, p.max_screens, p.max_slides,
+                        p.max_storage_mb, p.slug as plan_slug
+                 FROM subscriptions s
+                 JOIN plans p ON p.id = s.plan_id
+                 WHERE s.user_id = ?
+                 ORDER BY s.id DESC
+                 LIMIT 1',
+                [$userId]
+            );
+        } catch (Exception $e) {
+            // max_slides column not yet added — fall back without it
+            return Database::fetchOne(
+                'SELECT s.*, p.name as plan_name, p.max_screens,
+                        p.max_storage_mb, p.slug as plan_slug
+                 FROM subscriptions s
+                 JOIN plans p ON p.id = s.plan_id
+                 WHERE s.user_id = ?
+                 ORDER BY s.id DESC
+                 LIMIT 1',
+                [$userId]
+            );
+        }
     }
 
     public static function findByStripeId(string $stripeSubId): ?array

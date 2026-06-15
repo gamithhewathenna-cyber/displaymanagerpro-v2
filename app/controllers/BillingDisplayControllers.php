@@ -377,11 +377,18 @@ class SupportController extends BaseController
             $this->redirect('/support/create');
         }
 
+        $priority = in_array($_POST['priority'] ?? '', ['low','medium','high']) ? $_POST['priority'] : 'medium';
         $ticketId = SupportTicket::create($user['id'], [
             'subject'  => $subject,
-            'priority' => in_array($_POST['priority'] ?? '', ['low','medium','high']) ? $_POST['priority'] : 'medium',
+            'priority' => $priority,
         ]);
         SupportTicket::addReply($ticketId, $user['id'], $message, false);
+
+        $ticket   = SupportTicket::find($ticketId);
+        $fullUser = User::find($user['id']);
+        if ($ticket && $fullUser) {
+            try { Mailer::sendTicketCreated($fullUser, $ticket, $message); } catch (Exception $e) { error_log('Ticket email error: ' . $e->getMessage()); }
+        }
 
         Session::flash('success', 'Support ticket created. We\'ll be in touch soon.');
         $this->redirect('/support');
@@ -415,7 +422,14 @@ class SupportController extends BaseController
             $this->redirect('/support/' . $id);
         }
 
-        SupportTicket::addReply((int)$id, $user['id'], $message, $user['role'] === 'admin');
+        $isAdminReply = $user['role'] === 'admin';
+        SupportTicket::addReply((int)$id, $user['id'], $message, $isAdminReply);
+
+        $fullUser = User::find($user['id']);
+        if ($fullUser) {
+            try { Mailer::sendTicketReply($ticket, $fullUser, $message, $isAdminReply); } catch (Exception $e) { error_log('Reply email error: ' . $e->getMessage()); }
+        }
+
         Session::flash('success', 'Reply sent.');
         $this->redirect('/support/' . $id);
     }

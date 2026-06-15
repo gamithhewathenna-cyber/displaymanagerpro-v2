@@ -128,7 +128,7 @@ $c = function($key, $default='') { return htmlspecialchars(ContentController::ge
       <div class="bg-white border-2 <?= $i===1?'border-primary-500 shadow-xl shadow-primary-100':'border-gray-100' ?> rounded-2xl p-8 relative">
         <?php if ($i===1): ?><div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-primary-500 text-white text-xs font-bold px-4 py-1.5 rounded-full">MOST POPULAR</div><?php endif; ?>
         <div class="text-sm font-semibold text-gray-500 mb-2"><?= Helpers::e($plan['name']) ?></div>
-        <div class="flex items-baseline gap-1 mb-1"><span class="text-4xl font-extrabold text-gray-900">$<?= number_format($plan['price_monthly'],0) ?></span><span class="text-gray-400 text-sm">AUD/mo</span></div>
+        <div class="flex items-baseline gap-1 mb-1"><span class="text-4xl font-extrabold text-gray-900">$<?= number_format($plan['price_monthly'],0) ?></span><span class="text-gray-400 text-sm">USD/mo</span></div>
         <div class="text-sm text-gray-400 mb-6">Up to <?= $plan['max_screens'] ?> TV screen<?= $plan['max_screens']>1?'s':'' ?></div>
         <?php $feats = json_decode($plan['features']??'[]',true); ?>
         <ul class="space-y-3 mb-8">

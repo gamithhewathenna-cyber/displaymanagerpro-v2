@@ -87,10 +87,11 @@
         <?php foreach ($slides as $i => $slide): ?>
         <div class="slide-item flex items-center gap-3 p-3 bg-gray-50 rounded-xl group cursor-grab active:cursor-grabbing" data-id="<?= $slide['id'] ?>">
           <svg class="w-4 h-4 text-gray-300 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
-          <div class="w-14 h-10 rounded-lg overflow-hidden flex-shrink-0 bg-gray-200">
-            <img src="<?= Helpers::e($slide['public_url']) ?>" class="w-full h-full object-cover transition-transform"
+          <div class="w-14 h-10 rounded-lg overflow-hidden flex-shrink-0 bg-gray-200 flex items-center justify-center">
+            <?php $rot = (int)($slide['rotation'] ?? 0); ?>
+            <img src="<?= Helpers::e($slide['public_url']) ?>" class="object-cover transition-transform"
                  id="thumb-<?= $slide['id'] ?>"
-                 style="transform:rotate(<?= (int)($slide['rotation'] ?? 0) ?>deg)<?= in_array((int)($slide['rotation'] ?? 0), [90,270]) ? ';transform-origin:center;scale:0.7' : '' ?>">
+                 style="width:<?= in_array($rot,[90,270])?'40px':'56px' ?>;height:<?= in_array($rot,[90,270])?'56px':'40px' ?>;transform:rotate(<?= $rot ?>deg)">
           </div>
           <div class="flex-1 min-w-0">
             <div class="text-xs font-medium text-gray-700 truncate"><?= Helpers::e($slide['original_name']) ?></div>
@@ -220,8 +221,10 @@ async function rotateSlide(slideId, btn) {
     const label = document.getElementById('rot-label-' + slideId);
     const deg   = d.rotation;
     if (thumb) {
-      const scale = (deg === 90 || deg === 270) ? ';transform-origin:center;scale:0.7' : '';
-      thumb.style = `transform:rotate(${deg}deg)${scale}`;
+        const sideways = deg === 90 || deg === 270;
+      thumb.style.width     = sideways ? '40px' : '56px';
+      thumb.style.height    = sideways ? '56px' : '40px';
+      thumb.style.transform = `rotate(${deg}deg)`;
     }
     if (label) label.textContent = deg > 0 ? `${deg}° rotated` : '';
   } else { alert(d.error || 'Rotation failed'); }
