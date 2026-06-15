@@ -63,7 +63,7 @@ class BillingController extends BaseController
             $this->redirect($approvalUrl);
         } catch (Exception $e) {
             error_log('PayPal subscribe error: ' . $e->getMessage());
-            Session::flash('error', 'Could not connect to PayPal. Please try again or contact support.');
+            Session::flash('error', 'PayPal error: ' . $e->getMessage());
             $this->redirect('/billing');
         }
     }
@@ -121,7 +121,7 @@ class BillingController extends BaseController
             Session::flash('success', 'Subscription activated! Welcome aboard.');
         } catch (Exception $e) {
             error_log('PayPal return error: ' . $e->getMessage());
-            Session::flash('error', 'Subscription may not have activated — please check your billing page or contact support.');
+            Session::flash('error', 'PayPal error: ' . $e->getMessage());
         }
 
         $this->redirect('/billing');
@@ -158,7 +158,7 @@ class BillingController extends BaseController
             Session::flash('success', 'Your subscription has been canceled.');
         } catch (Exception $e) {
             error_log('PayPal cancel error: ' . $e->getMessage());
-            Session::flash('error', 'Could not cancel via PayPal API. Contact support if needed.');
+            Session::flash('error', 'PayPal error: ' . $e->getMessage());
         }
 
         $this->redirect('/billing');

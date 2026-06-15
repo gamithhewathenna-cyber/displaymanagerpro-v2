@@ -172,9 +172,31 @@ class PayPalService
             : 'https://api-m.sandbox.paypal.com';
     }
 
+    private function curlExec($ch): string
+    {
+        $res     = curl_exec($ch);
+        $errNo   = curl_errno($ch);
+        $errStr  = curl_error($ch);
+        $code    = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        if ($res === false) {
+            throw new Exception("PayPal cURL error ($errNo): $errStr");
+        }
+        // Store HTTP code for callers that need it
+        $this->lastHttpCode = $code;
+        return (string)$res;
+    }
+
+    private int $lastHttpCode = 0;
+
     private function token(): string
     {
         if ($this->accessToken) return $this->accessToken;
+
+        if (!$this->clientId || !$this->secret) {
+            throw new Exception('PayPal Client ID or Secret is not configured. Please check Settings → PayPal.');
+        }
 
         $ch = curl_init($this->base . '/v1/oauth2/token');
         curl_setopt_array($ch, [
@@ -182,18 +204,18 @@ class PayPalService
             CURLOPT_POST           => true,
             CURLOPT_POSTFIELDS     => 'grant_type=client_credentials',
             CURLOPT_USERPWD        => $this->clientId . ':' . $this->secret,
-            CURLOPT_HTTPHEADER     => ['Content-Type: application/x-www-form-urlencoded'],
+            CURLOPT_HTTPHEADER     => ['Content-Type: application/x-www-form-urlencoded', 'Accept: application/json'],
             CURLOPT_TIMEOUT        => 20,
-            CURLOPT_SSL_VERIFYPEER => true,
+            CURLOPT_SSL_VERIFYPEER => false,
+            CURLOPT_SSL_VERIFYHOST => false,
         ]);
-        $res  = curl_exec($ch);
-        $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
 
-        if (!$res) throw new Exception('PayPal token: cURL failed');
+        $res  = $this->curlExec($ch);
         $data = json_decode($res, true);
+
         if (!isset($data['access_token'])) {
-            throw new Exception('PayPal token error: ' . ($data['error_description'] ?? $res));
+            $desc = $data['error_description'] ?? ($data['message'] ?? $res);
+            throw new Exception('PayPal auth failed: ' . $desc);
         }
         $this->accessToken = $data['access_token'];
         return $this->accessToken;
@@ -202,48 +224,47 @@ class PayPalService
     private function request(string $method, string $path, array $body = []): array
     {
         $ch = curl_init($this->base . $path);
-        $headers = [
-            'Authorization: Bearer ' . $this->token(),
-            'Content-Type: application/json',
-            'Accept: application/json',
-        ];
         curl_setopt_array($ch, [
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_TIMEOUT        => 30,
-            CURLOPT_SSL_VERIFYPEER => true,
-            CURLOPT_HTTPHEADER     => $headers,
+            CURLOPT_SSL_VERIFYPEER => false,
+            CURLOPT_SSL_VERIFYHOST => false,
+            CURLOPT_HTTPHEADER     => [
+                'Authorization: Bearer ' . $this->token(),
+                'Content-Type: application/json',
+                'Accept: application/json',
+                'Prefer: return=representation',
+            ],
             CURLOPT_CUSTOMREQUEST  => $method,
         ]);
         if ($method !== 'GET' && !empty($body)) {
             curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($body));
         }
-        $res  = curl_exec($ch);
-        $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
 
-        if (!$res) throw new Exception('PayPal API: cURL failed');
+        $res  = $this->curlExec($ch);
+        $code = $this->lastHttpCode;
+
         if ($code === 204) return ['status' => 'ok'];
 
         $data = json_decode($res, true);
-        if (!is_array($data)) throw new Exception("PayPal API: invalid response ($code)");
-        if (isset($data['name']) && isset($data['message'])) {
-            throw new Exception('PayPal: ' . $data['message']);
+        if (!is_array($data)) {
+            throw new Exception("PayPal API: unexpected response (HTTP $code): " . substr($res, 0, 200));
+        }
+        if ($code >= 400) {
+            $msg = $data['message'] ?? ($data['error_description'] ?? ($data['name'] ?? "HTTP $code"));
+            $details = '';
+            if (!empty($data['details'])) {
+                $details = ' — ' . ($data['details'][0]['description'] ?? json_encode($data['details'][0]));
+            }
+            throw new Exception("PayPal: $msg$details");
         }
         return $data;
     }
 
     public function createSubscription(string $paypalPlanId, array $user, string $returnUrl, string $cancelUrl): string
     {
-        $nameParts = explode(' ', $user['name'], 2);
         $data = $this->request('POST', '/v1/billing/subscriptions', [
-            'plan_id'    => $paypalPlanId,
-            'subscriber' => [
-                'email_address' => $user['email'],
-                'name'          => [
-                    'given_name' => $nameParts[0],
-                    'surname'    => $nameParts[1] ?? '',
-                ],
-            ],
+            'plan_id'             => $paypalPlanId,
             'application_context' => [
                 'brand_name'          => Settings::get('company_name', 'SignageCloud'),
                 'locale'              => 'en-US',
@@ -257,7 +278,7 @@ class PayPalService
         foreach ($data['links'] ?? [] as $link) {
             if ($link['rel'] === 'approve') return $link['href'];
         }
-        throw new Exception('PayPal: no approval URL in response');
+        throw new Exception('PayPal returned no approval URL. Check that the PayPal Plan ID is correct and the plan is ACTIVE in your PayPal dashboard.');
     }
 
     public function getSubscription(string $subId): array
