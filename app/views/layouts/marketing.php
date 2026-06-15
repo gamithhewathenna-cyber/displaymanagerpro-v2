@@ -34,11 +34,16 @@
 <!-- Nav -->
 <nav class="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-100">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between h-16">
-    <a href="/" class="flex items-center gap-2 font-bold text-xl">
-      <div class="w-8 h-8 bg-primary-500 rounded-lg flex items-center justify-center">
-        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-      </div>
-      <?= Helpers::e(Settings::get('company_name', APP_NAME)) ?>
+    <?php $__logo = Settings::get('company_logo', ''); ?>
+    <a href="/" class="flex items-center gap-2 font-bold text-xl min-w-0">
+      <?php if ($__logo): ?>
+        <img src="<?= Helpers::e($__logo) ?>" alt="<?= Helpers::e(Settings::get('company_name', APP_NAME)) ?>" class="max-h-9 max-w-[180px] object-contain">
+      <?php else: ?>
+        <div class="w-8 h-8 bg-primary-500 rounded-lg flex items-center justify-center flex-shrink-0">
+          <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+        </div>
+        <?= Helpers::e(Settings::get('company_name', APP_NAME)) ?>
+      <?php endif; ?>
     </a>
     <div class="hidden md:flex items-center gap-8 text-sm font-medium text-gray-600">
       <a href="/features" class="hover:text-primary-600 transition-colors">Features</a>
@@ -74,10 +79,16 @@
     <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
       <div class="col-span-2 md:col-span-1">
         <div class="flex items-center gap-2 text-white font-bold text-lg mb-4">
-          <div class="w-7 h-7 bg-primary-500 rounded-md flex items-center justify-center">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-          </div>
-          <?= Helpers::e(Settings::get('company_name', APP_NAME)) ?>
+          <?php if ($__logo): ?>
+            <div class="bg-white rounded-md px-2 py-1">
+              <img src="<?= Helpers::e($__logo) ?>" alt="<?= Helpers::e(Settings::get('company_name', APP_NAME)) ?>" class="max-h-7 max-w-[140px] object-contain block">
+            </div>
+          <?php else: ?>
+            <div class="w-7 h-7 bg-primary-500 rounded-md flex items-center justify-center">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+            </div>
+            <?= Helpers::e(Settings::get('company_name', APP_NAME)) ?>
+          <?php endif; ?>
         </div>
         <p class="text-sm leading-relaxed"><?= Helpers::e(ContentController::get('footer', 'tagline', 'Cloud digital signage for restaurants, cafes, retail, and hospitality.')) ?></p>
       </div>

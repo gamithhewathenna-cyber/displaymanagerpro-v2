@@ -19,13 +19,22 @@
     </div>
 
     <!-- Logo -->
-    <div class="flex items-center justify-center gap-2 mb-8">
-      <div class="w-8 h-8 bg-indigo-500 rounded-lg flex items-center justify-center">
-        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-        </svg>
-      </div>
-      <span class="text-white font-bold text-lg"><?= htmlspecialchars($siteName) ?></span>
+    <?php $__logo = Settings::get('company_logo', ''); ?>
+    <div class="flex items-center justify-center mb-8">
+      <?php if ($__logo): ?>
+        <div class="bg-white rounded-xl px-4 py-2">
+          <img src="<?= htmlspecialchars($__logo) ?>" alt="<?= htmlspecialchars($siteName) ?>" class="max-h-10 max-w-[180px] object-contain block">
+        </div>
+      <?php else: ?>
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 bg-indigo-500 rounded-lg flex items-center justify-center">
+            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+            </svg>
+          </div>
+          <span class="text-white font-bold text-lg"><?= htmlspecialchars($siteName) ?></span>
+        </div>
+      <?php endif; ?>
     </div>
 
     <h1 class="text-4xl font-bold text-white mb-4">Under Maintenance</h1>

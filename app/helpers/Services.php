@@ -248,16 +248,23 @@ class Mailer
 
     private static function emailTemplate(string $title, string $content): string
     {
-        $company = Settings::get('company_name', APP_NAME);
+        $company  = Settings::get('company_name', APP_NAME);
+        $logoPath = Settings::get('company_logo', '');
+        $logoHtml = $logoPath
+            ? '<div style="background:#ffffff;padding:20px 32px;border-bottom:1px solid #e5e7eb;text-align:left">
+                 <img src="' . Helpers::baseUrl(ltrim($logoPath, '/')) . '" alt="' . htmlspecialchars($company) . '" style="max-height:44px;max-width:180px;object-fit:contain;display:block">
+               </div>'
+            : '<div style="background:#6366f1;padding:24px 32px">
+                 <h1 style="margin:0;color:#fff;font-size:20px;font-weight:700">' . htmlspecialchars($company) . '</h1>
+               </div>';
+
         return <<<HTML
 <!DOCTYPE html>
 <html>
 <head><meta charset="UTF-8"><title>$title</title></head>
 <body style="margin:0;padding:0;background:#f9fafb;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif">
   <div style="max-width:560px;margin:40px auto;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.1)">
-    <div style="background:#6366f1;padding:24px 32px">
-      <h1 style="margin:0;color:#fff;font-size:20px;font-weight:700">$company</h1>
-    </div>
+    $logoHtml
     <div style="padding:32px">$content</div>
     <div style="padding:16px 32px;background:#f9fafb;border-top:1px solid #e5e7eb">
       <p style="margin:0;color:#9ca3af;font-size:12px">© {$company}. All rights reserved.</p>
