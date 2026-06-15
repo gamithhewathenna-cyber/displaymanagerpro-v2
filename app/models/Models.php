@@ -36,7 +36,6 @@ class Subscription extends BaseModel
     {
         return Database::fetchOne(
             'SELECT s.*, p.name as plan_name, p.max_screens,
-                    COALESCE(p.max_slides, 15) as max_slides,
                     p.max_storage_mb, p.slug as plan_slug
              FROM subscriptions s
              JOIN plans p ON p.id = s.plan_id

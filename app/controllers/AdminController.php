@@ -136,21 +136,40 @@ class AdminController extends BaseController
         $plan = Plan::find((int)$id);
         if (!$plan) $this->abort(404);
 
-        Database::execute(
-            'UPDATE plans SET name=?, price_monthly=?, price_annual=?, max_screens=?, max_slides=?,
-             stripe_price_id_monthly=?, stripe_price_id_annual=?, is_active=? WHERE id=?',
-            [
-                Helpers::sanitize($_POST['name'] ?? ''),
-                (float)($_POST['price_monthly'] ?? 0),
-                (float)($_POST['price_annual'] ?? 0),
-                (int)($_POST['max_screens'] ?? 1),
-                max(1, min(50, (int)($_POST['max_slides'] ?? 15))),
-                Helpers::sanitize($_POST['stripe_price_id_monthly'] ?? ''),
-                Helpers::sanitize($_POST['stripe_price_id_annual'] ?? ''),
-                isset($_POST['is_active']) ? 1 : 0,
-                (int)$id,
-            ]
-        );
+        $hasMaxSlides = (bool) Database::fetchOne("SHOW COLUMNS FROM plans LIKE 'max_slides'");
+
+        if ($hasMaxSlides) {
+            Database::execute(
+                'UPDATE plans SET name=?, price_monthly=?, price_annual=?, max_screens=?, max_slides=?,
+                 stripe_price_id_monthly=?, stripe_price_id_annual=?, is_active=? WHERE id=?',
+                [
+                    Helpers::sanitize($_POST['name'] ?? ''),
+                    (float)($_POST['price_monthly'] ?? 0),
+                    (float)($_POST['price_annual'] ?? 0),
+                    (int)($_POST['max_screens'] ?? 1),
+                    max(1, min(50, (int)($_POST['max_slides'] ?? 15))),
+                    Helpers::sanitize($_POST['stripe_price_id_monthly'] ?? ''),
+                    Helpers::sanitize($_POST['stripe_price_id_annual'] ?? ''),
+                    isset($_POST['is_active']) ? 1 : 0,
+                    (int)$id,
+                ]
+            );
+        } else {
+            Database::execute(
+                'UPDATE plans SET name=?, price_monthly=?, price_annual=?, max_screens=?,
+                 stripe_price_id_monthly=?, stripe_price_id_annual=?, is_active=? WHERE id=?',
+                [
+                    Helpers::sanitize($_POST['name'] ?? ''),
+                    (float)($_POST['price_monthly'] ?? 0),
+                    (float)($_POST['price_annual'] ?? 0),
+                    (int)($_POST['max_screens'] ?? 1),
+                    Helpers::sanitize($_POST['stripe_price_id_monthly'] ?? ''),
+                    Helpers::sanitize($_POST['stripe_price_id_annual'] ?? ''),
+                    isset($_POST['is_active']) ? 1 : 0,
+                    (int)$id,
+                ]
+            );
+        }
         Session::flash('success', 'Plan updated.');
         $this->redirect('/admin/plans');
     }
