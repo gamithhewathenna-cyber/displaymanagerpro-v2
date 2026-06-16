@@ -146,13 +146,14 @@ class AdminController extends BaseController
 
         Database::execute(
             'UPDATE plans SET name=?, price_monthly=?, price_annual=?, max_screens=?, max_slides=?,
-             stripe_price_id_monthly=?, stripe_price_id_annual=?, has_trial=?, is_active=? WHERE id=?',
+             max_storage_mb=?, stripe_price_id_monthly=?, stripe_price_id_annual=?, has_trial=?, is_active=? WHERE id=?',
             [
                 Helpers::sanitize($_POST['name'] ?? ''),
                 (float)($_POST['price_monthly'] ?? 0),
                 (float)($_POST['price_annual'] ?? 0),
                 (int)($_POST['max_screens'] ?? 1),
                 max(1, min(50, (int)($_POST['max_slides'] ?? 15))),
+                max(100, (int)($_POST['max_storage_mb'] ?? 512)),
                 Helpers::sanitize($_POST['stripe_price_id_monthly'] ?? ''),
                 Helpers::sanitize($_POST['stripe_price_id_annual'] ?? ''),
                 isset($_POST['has_trial']) ? 1 : 0,
@@ -193,8 +194,8 @@ class AdminController extends BaseController
 
         Database::insert(
             'INSERT INTO plans (name, slug, price_monthly, price_annual, max_screens, max_slides,
-             stripe_price_id_monthly, stripe_price_id_annual, has_trial, is_active)
-             VALUES (?,?,?,?,?,?,?,?,?,?)',
+             max_storage_mb, stripe_price_id_monthly, stripe_price_id_annual, has_trial, is_active)
+             VALUES (?,?,?,?,?,?,?,?,?,?,?)',
             [
                 $name,
                 $slug,
@@ -202,6 +203,7 @@ class AdminController extends BaseController
                 (float)($_POST['price_annual'] ?? 0),
                 (int)($_POST['max_screens'] ?? 1),
                 max(1, min(50, (int)($_POST['max_slides'] ?? 15))),
+                max(100, (int)($_POST['max_storage_mb'] ?? 512)),
                 Helpers::sanitize($_POST['stripe_price_id_monthly'] ?? ''),
                 Helpers::sanitize($_POST['stripe_price_id_annual'] ?? ''),
                 isset($_POST['has_trial']) ? 1 : 0,

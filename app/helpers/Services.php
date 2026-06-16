@@ -534,6 +534,50 @@ class Mailer
         return self::send($user['email'], $user['name'], "Welcome to $company", $body);
     }
 
+    public static function sendPaymentInvoice(array $user, array $payment, string $planName, string $billingCycle): bool
+    {
+        $company   = Settings::get('company_name', APP_NAME);
+        $amount    = number_format((float)($payment['amount'] ?? 0), 2);
+        $currency  = strtoupper($payment['currency'] ?? 'AUD');
+        $txnId     = $payment['stripe_invoice_id'] ?? 'N/A';
+        $paidAt    = !empty($payment['paid_at']) ? date('d M Y', strtotime($payment['paid_at'])) : date('d M Y');
+        $cycle     = ucfirst($billingCycle);
+        $dashUrl   = Helpers::baseUrl('billing');
+        $contactUrl = Helpers::baseUrl('contact');
+
+        $body = self::emailTemplate(
+            "Payment Receipt – $planName",
+            "<p>Hi {$user['name']},</p>
+            <p>Thank you for your payment. Here is your receipt for your $company subscription.</p>
+            <div style='background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:20px;margin:24px 0'>
+              <table style='width:100%;font-size:14px;border-collapse:collapse'>
+                <tr>
+                  <td style='padding:6px 0;color:#6b7280;width:140px'>Plan</td>
+                  <td style='padding:6px 0;font-weight:600;color:#111827'>$planName ($cycle)</td>
+                </tr>
+                <tr>
+                  <td style='padding:6px 0;color:#6b7280'>Date</td>
+                  <td style='padding:6px 0;color:#111827'>$paidAt</td>
+                </tr>
+                <tr>
+                  <td style='padding:6px 0;color:#6b7280'>Transaction ID</td>
+                  <td style='padding:6px 0;color:#374151;font-family:monospace;font-size:12px'>$txnId</td>
+                </tr>
+                <tr style='border-top:2px solid #e5e7eb'>
+                  <td style='padding:12px 0 6px;color:#111827;font-weight:700;font-size:16px'>Amount Paid</td>
+                  <td style='padding:12px 0 6px;color:#111827;font-weight:700;font-size:18px'>\$$amount $currency</td>
+                </tr>
+              </table>
+            </div>
+            <p style='text-align:center;margin:24px 0'>
+              <a href='$dashUrl' style='background:#6366f1;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:600;display:inline-block'>View Billing History</a>
+            </p>
+            <p style='color:#6b7280;font-size:13px'>Questions about this payment? <a href='$contactUrl' style='color:#6366f1'>Contact support</a>.</p>"
+        );
+
+        return self::send($user['email'], $user['name'], "Payment receipt – $planName – \$$amount $currency", $body);
+    }
+
     public static function sendTicketCreated(array $user, array $ticket, string $message): bool
     {
         $company   = Settings::get('company_name', APP_NAME);

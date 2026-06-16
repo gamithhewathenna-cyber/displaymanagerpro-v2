@@ -255,17 +255,36 @@ class BillingController extends BaseController
         $sub = Subscription::findByStripeId($billingAgreementId);
         if (!$sub) return;
 
-        $amount = $res['amount']['total'] ?? '0';
+        $amount   = $res['amount']['total'] ?? '0';
+        $currency = strtoupper($res['amount']['currency'] ?? 'AUD');
+        $txnId    = $res['id'] ?? null;
+        $paidAt   = date('Y-m-d H:i:s');
+
         Payment::create([
-            'user_id'         => $sub['user_id'],
-            'subscription_id' => $sub['id'],
-            'stripe_invoice_id' => $res['id'] ?? null,
-            'amount'          => (float)$amount,
-            'currency'        => strtoupper($res['amount']['currency'] ?? 'USD'),
-            'status'          => 'succeeded',
-            'description'     => 'PayPal subscription payment',
-            'paid_at'         => date('Y-m-d H:i:s'),
+            'user_id'           => $sub['user_id'],
+            'subscription_id'   => $sub['id'],
+            'stripe_invoice_id' => $txnId,
+            'amount'            => (float)$amount,
+            'currency'          => $currency,
+            'status'            => 'succeeded',
+            'description'       => 'PayPal subscription payment',
+            'paid_at'           => $paidAt,
         ]);
+
+        $user = User::find($sub['user_id']);
+        $plan = Plan::find((int)($sub['plan_id'] ?? 0));
+        if ($user && $plan) {
+            try {
+                Mailer::sendPaymentInvoice($user, [
+                    'amount'            => (float)$amount,
+                    'currency'          => $currency,
+                    'stripe_invoice_id' => $txnId,
+                    'paid_at'           => $paidAt,
+                ], $plan['name'], $sub['billing_cycle'] ?? 'monthly');
+            } catch (Exception $e) {
+                error_log('Invoice email error: ' . $e->getMessage());
+            }
+        }
     }
 }
 

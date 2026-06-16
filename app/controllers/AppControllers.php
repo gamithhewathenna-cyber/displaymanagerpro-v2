@@ -350,6 +350,13 @@ class MediaController extends BaseController
             $this->json(['error' => 'No files received.'], 400);
         }
 
+        $maxStorageBytes = (int)($sub['max_storage_mb'] ?? 512) * 1024 * 1024;
+        $storageUsed     = Media::totalSizeForUser($user['id']);
+
+        if ($storageUsed >= $maxStorageBytes) {
+            $this->json(['error' => 'Storage limit of ' . Helpers::formatBytes($maxStorageBytes) . ' reached. Delete unused files or upgrade your plan.'], 403);
+        }
+
         $storage = new StorageService();
         $uploaded = [];
         $errors   = [];
@@ -372,10 +379,16 @@ class MediaController extends BaseController
                 continue;
             }
 
+            if ($storageUsed + $file['size'] > $maxStorageBytes) {
+                $errors[] = $file['name'] . ': Storage limit reached (' . Helpers::formatBytes($maxStorageBytes) . ' total).';
+                continue;
+            }
+
             try {
                 $meta    = $storage->store($file, $user['id']);
                 $mediaId = Media::create($user['id'], $meta);
                 $media   = Media::find($mediaId);
+                $storageUsed += $meta['file_size'];
                 $uploaded[] = [
                     'id'       => $mediaId,
                     'name'     => $media['original_name'],
