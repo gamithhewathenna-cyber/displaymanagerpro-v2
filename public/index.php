@@ -70,8 +70,11 @@ $router->get('/features',   'MarketingController', 'features');
 $router->get('/pricing',    'MarketingController', 'pricing');
 $router->get('/industries', 'MarketingController', 'industries');
 $router->get('/faq',        'MarketingController', 'faq');
-$router->get('/contact',    'MarketingController', 'contact');
-$router->post('/contact',   'MarketingController', 'contactSubmit');
+$router->get('/contact',        'MarketingController', 'contact');
+$router->post('/contact',       'MarketingController', 'contactSubmit');
+$router->get('/privacy-policy', 'MarketingController', 'privacy');
+$router->get('/terms',          'MarketingController', 'terms');
+$router->get('/refund-policy',  'MarketingController', 'refund');
 
 $router->get('/login',                  'AuthController', 'showLogin');
 $router->post('/login',                 'AuthController', 'login');

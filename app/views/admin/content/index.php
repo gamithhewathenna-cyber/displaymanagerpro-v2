@@ -31,6 +31,9 @@
         ['faq',        '❓', 'FAQ',         '10 questions & answers, section titles'],
         ['contact',    '📬', 'Contact',     'Contact info, hours, form title'],
         ['footer',     '🔗', 'Footer',      'Tagline, navigation columns, copyright'],
+        ['privacy',    '📄', 'Privacy Policy',     'Full privacy policy content, title, last updated date'],
+        ['terms',      '📋', 'Terms & Conditions', 'Full terms content, title, last updated date'],
+        ['refund',     '💰', 'Refund Policy',      'Full refund policy content, title, last updated date'],
       ];
       foreach ($pages as [$slug, $icon, $name, $desc]):
     ?>
