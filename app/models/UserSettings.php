@@ -17,11 +17,11 @@ class Settings extends BaseModel
         return self::$cache[$key] ?? $default;
     }
 
-    public static function set(string $key, mixed $value): void
+    public static function set(string $key, mixed $value, string $group = 'general'): void
     {
         Database::execute(
-            'INSERT INTO settings (`key`, `value`) VALUES (?,?) ON DUPLICATE KEY UPDATE `value` = ?',
-            [$key, $value, $value]
+            'INSERT INTO settings (`key`, `value`, `group`) VALUES (?,?,?) ON DUPLICATE KEY UPDATE `value` = ?, `group` = ?',
+            [$key, $value, $group, $value, $group]
         );
         self::$cache[$key] = $value;
     }
@@ -36,10 +36,10 @@ class Settings extends BaseModel
         return $result;
     }
 
-    public static function setMany(array $data): void
+    public static function setMany(array $data, string $group = 'general'): void
     {
         foreach ($data as $key => $value) {
-            self::set($key, $value);
+            self::set($key, $value, $group);
         }
     }
 

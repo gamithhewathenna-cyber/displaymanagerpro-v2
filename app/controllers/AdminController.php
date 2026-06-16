@@ -317,9 +317,9 @@ class AdminController extends BaseController
         $checkboxFields = ['maintenance_mode'];
         foreach ($allowed[$group] as $key) {
             if (in_array($key, $checkboxFields)) {
-                Settings::set($key, isset($_POST[$key]) ? '1' : '0');
+                Settings::set($key, isset($_POST[$key]) ? '1' : '0', $group);
             } elseif (isset($_POST[$key])) {
-                Settings::set($key, Helpers::sanitize($_POST[$key]));
+                Settings::set($key, Helpers::sanitize($_POST[$key]), $group);
             }
         }
 

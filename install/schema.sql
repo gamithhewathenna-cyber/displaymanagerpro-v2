@@ -330,4 +330,6 @@ INSERT INTO `settings` (`key`, `value`, `group`) VALUES
 ('r2_secret_key', '', 'storage'),
 ('r2_url', '', 'storage'),
 ('max_upload_size_kb', '500', 'media'),
-('allowed_mime_types', 'image/jpeg,image/png,image/webp', 'media');
+('allowed_mime_types', 'image/jpeg,image/png,image/webp', 'media'),
+('ga_measurement_id', '', 'seo'),
+('gsc_verification', '', 'seo');
