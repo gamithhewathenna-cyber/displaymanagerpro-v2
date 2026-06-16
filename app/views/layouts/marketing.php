@@ -64,32 +64,32 @@
 
 <!-- Nav -->
 <nav class="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-100">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between h-16">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between h-20">
     <?php $__logo = Settings::get('website_logo', '') ?: Settings::get('company_logo', ''); ?>
-    <a href="/" class="flex items-center gap-2 font-bold text-xl min-w-0">
+    <a href="/" class="flex items-center gap-2.5 font-bold text-2xl min-w-0">
       <?php if ($__logo): ?>
-        <img src="<?= Helpers::e($__logo) ?>" alt="<?= Helpers::e(Settings::get('company_name', APP_NAME)) ?>" class="max-h-9 max-w-[180px] object-contain">
+        <img src="<?= Helpers::e($__logo) ?>" alt="<?= Helpers::e(Settings::get('company_name', APP_NAME)) ?>" class="max-h-12 max-w-[210px] object-contain">
       <?php else: ?>
-        <div class="w-8 h-8 bg-primary-500 rounded-lg flex items-center justify-center flex-shrink-0">
-          <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+        <div class="w-10 h-10 bg-primary-500 rounded-lg flex items-center justify-center flex-shrink-0">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
         </div>
         <?= Helpers::e(Settings::get('company_name', APP_NAME)) ?>
       <?php endif; ?>
     </a>
-    <div class="hidden md:flex items-center gap-8 text-sm font-medium text-gray-600">
+    <div class="hidden md:flex items-center gap-8 text-base font-medium text-gray-600">
       <a href="/features" class="hover:text-primary-600 transition-colors">Features</a>
       <a href="/pricing" class="hover:text-primary-600 transition-colors">Pricing</a>
       <a href="/industries" class="hover:text-primary-600 transition-colors">Industries</a>
       <a href="/faq" class="hover:text-primary-600 transition-colors">FAQ</a>
     </div>
     <div class="flex items-center gap-3">
-      <a href="/login" class="text-sm font-medium text-gray-700 hover:text-primary-600 transition-colors">Sign In</a>
-      <a href="/register" class="bg-primary-500 hover:bg-primary-600 text-white text-sm font-semibold px-5 py-2.5 rounded-lg transition-colors shadow-sm">Start Free Trial</a>
+      <a href="/login" class="text-base font-medium text-gray-700 hover:text-primary-600 transition-colors">Sign In</a>
+      <a href="/register" class="bg-primary-500 hover:bg-primary-600 text-white text-base font-semibold px-6 py-2.5 rounded-lg transition-colors shadow-sm">Start Free Trial</a>
     </div>
   </div>
 </nav>
 
-<main class="pt-16">
+<main class="pt-20">
   <?php if ($msg = Session::getFlash('success')): ?>
     <div class="fixed top-20 right-4 z-50 bg-green-500 text-white px-5 py-3 rounded-lg shadow-lg text-sm font-medium max-w-sm" id="flash-msg">
       <?= Helpers::e($msg) ?>
