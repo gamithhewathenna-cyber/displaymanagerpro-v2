@@ -3,8 +3,39 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title><?= Helpers::e($title ?? APP_NAME) ?> – <?= Helpers::e(Settings::get('company_name', APP_NAME)) ?></title>
-<meta name="description" content="Cloud digital signage management for restaurants, cafes, and retail. Manage all your TV screens from one dashboard.">
+<?php
+  $_seo_page        = basename($content_view ?? '');
+  $_seo_title       = ContentController::get($_seo_page, 'seo_title', '');
+  $_seo_description = ContentController::get($_seo_page, 'seo_description', '');
+  $_seo_keyphrase   = ContentController::get($_seo_page, 'seo_keyphrase', '');
+  $_company         = Settings::get('company_name', APP_NAME);
+  $_page_title      = $title ?? APP_NAME;
+  $_full_title      = $_seo_title !== ''
+    ? Helpers::e($_seo_title)
+    : Helpers::e($_page_title) . ' – ' . Helpers::e($_company);
+  $_meta_desc       = $_seo_description !== ''
+    ? $_seo_description
+    : 'Cloud digital signage management for restaurants, cafes, and retail. Manage all your TV screens from one dashboard.';
+  $_ga_id           = Settings::get('ga_measurement_id', '');
+  $_gsc_code        = Settings::get('gsc_verification', '');
+?>
+<title><?= $_full_title ?></title>
+<meta name="description" content="<?= Helpers::e($_meta_desc) ?>">
+<?php if ($_seo_keyphrase !== ''): ?>
+<meta name="keywords" content="<?= Helpers::e($_seo_keyphrase) ?>">
+<?php endif; ?>
+<?php if ($_gsc_code !== ''): ?>
+<meta name="google-site-verification" content="<?= Helpers::e($_gsc_code) ?>">
+<?php endif; ?>
+<?php if ($_ga_id !== ''): ?>
+<script async src="https://www.googletagmanager.com/gtag/js?id=<?= Helpers::e($_ga_id) ?>"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', '<?= Helpers::e($_ga_id) ?>');
+</script>
+<?php endif; ?>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.tailwindcss.com"></script>

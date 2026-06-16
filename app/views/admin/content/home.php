@@ -103,5 +103,7 @@
     </div>
   </div>
 
+  <?php require VIEWS_PATH . '/admin/content/_seo_fields.php'; ?>
+
   <button type="submit" class="bg-primary-500 hover:bg-primary-600 text-white font-semibold px-8 py-3 rounded-xl transition-colors">Save Homepage Content</button>
 </form>

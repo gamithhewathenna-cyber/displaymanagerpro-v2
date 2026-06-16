@@ -27,6 +27,7 @@
         ['home',       '🏠', 'Homepage',    'Hero, stats, features, how-it-works, testimonials, CTA'],
         ['features',   '⚡', 'Features',    '12 feature cards, page title, CTA section'],
         ['industries', '🏢', 'Industries',  '6 industry sections with descriptions'],
+        ['pricing',    '💳', 'Pricing',     'SEO title, meta description, focus keyphrase'],
         ['faq',        '❓', 'FAQ',         '10 questions & answers, section titles'],
         ['contact',    '📬', 'Contact',     'Contact info, hours, form title'],
         ['footer',     '🔗', 'Footer',      'Tagline, navigation columns, copyright'],

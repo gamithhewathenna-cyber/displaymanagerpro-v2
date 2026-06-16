@@ -4,7 +4,7 @@
  */
 class ContentController extends BaseController
 {
-    private array $pages = ['home', 'features', 'industries', 'faq', 'contact', 'footer', 'branding'];
+    private array $pages = ['home', 'features', 'industries', 'faq', 'contact', 'pricing', 'footer', 'branding'];
 
     public function index(): void
     {
@@ -153,6 +153,9 @@ class ContentController extends BaseController
     {
         return match($page) {
             'home' => [
+                'seo_title'           => '',
+                'seo_description'     => '',
+                'seo_keyphrase'       => '',
                 'badge_text'          => '14-day free trial · No credit card required',
                 'hero_title_1'        => 'Update Every Restaurant Screen',
                 'hero_title_2'        => 'In Seconds',
@@ -193,6 +196,9 @@ class ContentController extends BaseController
                 'cta_button'          => 'Get Started Free →',
             ],
             'features' => [
+                'seo_title'       => '',
+                'seo_description' => '',
+                'seo_keyphrase'   => '',
                 'title'      => 'Everything your screens need',
                 'subtitle'   => 'Built for busy restaurants and small businesses.',
                 'f1_icon'    => '📺', 'f1_title' => 'Multi-Screen Management',  'f1_desc' => 'Control every TV screen from one dashboard.',
@@ -212,6 +218,9 @@ class ContentController extends BaseController
                 'cta_button' => 'Start Free Trial →',
             ],
             'industries' => [
+                'seo_title'       => '',
+                'seo_description' => '',
+                'seo_keyphrase'   => '',
                 'title'    => 'Built for your industry',
                 'subtitle' => 'From busy restaurants to boutique retail.',
                 'i1_icon'  => '🍕', 'i1_name' => 'Restaurants & Cafes',    'i1_desc' => 'Display your full menu, daily specials, and combo deals.',
@@ -224,6 +233,9 @@ class ContentController extends BaseController
                 'cta_button' => 'Start Your 14-Day Free Trial',
             ],
             'faq' => [
+                'seo_title'       => '',
+                'seo_description' => '',
+                'seo_keyphrase'   => '',
                 'title'        => 'Frequently Asked Questions',
                 'subtitle'     => 'Everything you need to know.',
                 'q1'  => 'Do I need a credit card to start?',
@@ -251,6 +263,9 @@ class ContentController extends BaseController
                 'still_button'  => 'Contact Us',
             ],
             'contact' => [
+                'seo_title'       => '',
+                'seo_description' => '',
+                'seo_keyphrase'   => '',
                 'title'       => 'Get in touch',
                 'subtitle'    => 'Have a question, need help setting up, or want to discuss a custom plan?',
                 'email_label' => 'Email Support',
@@ -271,6 +286,11 @@ class ContentController extends BaseController
                 'col3_title' => 'Account',
                 'col3_links' => "Sign In|/login\nStart Free Trial|/register",
                 'copyright'  => '© ' . date('Y') . ' SignageCloud. All rights reserved.',
+            ],
+            'pricing' => [
+                'seo_title'       => '',
+                'seo_description' => '',
+                'seo_keyphrase'   => '',
             ],
             'branding' => [],
             default => [],

@@ -289,6 +289,7 @@ class AdminController extends BaseController
             'storage'     => Settings::getGroup('storage'),
             'maintenance' => Settings::getGroup('maintenance'),
             'media'       => Settings::getGroup('media'),
+            'seo'         => Settings::getGroup('seo'),
         ];
         $this->view('admin/settings', ['title' => 'System Settings', 'settings' => $settings], 'admin');
     }
@@ -307,6 +308,7 @@ class AdminController extends BaseController
                               'r2_bucket','r2_account_id','r2_access_key','r2_secret_key','r2_url'],
             'media'       => ['max_upload_size_kb'],
             'maintenance' => ['maintenance_mode','maintenance_message'],
+            'seo'         => ['ga_measurement_id','gsc_verification'],
         ];
 
         if (!isset($allowed[$group])) $this->abort(400, 'Invalid settings group.');

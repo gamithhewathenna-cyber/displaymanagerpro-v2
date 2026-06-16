@@ -36,5 +36,7 @@
         <input type="text" name="cta_button" value="<?= htmlspecialchars($content['cta_button']) ?>" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"></div>
     </div>
   </div>
+  <?php require VIEWS_PATH . '/admin/content/_seo_fields.php'; ?>
+
   <button type="submit" class="bg-primary-500 hover:bg-primary-600 text-white font-semibold px-8 py-3 rounded-xl transition-colors">Save Contact Content</button>
 </form>

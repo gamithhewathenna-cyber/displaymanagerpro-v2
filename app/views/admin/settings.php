@@ -184,6 +184,64 @@
     </div>
   </div>
 
+  <!-- SEO & Analytics -->
+  <div class="bg-white rounded-xl border border-gray-100 p-6" id="seo">
+    <h2 class="font-semibold text-gray-900 mb-1">SEO &amp; Analytics</h2>
+    <p class="text-sm text-gray-400 mb-4">Connect Google Analytics and Google Search Console to your public website.</p>
+    <form method="POST" action="/admin/settings" class="space-y-5">
+      <input type="hidden" name="_csrf_token" value="<?= Csrf::token() ?>">
+      <input type="hidden" name="group" value="seo">
+
+      <!-- Google Analytics -->
+      <div class="border border-gray-100 rounded-xl p-4 space-y-3">
+        <div class="flex items-center gap-2 mb-1">
+          <svg class="w-5 h-5 text-orange-500" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm-1.25 17.292l-4.5-4.364 1.857-1.858 2.643 2.506 5.643-5.784 1.857 1.857-7.5 7.643z"/></svg>
+          <span class="text-sm font-semibold text-gray-800">Google Analytics (GA4)</span>
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-600 mb-1">Measurement ID</label>
+          <input type="text" name="ga_measurement_id"
+            value="<?= Helpers::e($g['seo']['ga_measurement_id'] ?? '') ?>"
+            placeholder="G-XXXXXXXXXX"
+            class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary-500">
+          <p class="text-xs text-gray-400 mt-1">Found in Google Analytics → Admin → Data Streams → your stream → Measurement ID</p>
+        </div>
+      </div>
+
+      <!-- Google Search Console -->
+      <div class="border border-gray-100 rounded-xl p-4 space-y-3">
+        <div class="flex items-center gap-2 mb-1">
+          <svg class="w-5 h-5 text-blue-500" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15v-4H7l5-8v4h4l-5 8z"/></svg>
+          <span class="text-sm font-semibold text-gray-800">Google Search Console</span>
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-600 mb-1">HTML Meta Tag Verification Code</label>
+          <input type="text" name="gsc_verification"
+            value="<?= Helpers::e($g['seo']['gsc_verification'] ?? '') ?>"
+            placeholder="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+            class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary-500">
+          <p class="text-xs text-gray-400 mt-1">
+            In Search Console → Add Property → HTML tag method. Paste only the <code class="bg-gray-100 px-1 rounded">content="…"</code> value, not the full tag.
+            <br>e.g. if Google gives <code class="bg-gray-100 px-1 rounded">&lt;meta name="google-site-verification" content="<strong>abc123</strong>"&gt;</code>, paste <strong>abc123</strong> only.
+          </p>
+        </div>
+      </div>
+
+      <?php
+        $gaSet  = !empty($g['seo']['ga_measurement_id']);
+        $gscSet = !empty($g['seo']['gsc_verification']);
+      ?>
+      <?php if ($gaSet || $gscSet): ?>
+      <div class="flex flex-wrap gap-3 text-xs">
+        <?php if ($gaSet): ?><span class="inline-flex items-center gap-1.5 bg-green-50 text-green-700 font-medium px-3 py-1.5 rounded-full"><span class="w-1.5 h-1.5 bg-green-500 rounded-full"></span>Google Analytics connected</span><?php endif; ?>
+        <?php if ($gscSet): ?><span class="inline-flex items-center gap-1.5 bg-blue-50 text-blue-700 font-medium px-3 py-1.5 rounded-full"><span class="w-1.5 h-1.5 bg-blue-500 rounded-full"></span>Search Console verification set</span><?php endif; ?>
+      </div>
+      <?php endif; ?>
+
+      <button type="submit" class="bg-primary-500 hover:bg-primary-600 text-white font-semibold px-5 py-2.5 rounded-xl text-sm transition-colors">Save SEO &amp; Analytics</button>
+    </form>
+  </div>
+
   <!-- Storage -->
   <div class="bg-white rounded-xl border border-gray-100 p-6" id="storage">
     <h2 class="font-semibold text-gray-900 mb-4">File Storage</h2>
