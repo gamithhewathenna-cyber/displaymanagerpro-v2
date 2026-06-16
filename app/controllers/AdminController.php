@@ -319,7 +319,15 @@ class AdminController extends BaseController
             if (in_array($key, $checkboxFields)) {
                 Settings::set($key, isset($_POST[$key]) ? '1' : '0', $group);
             } elseif (isset($_POST[$key])) {
-                Settings::set($key, Helpers::sanitize($_POST[$key]), $group);
+                $val = Helpers::sanitize($_POST[$key]);
+                // If the user pasted the full <meta> tag instead of just the content value,
+                // strip_tags() in sanitize() would have erased it — re-extract from the raw input.
+                if ($key === 'gsc_verification' && $val === '') {
+                    if (preg_match('/content=["\']([^"\']+)["\']/', $_POST[$key], $m)) {
+                        $val = trim($m[1]);
+                    }
+                }
+                Settings::set($key, $val, $group);
             }
         }
 
