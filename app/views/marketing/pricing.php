@@ -8,7 +8,7 @@
     <div class="bg-white border-2 <?= $i===1?'border-indigo-500 shadow-xl shadow-indigo-100':'border-gray-100' ?> rounded-2xl p-8 relative">
       <?php if ($i===1): ?><div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-indigo-500 text-white text-xs font-bold px-4 py-1.5 rounded-full">MOST POPULAR</div><?php endif; ?>
       <div class="text-sm font-semibold text-gray-400 mb-2"><?= Helpers::e($plan['name']) ?></div>
-      <div class="text-4xl font-extrabold text-gray-900 mb-1">$<?= number_format($plan['price_monthly'],0) ?><span class="text-lg font-normal text-gray-400"> USD/mo</span></div>
+      <div class="text-4xl font-extrabold text-gray-900 mb-1">$<?= number_format($plan['price_monthly'],0) ?><span class="text-lg font-normal text-gray-400"> <?= Helpers::e($plan['currency']) ?>/mo</span></div>
       <div class="text-sm text-gray-400 mb-6">Up to <?= $plan['max_screens'] ?> TV screen<?= $plan['max_screens']>1?'s':'' ?></div>
       <?php $feats = json_decode($plan['features']??'[]',true); ?>
       <ul class="space-y-2.5 mb-8">
@@ -24,6 +24,6 @@
     <?php endforeach; ?>
   </div>
   <div class="mt-12 text-center text-sm text-gray-400">
-    All prices in USD. <a href="/contact" class="text-indigo-600 hover:text-indigo-700 font-medium">Need custom pricing?</a>
+    All prices in AUD. <a href="/contact" class="text-indigo-600 hover:text-indigo-700 font-medium">Need custom pricing?</a>
   </div>
 </section>
