@@ -144,8 +144,46 @@
       </div>
       <?php endfor; ?>
     </div>
-    <div class="border-t border-gray-800 pt-8 text-xs text-center">
-      <?= Helpers::e(ContentController::get('footer', 'copyright', '© ' . date('Y') . ' ' . Settings::get('company_name', APP_NAME) . '. All rights reserved.')) ?>
+    <div class="border-t border-gray-800 pt-8 flex flex-col sm:flex-row items-center justify-between gap-5">
+      <div class="text-xs text-gray-500 text-center sm:text-left">
+        <?= Helpers::e(ContentController::get('footer', 'copyright', '© ' . date('Y') . ' ' . Settings::get('company_name', APP_NAME) . '. All rights reserved.')) ?>
+      </div>
+
+      <!-- Payment badges -->
+      <div class="flex items-center gap-2">
+
+        <!-- PayPal -->
+        <div class="bg-white rounded-md px-2.5 flex items-center justify-center" style="height:28px;">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 20" height="14" width="56" aria-label="PayPal">
+            <path fill="#003087" d="M9.5 2h5.8c2.4 0 4 1.5 3.6 3.9-.6 3.9-3.3 5.3-6.6 5.3H10l-1.1 6.3H5.6L9.5 2zm2.4 7c1.7 0 3-.8 3.3-2.5.2-1.3-.5-2-1.9-2h-2l-.9 4.5h1.5z"/>
+            <path fill="#009cde" d="M21 2h5.8c2.4 0 4 1.5 3.6 3.9-.6 3.9-3.3 5.3-6.6 5.3h-2.3L20.4 17.5h-3.3L21 2zm2.4 7c1.7 0 3-.8 3.3-2.5.2-1.3-.5-2-1.9-2h-2l-.9 4.5h1.5z"/>
+            <path fill="#003087" d="M34.5 12.5c.1-.7.6-1.1 1.3-1.1.6 0 1 .4.9 1.1H34.5zm4.3 1.8c-.5 1-1.6 1.6-2.9 1.6-2.1 0-3.2-1.4-2.8-3.5.4-2.1 2.1-3.5 4.2-3.5 2 0 3.1 1.4 2.7 3.5l-.1.5h-5.3c-.1.9.4 1.4 1.2 1.4.5 0 .9-.2 1.1-.6l1.9.6z"/>
+            <path fill="#003087" d="M40.2 9h2.2l-.2 1c.4-.7 1.1-1.1 1.9-1.1.2 0 .4 0 .5.1l-.4 2c-.2-.1-.4-.1-.6-.1-1 0-1.7.7-1.9 1.8l-.5 3h-2.2L40.2 9z"/>
+            <path fill="#003087" d="M45.1 9h2.2l-1.5 8.5h-2.2L45.1 9zm.5-2.8c0-.7.5-1.2 1.2-1.2s1.1.5 1 1.2c-.1.7-.6 1.2-1.3 1.2-.6 0-1-.5-.9-1.2z"/>
+            <path fill="#003087" d="M48.4 9h2.1l.5 4.5 2.2-4.5h2.3l-3.9 7.5c-.7 1.3-1.5 2-2.8 2-.5 0-.9-.1-1.2-.2l.4-1.7c.2.1.4.1.6.1.5 0 .8-.2 1.1-.7l.2-.4L48.4 9z"/>
+            <path fill="#009cde" d="M60.9 11.6c.2-1-.3-1.6-1.1-1.6-1 0-1.7.8-1.9 1.9-.2 1 .3 1.6 1.1 1.6 1 0 1.7-.8 1.9-1.9zm-5.4 6h-2.2l2.1-11.5h2.1l-.2 1.1c.6-.8 1.4-1.3 2.5-1.3 1.9 0 3 1.4 2.5 3.6-.4 2.1-2 3.5-3.8 3.5-1 0-1.7-.5-2-1.2l-.9 4.8h-.1z"/>
+            <path fill="#009cde" d="M66.4 12.5c.1-.7.6-1.1 1.3-1.1.6 0 1 .4.9 1.1h-2.2zm4.3 1.8c-.5 1-1.6 1.6-2.9 1.6-2.1 0-3.2-1.4-2.8-3.5.4-2.1 2.1-3.5 4.2-3.5 2 0 3.1 1.4 2.7 3.5l-.1.5h-5.3c-.1.9.4 1.4 1.2 1.4.5 0 .9-.2 1.1-.6l1.9.6z"/>
+            <path fill="#009cde" d="M72 9h2.1l-.2 1c.4-.7 1.1-1.1 1.9-1.1.2 0 .4 0 .5.1l-.4 2c-.2-.1-.4-.1-.6-.1-1 0-1.7.7-1.9 1.8l-.5 3H70.7L72 9z"/>
+          </svg>
+        </div>
+
+        <!-- Visa -->
+        <div class="rounded-md flex items-center justify-center px-2.5" style="height:28px;background:#1A1F71;">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 16" height="11" width="34" aria-label="Visa">
+            <text x="25" y="12.5" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="900" font-size="13" fill="white" letter-spacing="1.5">VISA</text>
+          </svg>
+        </div>
+
+        <!-- Mastercard -->
+        <div class="bg-white rounded-md px-1.5 flex items-center justify-center" style="height:28px;">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 38 24" height="18" width="28" aria-label="Mastercard">
+            <circle cx="14" cy="12" r="10" fill="#EB001B"/>
+            <circle cx="24" cy="12" r="10" fill="#F79E1B"/>
+            <path d="M19 4.27a10 10 0 010 15.46A10 10 0 0119 4.27z" fill="#FF5F00"/>
+          </svg>
+        </div>
+
+      </div>
     </div>
   </div>
 </footer>
