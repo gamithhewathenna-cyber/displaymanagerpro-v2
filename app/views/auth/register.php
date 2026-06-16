@@ -2,6 +2,14 @@
 $selectedCycle = in_array($_GET['cycle'] ?? '', ['monthly', 'annual']) ? $_GET['cycle'] : 'monthly';
 $selectedPlan  = $_GET['plan'] ?? 'starter';
 $old           = Session::getFlash('old') ?? [];
+
+// Determine the initially selected plan so we can set the correct button text
+$_activePlan = null;
+foreach ($plans as $_p) {
+    if ($_p['slug'] === $selectedPlan) { $_activePlan = $_p; break; }
+}
+if (!$_activePlan) $_activePlan = $plans[0] ?? null;
+$_initialHasTrial = (bool)($_activePlan['has_trial'] ?? 1);
 ?>
 
 <h2 class="text-2xl font-bold text-gray-900 mb-1">Start your free trial</h2>
