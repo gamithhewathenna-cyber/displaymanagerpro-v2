@@ -19,13 +19,13 @@
 </div>
 
 <!-- Storage + stats bar -->
-<div class="flex items-center justify-between mb-4 gap-4">
+<div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-3">
   <div class="flex items-center gap-4">
     <h3 class="font-semibold text-gray-900">Media Library</h3>
     <span class="text-sm text-gray-400"><?= count($media) ?> image<?= count($media) != 1 ? 's' : '' ?></span>
   </div>
   <div class="flex items-center gap-2 text-xs text-gray-400">
-    <div class="w-32 bg-gray-100 rounded-full h-1.5">
+    <div class="w-24 sm:w-32 bg-gray-100 rounded-full h-1.5">
       <div class="h-1.5 rounded-full <?= $storagePercent > 85 ? 'bg-red-400' : 'bg-primary-400' ?>" style="width:<?= $storagePercent ?>%"></div>
     </div>
     <span><?= Helpers::formatBytes($storageUsed) ?> used</span>

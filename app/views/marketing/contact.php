@@ -1,6 +1,6 @@
 <?php $c = function($k,$d=''){return htmlspecialchars(ContentController::get('contact',$k,$d));}; ?>
 <section class="py-24 px-4">
-  <div class="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
+  <div class="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-16 items-start">
     <div>
       <h1 class="text-5xl font-extrabold text-gray-900 mb-5"><?= $c('title','Get in touch') ?></h1>
       <p class="text-gray-500 text-lg mb-10"><?= $c('subtitle') ?></p>
@@ -30,7 +30,7 @@
         <a href="/register" class="inline-block bg-white text-indigo-600 font-bold px-5 py-2.5 rounded-xl text-sm hover:bg-gray-50 transition-colors"><?= $c('cta_button','Start Free Trial →') ?></a>
       </div>
     </div>
-    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-8">
+    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 sm:p-8">
       <h2 class="text-lg font-bold text-gray-900 mb-6"><?= $c('form_title','Send us a message') ?></h2>
       <form method="POST" action="/contact" class="space-y-5">
         <input type="hidden" name="_csrf_token" value="<?= Csrf::token() ?>">

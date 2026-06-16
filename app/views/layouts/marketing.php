@@ -107,7 +107,7 @@
 <!-- Footer (CMS-driven) -->
 <footer class="bg-gray-900 text-gray-400 py-16 mt-20">
   <div class="max-w-7xl mx-auto px-4 sm:px-6">
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 mb-12">
       <div class="col-span-2 md:col-span-1">
         <div class="flex items-center gap-2 text-white font-bold text-lg mb-4">
           <?php if ($__logo): ?>

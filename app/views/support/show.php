@@ -4,7 +4,7 @@
   <a href="<?= $isAdmin ? '/admin/tickets' : '/support' ?>" class="text-sm text-gray-400 hover:text-gray-600 inline-flex items-center gap-1 mb-5">← Back to tickets</a>
 
   <div class="bg-white rounded-2xl border border-gray-100 mb-5">
-    <div class="px-6 py-5 border-b border-gray-50 flex items-start justify-between gap-4">
+    <div class="px-6 py-5 border-b border-gray-50 flex flex-col sm:flex-row items-start sm:justify-between gap-4">
       <div>
         <div class="font-mono text-xs text-gray-400 mb-1"><?= $ticket['ticket_number'] ?></div>
         <div class="text-lg font-bold text-gray-900"><?= Helpers::e($ticket['subject']) ?></div>
@@ -12,7 +12,7 @@
           Opened <?= date('M j, Y g:ia', strtotime($ticket['created_at'])) ?>
         </div>
       </div>
-      <div class="flex items-center gap-2 flex-shrink-0">
+      <div class="flex items-center gap-2 sm:flex-shrink-0">
         <span class="inline-flex text-xs font-semibold px-2.5 py-1 rounded-full
           <?= $ticket['status']==='open'?'bg-red-50 text-red-700':($ticket['status']==='pending'?'bg-yellow-50 text-yellow-700':'bg-gray-100 text-gray-500') ?>">
           <?= ucfirst($ticket['status']) ?>

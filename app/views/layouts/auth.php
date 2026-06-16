@@ -46,7 +46,7 @@
   <?php endif; ?>
 
   <!-- Card -->
-  <div class="bg-white rounded-2xl shadow-lg shadow-gray-200/80 border border-gray-100 p-8">
+  <div class="bg-white rounded-2xl shadow-lg shadow-gray-200/80 border border-gray-100 p-6 sm:p-8">
     <?php require VIEWS_PATH . '/' . $content_view . '.php'; ?>
   </div>
 </div>

@@ -8,7 +8,7 @@
 <section class="py-20 px-4">
   <div class="max-w-6xl mx-auto">
     <?php for ($i = 1; $i <= 6; $i++): ?>
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-24 last:mb-0">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-12 items-center mb-24 last:mb-0">
       <div>
         <div class="text-5xl mb-4"><?= $c("i{$i}_icon") ?></div>
         <h2 class="text-3xl font-bold text-gray-900 mb-4"><?= $c("i{$i}_name") ?></h2>
@@ -17,7 +17,7 @@
       </div>
       <div class="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-3xl p-10 flex items-center justify-center">
         <div class="text-center">
-          <div class="text-8xl mb-4"><?= $c("i{$i}_icon") ?></div>
+          <div class="text-5xl sm:text-8xl mb-4"><?= $c("i{$i}_icon") ?></div>
           <div class="font-bold text-gray-700 text-lg"><?= $c("i{$i}_name") ?></div>
         </div>
       </div>

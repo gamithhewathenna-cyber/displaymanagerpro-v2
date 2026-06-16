@@ -1,13 +1,13 @@
 <?php $qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' . urlencode($displayUrl); ?>
 
-<div class="mb-6 flex items-start justify-between gap-4">
+<div class="mb-6 flex flex-col sm:flex-row items-start sm:justify-between gap-4">
   <div>
     <a href="/channels" class="text-sm text-gray-400 hover:text-gray-600 inline-flex items-center gap-1 mb-2">
       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
       All channels
     </a>
     <h2 class="text-lg font-bold text-gray-900"><?= Helpers::e($channel['name']) ?></h2>
-    <div class="flex items-center gap-3 mt-1">
+    <div class="flex flex-wrap items-center gap-3 mt-1">
       <span class="text-xs text-gray-400"><?= ucfirst($channel['orientation']) ?> · <?= $channel['slide_duration'] ?>s per slide</span>
       <span class="inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full <?= $channel['is_active'] ? 'bg-green-50 text-green-700' : 'bg-gray-100 text-gray-500' ?>">
         <span class="w-1.5 h-1.5 rounded-full <?= $channel['is_active'] ? 'bg-green-400' : 'bg-gray-400' ?>"></span>
@@ -15,7 +15,7 @@
       </span>
     </div>
   </div>
-  <div class="flex gap-2 flex-shrink-0">
+  <div class="flex flex-wrap gap-2">
     <a href="/display/<?= $channel['slug'] ?>" target="_blank" class="flex items-center gap-1.5 border border-gray-200 hover:border-gray-300 text-gray-600 text-sm font-medium px-3.5 py-2 rounded-xl transition-colors">
       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.069A1 1 0 0121 8.82v6.36a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
       Preview
@@ -27,10 +27,10 @@
   </div>
 </div>
 
-<div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
   <!-- Slides Panel -->
-  <div class="xl:col-span-2 space-y-4">
+  <div class="lg:col-span-2 space-y-4">
 
     <!-- Add slide -->
     <div class="bg-white rounded-2xl border border-gray-100 p-5">
@@ -51,7 +51,7 @@
         Slide limit reached (<?= $maxSlides ?>). Remove a slide to add another, or upgrade your plan.
       </div>
       <?php endif; ?>
-      <div id="media-grid" class="grid grid-cols-4 sm:grid-cols-6 gap-2 max-h-48 overflow-y-auto mb-4 <?= count($slides) >= $maxSlides ? 'opacity-50 pointer-events-none' : '' ?>" id="media-grid-wrap">
+      <div id="media-grid" class="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-6 gap-2 max-h-48 overflow-y-auto mb-4 <?= count($slides) >= $maxSlides ? 'opacity-50 pointer-events-none' : '' ?>" id="media-grid-wrap">
         <?php foreach ($media as $m): ?>
         <div onclick="addSlide(<?= $m['id'] ?>, this)"
           class="aspect-square rounded-lg overflow-hidden cursor-pointer border-2 border-transparent hover:border-primary-400 transition-all group relative"
@@ -104,10 +104,10 @@
             </div>
           </div>
           <button onclick="rotateSlide(<?= $slide['id'] ?>, this)" title="Rotate 90°"
-            class="opacity-0 group-hover:opacity-100 text-indigo-400 hover:text-indigo-600 p-1.5 hover:bg-indigo-50 rounded-lg transition-all">
+            class="sm:opacity-0 sm:group-hover:opacity-100 text-indigo-400 hover:text-indigo-600 p-1.5 hover:bg-indigo-50 rounded-lg transition-all">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
           </button>
-          <button onclick="removeSlide(<?= $slide['id'] ?>, this)" class="opacity-0 group-hover:opacity-100 text-red-400 hover:text-red-600 p-1.5 hover:bg-red-50 rounded-lg transition-all">
+          <button onclick="removeSlide(<?= $slide['id'] ?>, this)" class="sm:opacity-0 sm:group-hover:opacity-100 text-red-400 hover:text-red-600 p-1.5 hover:bg-red-50 rounded-lg transition-all">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
           </button>
         </div>

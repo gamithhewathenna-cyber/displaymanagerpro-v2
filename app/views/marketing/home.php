@@ -33,7 +33,7 @@ $c = function($key, $default='') { return htmlspecialchars(ContentController::ge
           <div class="w-3 h-3 rounded-full bg-green-400"></div>
           <div class="flex-1 bg-white/10 rounded px-3 py-1 text-xs text-gray-400 ml-2">dashboard.signagecloud.com</div>
         </div>
-        <div class="grid grid-cols-3 gap-3 mb-4">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
           <div class="bg-white/5 rounded-lg p-3"><div class="text-xs text-gray-400 mb-1">Active Screens</div><div class="text-2xl font-bold text-white">3</div><div class="text-xs text-green-400">● All live</div></div>
           <div class="bg-white/5 rounded-lg p-3"><div class="text-xs text-gray-400 mb-1">Slides Uploaded</div><div class="text-2xl font-bold text-white">24</div><div class="text-xs text-gray-400">Across all channels</div></div>
           <div class="bg-white/5 rounded-lg p-3"><div class="text-xs text-gray-400 mb-1">Auto Refresh</div><div class="text-2xl font-bold text-white">15m</div><div class="text-xs text-blue-400">Enabled</div></div>

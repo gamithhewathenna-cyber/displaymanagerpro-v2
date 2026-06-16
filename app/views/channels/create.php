@@ -4,7 +4,7 @@
     Back to channels
   </a>
 
-  <div class="bg-white rounded-2xl border border-gray-100 p-7 mt-3">
+  <div class="bg-white rounded-2xl border border-gray-100 p-5 sm:p-7 mt-3">
     <h2 class="text-lg font-bold text-gray-900 mb-1">Create a new channel</h2>
     <p class="text-sm text-gray-400 mb-7">Each channel displays on one TV screen using a unique URL.</p>
 

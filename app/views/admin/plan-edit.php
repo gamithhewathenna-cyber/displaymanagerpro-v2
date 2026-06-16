@@ -1,4 +1,4 @@
-<div class="max-w-xl">
+<div class="max-w-xl w-full">
   <a href="/admin/plans" class="text-sm text-gray-400 hover:text-gray-600 inline-flex items-center gap-1 mb-5">← All plans</a>
   <div class="bg-white rounded-xl border border-gray-100 p-6">
     <h2 class="font-semibold text-gray-900 mb-5">Edit Plan: <?= Helpers::e($plan['name']) ?></h2>
@@ -11,8 +11,8 @@
         <a href="/admin/plans" class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold px-6 py-2.5 rounded-xl text-sm transition-colors">Cancel</a>
       </div>
 
-      <div class="grid grid-cols-2 gap-4">
-        <div class="col-span-2"><label class="block text-sm font-medium text-gray-700 mb-1">Plan Name</label>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="sm:col-span-2"><label class="block text-sm font-medium text-gray-700 mb-1">Plan Name</label>
           <input type="text" name="name" value="<?= Helpers::e($plan['name']) ?>" required class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"></div>
         <div><label class="block text-sm font-medium text-gray-700 mb-1">Price Monthly (AUD)</label>
           <input type="number" name="price_monthly" step="0.01" value="<?= $plan['price_monthly'] ?>" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"></div>
@@ -26,16 +26,16 @@
         <div><label class="block text-sm font-medium text-gray-700 mb-1">Storage Limit (MB)</label>
           <input type="number" name="max_storage_mb" value="<?= (int)($plan['max_storage_mb'] ?? 512) ?>" min="100" step="1" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500">
           <p class="text-xs text-gray-400 mt-1">e.g. 512 = 500 MB, 1024 = 1 GB, 2048 = 2 GB</p></div>
-        <div class="col-span-2"><label class="block text-sm font-medium text-gray-700 mb-1">PayPal Plan ID (Monthly)</label>
+        <div class="sm:col-span-2"><label class="block text-sm font-medium text-gray-700 mb-1">PayPal Plan ID (Monthly)</label>
           <input type="text" name="stripe_price_id_monthly" value="<?= Helpers::e($plan['stripe_price_id_monthly']) ?>" placeholder="P-XXXXXXXXXXXXXXXXXXXX" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary-500"></div>
-        <div class="col-span-2"><label class="block text-sm font-medium text-gray-700 mb-1">PayPal Plan ID (Annual)</label>
+        <div class="sm:col-span-2"><label class="block text-sm font-medium text-gray-700 mb-1">PayPal Plan ID (Annual)</label>
           <input type="text" name="stripe_price_id_annual" value="<?= Helpers::e($plan['stripe_price_id_annual']) ?>" placeholder="P-XXXXXXXXXXXXXXXXXXXX" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary-500"></div>
-        <div class="col-span-2"><label class="flex items-center gap-2 cursor-pointer">
+        <div class="sm:col-span-2"><label class="flex items-center gap-2 cursor-pointer">
           <input type="checkbox" name="has_trial" value="1" <?= ($plan['has_trial'] ?? 1) ? 'checked' : '' ?> class="rounded text-primary-500">
           <span class="text-sm font-medium text-gray-700">Offer free trial for this plan</span>
         </label>
         <p class="text-xs text-gray-400 mt-1 ml-6">When checked, the sign-up button shows "Start Free Trial". Uncheck for plans that charge immediately.</p></div>
-        <div class="col-span-2"><label class="flex items-center gap-2 cursor-pointer">
+        <div class="sm:col-span-2"><label class="flex items-center gap-2 cursor-pointer">
           <input type="checkbox" name="is_active" value="1" <?= $plan['is_active']?'checked':'' ?> class="rounded text-primary-500">
           <span class="text-sm font-medium text-gray-700">Plan is active (shown to customers)</span>
         </label></div>

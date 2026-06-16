@@ -97,7 +97,7 @@
     <form method="POST" action="/admin/settings" class="space-y-4">
       <input type="hidden" name="_csrf_token" value="<?= Csrf::token() ?>">
       <input type="hidden" name="group" value="general">
-      <div class="grid grid-cols-2 gap-4">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div><label class="block text-sm font-medium text-gray-700 mb-1">Company Name</label>
           <input type="text" name="company_name" value="<?= Helpers::e($g['general']['company_name'] ?? '') ?>" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"></div>
         <div><label class="block text-sm font-medium text-gray-700 mb-1">Company URL</label>
@@ -121,17 +121,17 @@
           <option value="live" <?= (Settings::get('paypal_mode','sandbox'))==='live'?'selected':'' ?>>Live (Production)</option>
         </select>
       </div>
-      <div class="grid grid-cols-2 gap-4">
-        <div class="col-span-2"><label class="block text-xs font-medium text-gray-500 mb-1">Client ID</label>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="sm:col-span-2"><label class="block text-xs font-medium text-gray-500 mb-1">Client ID</label>
           <input type="text" name="paypal_client_id" value="<?= Helpers::e(Settings::get('paypal_client_id','')) ?>" placeholder="AXxx…" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary-500"></div>
-        <div class="col-span-2"><label class="block text-xs font-medium text-gray-500 mb-1">Secret Key</label>
+        <div class="sm:col-span-2"><label class="block text-xs font-medium text-gray-500 mb-1">Secret Key</label>
           <input type="password" name="paypal_secret" value="<?= Helpers::e(Settings::get('paypal_secret','')) ?>" placeholder="EXxx…" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary-500"></div>
-        <div class="col-span-2"><label class="block text-xs font-medium text-gray-500 mb-1">Webhook ID <span class="text-gray-400 font-normal">(from PayPal developer dashboard)</span></label>
+        <div class="sm:col-span-2"><label class="block text-xs font-medium text-gray-500 mb-1">Webhook ID <span class="text-gray-400 font-normal">(from PayPal developer dashboard)</span></label>
           <input type="text" name="paypal_webhook_id" value="<?= Helpers::e(Settings::get('paypal_webhook_id','')) ?>" placeholder="1AB23456CD789012E" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary-500"></div>
       </div>
-      <div class="bg-blue-50 border border-blue-200 rounded-xl p-3 text-xs text-blue-700 space-y-1">
-        <div>Webhook URL: <code class="font-mono font-bold"><?= Helpers::baseUrl('billing/paypal/webhook') ?></code></div>
-        <div>Return URL: <code class="font-mono font-bold"><?= Helpers::baseUrl('billing/paypal/return') ?></code></div>
+      <div class="bg-blue-50 border border-blue-200 rounded-xl p-3 text-xs text-blue-700 space-y-1 overflow-x-auto">
+        <div>Webhook URL: <code class="font-mono font-bold break-all"><?= Helpers::baseUrl('billing/paypal/webhook') ?></code></div>
+        <div>Return URL: <code class="font-mono font-bold break-all"><?= Helpers::baseUrl('billing/paypal/return') ?></code></div>
       </div>
       <button type="submit" class="bg-primary-500 hover:bg-primary-600 text-white font-semibold px-5 py-2.5 rounded-xl text-sm transition-colors">Save PayPal</button>
     </form>
@@ -143,7 +143,7 @@
     <form method="POST" action="/admin/settings" class="space-y-4">
       <input type="hidden" name="_csrf_token" value="<?= Csrf::token() ?>">
       <input type="hidden" name="group" value="mail">
-      <div class="grid grid-cols-2 gap-4">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div><label class="block text-xs font-medium text-gray-500 mb-1">SMTP Host</label>
           <input type="text" name="smtp_host" value="<?= Helpers::e($g['mail']['smtp_host'] ?? '') ?>" placeholder="mail.yourdomain.com" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"></div>
         <div><label class="block text-xs font-medium text-gray-500 mb-1">Port</label>
@@ -171,12 +171,12 @@
     <div class="mt-5 pt-5 border-t border-gray-100">
       <h3 class="text-sm font-semibold text-gray-700 mb-1">Send Test Email</h3>
       <p class="text-xs text-gray-400 mb-3">Save your settings first, then send a test to verify the connection works.</p>
-      <form method="POST" action="/admin/settings/test-email" class="flex items-center gap-3">
+      <form method="POST" action="/admin/settings/test-email" class="flex flex-col sm:flex-row items-start sm:items-center gap-3">
         <input type="hidden" name="_csrf_token" value="<?= Csrf::token() ?>">
         <input type="email" name="test_email"
           value="<?= Helpers::e(Session::get('user')['email'] ?? '') ?>"
           placeholder="you@example.com" required
-          class="flex-1 border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500">
+          class="w-full sm:flex-1 border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500">
         <button type="submit" class="border border-primary-300 text-primary-600 hover:bg-primary-50 font-semibold px-5 py-2.5 rounded-xl text-sm transition-colors whitespace-nowrap">
           Send Test
         </button>
@@ -256,14 +256,14 @@
           <option value="r2" <?= ($g['storage']['storage_driver']??'')==='r2'?'selected':'' ?>>Cloudflare R2</option>
         </select>
       </div>
-      <div id="s3-fields" class="grid grid-cols-2 gap-4 <?= ($g['storage']['storage_driver']??'local')!=='s3'?'hidden':'' ?>">
+      <div id="s3-fields" class="grid grid-cols-1 sm:grid-cols-2 gap-4 <?= ($g['storage']['storage_driver']??'local')!=='s3'?'hidden':'' ?>">
         <div><label class="block text-xs font-medium text-gray-500 mb-1">Bucket</label><input type="text" name="s3_bucket" value="<?= Helpers::e($g['storage']['s3_bucket']??'') ?>" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"></div>
         <div><label class="block text-xs font-medium text-gray-500 mb-1">Region</label><input type="text" name="s3_region" value="<?= Helpers::e($g['storage']['s3_region']??'') ?>" placeholder="us-east-1" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"></div>
         <div><label class="block text-xs font-medium text-gray-500 mb-1">Access Key</label><input type="text" name="s3_access_key" value="<?= Helpers::e($g['storage']['s3_access_key']??'') ?>" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary-500"></div>
         <div><label class="block text-xs font-medium text-gray-500 mb-1">Secret Key</label><input type="password" name="s3_secret_key" value="<?= Helpers::e($g['storage']['s3_secret_key']??'') ?>" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary-500"></div>
         <div class="col-span-2"><label class="block text-xs font-medium text-gray-500 mb-1">Public CDN URL</label><input type="text" name="s3_url" value="<?= Helpers::e($g['storage']['s3_url']??'') ?>" placeholder="https://your-bucket.s3.amazonaws.com" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"></div>
       </div>
-      <div id="r2-fields" class="grid grid-cols-2 gap-4 <?= ($g['storage']['storage_driver']??'local')!=='r2'?'hidden':'' ?>">
+      <div id="r2-fields" class="grid grid-cols-1 sm:grid-cols-2 gap-4 <?= ($g['storage']['storage_driver']??'local')!=='r2'?'hidden':'' ?>">
         <div><label class="block text-xs font-medium text-gray-500 mb-1">Bucket</label><input type="text" name="r2_bucket" value="<?= Helpers::e($g['storage']['r2_bucket']??'') ?>" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"></div>
         <div><label class="block text-xs font-medium text-gray-500 mb-1">Account ID</label><input type="text" name="r2_account_id" value="<?= Helpers::e($g['storage']['r2_account_id']??'') ?>" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary-500"></div>
         <div><label class="block text-xs font-medium text-gray-500 mb-1">Access Key</label><input type="text" name="r2_access_key" value="<?= Helpers::e($g['storage']['r2_access_key']??'') ?>" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary-500"></div>

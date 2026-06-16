@@ -5,17 +5,17 @@
   </a>
 </div>
 
-<div class="grid grid-cols-1 xl:grid-cols-3 gap-5">
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
   <!-- Customer info -->
   <div class="xl:col-span-2 space-y-5">
     <div class="bg-white rounded-xl border border-gray-100 p-5">
-      <div class="flex items-start justify-between mb-5">
+      <div class="flex flex-col sm:flex-row items-start sm:justify-between gap-4 mb-5">
         <div>
           <div class="text-xl font-bold text-gray-900"><?= Helpers::e($customer['name']) ?></div>
           <div class="text-sm text-gray-400"><?= Helpers::e($customer['email']) ?></div>
           <div class="text-xs text-gray-400 mt-1">Joined <?= date('M j, Y', strtotime($customer['created_at'])) ?></div>
         </div>
-        <div class="flex gap-2">
+        <div class="flex flex-wrap gap-2">
           <?php if ($customer['status'] === 'active'): ?>
           <form method="POST" action="/admin/customers/<?= $customer['id'] ?>/suspend">
             <input type="hidden" name="_csrf_token" value="<?= Csrf::token() ?>">
@@ -37,7 +37,7 @@
           </form>
         </div>
       </div>
-      <div class="grid grid-cols-3 gap-4">
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div class="bg-gray-50 rounded-lg p-3 text-center">
           <div class="text-xs text-gray-400 mb-1">Plan</div>
           <div class="font-semibold text-sm text-gray-900"><?= Helpers::e($customer['plan_name'] ?? '—') ?></div>

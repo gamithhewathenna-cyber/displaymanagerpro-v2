@@ -14,10 +14,14 @@
 <style>body{font-family:'Poppins',sans-serif;}.active-nav{background:#1e1b4b;color:#fff;}</style>
 </head>
 <body class="bg-gray-100 min-h-screen">
+
+<!-- Mobile sidebar overlay -->
+<div id="sidebar-overlay" class="fixed inset-0 z-30 bg-black/50 hidden md:hidden" onclick="closeSidebar()"></div>
+
 <div class="flex min-h-screen">
 
   <!-- Admin Sidebar -->
-  <aside class="w-60 bg-gray-900 fixed top-0 left-0 h-full z-30 flex flex-col">
+  <aside id="admin-sidebar" class="w-60 bg-gray-900 fixed top-0 left-0 h-full z-40 flex flex-col transform -translate-x-full md:translate-x-0 transition-transform duration-200">
     <div class="h-16 flex items-center px-5 border-b border-gray-700">
       <?php $__logo = Settings::get('company_logo', ''); ?>
       <a href="/admin" class="flex items-center gap-2 text-white font-bold min-w-0">
@@ -33,7 +37,7 @@
         <?php endif; ?>
       </a>
     </div>
-    <nav class="flex-1 p-3 space-y-0.5">
+    <nav class="flex-1 p-3 space-y-0.5 overflow-y-auto">
       <?php
         $cp = strtok($_SERVER['REQUEST_URI'],'?');
         $items = [
@@ -66,25 +70,42 @@
     </div>
   </aside>
 
-  <div class="flex-1 ml-60 flex flex-col min-h-screen">
-    <header class="h-14 bg-white border-b border-gray-200 flex items-center justify-between px-6 sticky top-0 z-20">
-      <h1 class="text-base font-semibold text-gray-800"><?= Helpers::e($title ?? 'Admin') ?></h1>
+  <div class="flex-1 md:ml-60 flex flex-col min-h-screen">
+    <header class="h-14 bg-white border-b border-gray-200 flex items-center justify-between px-4 md:px-6 sticky top-0 z-20">
+      <div class="flex items-center gap-3">
+        <!-- Hamburger (mobile only) -->
+        <button onclick="openSidebar()" class="md:hidden p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 transition-colors" aria-label="Open menu">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+        <h1 class="text-base font-semibold text-gray-800"><?= Helpers::e($title ?? 'Admin') ?></h1>
+      </div>
       <div class="flex items-center gap-3 text-sm text-gray-500">
-        <?= Helpers::e(Session::get('user')['name'] ?? '') ?>
+        <span class="hidden sm:inline"><?= Helpers::e(Session::get('user')['name'] ?? '') ?></span>
       </div>
     </header>
 
     <?php if ($msg = Session::getFlash('success')): ?>
-      <div class="mx-6 mt-4 bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg text-sm"><?= Helpers::e($msg) ?></div>
+      <div class="mx-4 md:mx-6 mt-4 bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg text-sm"><?= Helpers::e($msg) ?></div>
     <?php endif; ?>
     <?php if ($msg = Session::getFlash('error')): ?>
-      <div class="mx-6 mt-4 bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg text-sm"><?= Helpers::e($msg) ?></div>
+      <div class="mx-4 md:mx-6 mt-4 bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg text-sm"><?= Helpers::e($msg) ?></div>
     <?php endif; ?>
 
-    <main class="flex-1 p-6">
+    <main class="flex-1 p-4 md:p-6">
       <?php require VIEWS_PATH . '/' . $content_view . '.php'; ?>
     </main>
   </div>
 </div>
+
+<script>
+  function openSidebar() {
+    document.getElementById('admin-sidebar').classList.remove('-translate-x-full');
+    document.getElementById('sidebar-overlay').classList.remove('hidden');
+  }
+  function closeSidebar() {
+    document.getElementById('admin-sidebar').classList.add('-translate-x-full');
+    document.getElementById('sidebar-overlay').classList.add('hidden');
+  }
+</script>
 </body>
 </html>

@@ -5,7 +5,7 @@
 </div>
 <div class="space-y-4">
   <?php foreach ($plans as $p): ?>
-  <div class="bg-white rounded-xl border border-gray-100 p-5 flex items-center justify-between gap-4">
+  <div class="bg-white rounded-xl border border-gray-100 p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
     <div>
       <div class="font-semibold text-gray-900"><?= Helpers::e($p['name']) ?> <span class="text-xs font-normal text-gray-400 ml-2"><?= $p['is_active']?'Active':'Inactive' ?></span></div>
       <div class="text-sm text-gray-400 mt-1">$<?= number_format($p['price_monthly'],2) ?>/mo · Up to <?= $p['max_screens'] ?> screen<?= $p['max_screens']>1?'s':'' ?> · <?= $p['max_slides'] ?? 15 ?> slides</div>

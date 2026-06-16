@@ -20,10 +20,13 @@
 </head>
 <body class="bg-gray-50 min-h-screen">
 
+<!-- Mobile sidebar overlay -->
+<div id="sidebar-overlay" class="fixed inset-0 z-30 bg-black/50 hidden md:hidden" onclick="closeSidebar()"></div>
+
 <div class="flex min-h-screen">
 
   <!-- Sidebar -->
-  <aside class="w-64 bg-white border-r border-gray-100 flex-shrink-0 fixed top-0 left-0 h-full z-30 flex flex-col">
+  <aside id="app-sidebar" class="w-64 bg-white border-r border-gray-100 flex-shrink-0 fixed top-0 left-0 h-full z-40 flex flex-col transform -translate-x-full md:translate-x-0 transition-transform duration-200">
     <!-- Logo -->
     <div class="h-16 flex items-center px-6 border-b border-gray-100">
       <?php $__logo = Settings::get('company_logo', ''); ?>
@@ -55,7 +58,7 @@
           $active = ($currentPath === $href || str_starts_with($currentPath, $href . '/')) && $href !== '/dashboard'
                     || $currentPath === $href;
       ?>
-      <a href="<?= $href ?>" class="sidebar-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors text-sm <?= $active ? 'active' : '' ?>">
+      <a href="<?= $href ?>" onclick="closeSidebar()" class="sidebar-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors text-sm <?= $active ? 'active' : '' ?>">
         <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><?= $iconPath ?></svg>
         <?= $label ?>
       </a>
@@ -82,40 +85,54 @@
   </aside>
 
   <!-- Main Content -->
-  <div class="flex-1 ml-64 flex flex-col min-h-screen">
+  <div class="flex-1 md:ml-64 flex flex-col min-h-screen">
     <!-- Top bar -->
-    <header class="h-16 bg-white border-b border-gray-100 flex items-center justify-between px-8 sticky top-0 z-20">
-      <h1 class="text-lg font-semibold text-gray-900"><?= Helpers::e($title ?? 'Dashboard') ?></h1>
-      <div class="flex items-center gap-3">
-        <a href="/channels/create" class="bg-primary-500 hover:bg-primary-600 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors">
+    <header class="h-16 bg-white border-b border-gray-100 flex items-center justify-between px-4 md:px-8 sticky top-0 z-20">
+      <div class="flex items-center gap-3 min-w-0">
+        <!-- Hamburger (mobile only) -->
+        <button onclick="openSidebar()" class="md:hidden p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 transition-colors flex-shrink-0" aria-label="Open menu">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+        <h1 class="text-base md:text-lg font-semibold text-gray-900 truncate"><?= Helpers::e($title ?? 'Dashboard') ?></h1>
+      </div>
+      <div class="flex items-center gap-3 flex-shrink-0">
+        <a href="/channels/create" class="bg-primary-500 hover:bg-primary-600 text-white text-xs md:text-sm font-semibold px-3 md:px-4 py-2 rounded-lg transition-colors whitespace-nowrap">
           + New Channel
         </a>
       </div>
     </header>
 
     <!-- Flash messages -->
-    <div id="flash-container" class="px-8 pt-4">
+    <div id="flash-container" class="px-4 md:px-8 pt-4">
       <?php if ($msg = Session::getFlash('success')): ?>
         <div class="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg text-sm font-medium flex items-center gap-2">
-          <svg class="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+          <svg class="w-4 h-4 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
           <?= Helpers::e($msg) ?>
         </div>
       <?php endif; ?>
       <?php if ($msg = Session::getFlash('error')): ?>
         <div class="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg text-sm font-medium flex items-center gap-2">
-          <svg class="w-4 h-4 text-red-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/></svg>
+          <svg class="w-4 h-4 text-red-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/></svg>
           <?= Helpers::e($msg) ?>
         </div>
       <?php endif; ?>
     </div>
 
-    <main class="flex-1 p-8">
+    <main class="flex-1 p-4 md:p-8">
       <?php require VIEWS_PATH . '/' . $content_view . '.php'; ?>
     </main>
   </div>
 </div>
 
 <script>
+  function openSidebar() {
+    document.getElementById('app-sidebar').classList.remove('-translate-x-full');
+    document.getElementById('sidebar-overlay').classList.remove('hidden');
+  }
+  function closeSidebar() {
+    document.getElementById('app-sidebar').classList.add('-translate-x-full');
+    document.getElementById('sidebar-overlay').classList.add('hidden');
+  }
   setTimeout(() => {
     document.querySelectorAll('#flash-container > div').forEach(el => el.remove());
   }, 5000);

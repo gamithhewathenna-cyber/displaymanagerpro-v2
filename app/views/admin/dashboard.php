@@ -1,4 +1,4 @@
-<div class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 mb-7">
+<div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-4 mb-7">
   <?php
     $cards = [
       ['Total Customers', $totalCustomers, '#6366f1', 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z'],
@@ -31,38 +31,40 @@
   <?php if (empty($recentSignups)): ?>
   <div class="text-center py-10 text-gray-400 text-sm">No customers yet.</div>
   <?php else: ?>
-  <table class="w-full text-sm">
+  <div class="overflow-x-auto">
+  <table class="w-full text-sm min-w-[520px]">
     <thead>
       <tr class="text-xs text-gray-400 bg-gray-50">
-        <th class="px-5 py-2.5 text-left font-medium">Customer</th>
-        <th class="px-5 py-2.5 text-left font-medium">Plan</th>
-        <th class="px-5 py-2.5 text-left font-medium">Status</th>
-        <th class="px-5 py-2.5 text-left font-medium">Joined</th>
-        <th class="px-5 py-2.5"></th>
+        <th class="px-4 py-2.5 text-left font-medium">Customer</th>
+        <th class="px-4 py-2.5 text-left font-medium hidden sm:table-cell">Plan</th>
+        <th class="px-4 py-2.5 text-left font-medium">Status</th>
+        <th class="px-4 py-2.5 text-left font-medium hidden md:table-cell">Joined</th>
+        <th class="px-4 py-2.5"></th>
       </tr>
     </thead>
     <tbody class="divide-y divide-gray-50">
       <?php foreach ($recentSignups as $c): ?>
       <tr class="hover:bg-gray-50/50">
-        <td class="px-5 py-3">
+        <td class="px-4 py-3">
           <div class="font-medium text-gray-900"><?= Helpers::e($c['name']) ?></div>
           <div class="text-xs text-gray-400"><?= Helpers::e($c['email']) ?></div>
         </td>
-        <td class="px-5 py-3 text-gray-600"><?= Helpers::e($c['plan_name'] ?? '—') ?></td>
-        <td class="px-5 py-3">
+        <td class="px-4 py-3 text-gray-600 hidden sm:table-cell"><?= Helpers::e($c['plan_name'] ?? '—') ?></td>
+        <td class="px-4 py-3">
           <span class="inline-flex text-xs font-semibold px-2 py-0.5 rounded-full
             <?= $c['sub_status']==='active'?'bg-green-50 text-green-700':
                ($c['sub_status']==='trialing'?'bg-blue-50 text-blue-700':'bg-gray-100 text-gray-500') ?>">
             <?= ucfirst($c['sub_status'] ?? 'none') ?>
           </span>
         </td>
-        <td class="px-5 py-3 text-gray-400 text-xs"><?= Helpers::timeAgo($c['created_at']) ?></td>
-        <td class="px-5 py-3 text-right">
+        <td class="px-4 py-3 text-gray-400 text-xs hidden md:table-cell"><?= Helpers::timeAgo($c['created_at']) ?></td>
+        <td class="px-4 py-3 text-right">
           <a href="/admin/customers/<?= $c['id'] ?>" class="text-xs text-primary-600 hover:text-primary-700 font-medium">View →</a>
         </td>
       </tr>
       <?php endforeach; ?>
     </tbody>
   </table>
+  </div>
   <?php endif; ?>
 </div>

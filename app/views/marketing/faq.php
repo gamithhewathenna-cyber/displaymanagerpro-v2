@@ -20,7 +20,7 @@
       </details>
       <?php endfor; ?>
     </div>
-    <div class="bg-indigo-50 border border-indigo-100 rounded-2xl p-8 text-center">
+    <div class="bg-indigo-50 border border-indigo-100 rounded-2xl p-6 sm:p-8 text-center">
       <div class="text-3xl mb-3">💬</div>
       <h3 class="font-bold text-gray-900 text-lg mb-2"><?= $c('still_title','Still have questions?') ?></h3>
       <p class="text-gray-500 text-sm mb-5"><?= $c('still_subtitle') ?></p>

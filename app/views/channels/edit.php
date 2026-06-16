@@ -4,7 +4,7 @@
     Back to channel
   </a>
 
-  <div class="bg-white rounded-2xl border border-gray-100 p-7 mt-3">
+  <div class="bg-white rounded-2xl border border-gray-100 p-5 sm:p-7 mt-3">
     <h2 class="text-lg font-bold text-gray-900 mb-6">Channel Settings</h2>
     <form method="POST" action="/channels/<?= $channel['id'] ?>" class="space-y-6">
       <input type="hidden" name="_csrf_token" value="<?= Csrf::token() ?>">

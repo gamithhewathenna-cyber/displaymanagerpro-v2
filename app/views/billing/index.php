@@ -4,10 +4,10 @@ $isActive     = Subscription::isActive($sub);
 $trialDaysLeft= Subscription::trialDaysLeft($sub);
 ?>
 
-<div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
   <!-- Left: Subscription details -->
-  <div class="xl:col-span-2 space-y-5">
+  <div class="lg:col-span-2 space-y-5">
 
     <!-- Current plan -->
     <div class="bg-white rounded-2xl border border-gray-100 p-6">
@@ -181,28 +181,28 @@ $trialDaysLeft= Subscription::trialDaysLeft($sub);
     <div class="bg-white rounded-2xl border border-gray-100 p-6">
       <h2 class="font-semibold text-gray-900 mb-5">Payment History</h2>
       <div class="overflow-x-auto">
-        <table class="w-full text-sm">
+        <table class="w-full text-sm min-w-[420px]">
           <thead>
             <tr class="text-xs text-gray-400 border-b border-gray-50">
               <th class="pb-3 text-left font-medium">Date</th>
-              <th class="pb-3 text-left font-medium">Description</th>
+              <th class="pb-3 text-left font-medium hidden sm:table-cell">Description</th>
               <th class="pb-3 text-right font-medium">Amount</th>
               <th class="pb-3 text-right font-medium">Status</th>
-              <th class="pb-3 text-right font-medium">Invoice</th>
+              <th class="pb-3 text-right font-medium hidden sm:table-cell">Invoice</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-50">
             <?php foreach ($payments as $p): ?>
             <tr>
               <td class="py-3 text-gray-600"><?= date('M j, Y', strtotime($p['created_at'])) ?></td>
-              <td class="py-3 text-gray-600"><?= Helpers::e($p['description'] ?? 'Subscription') ?></td>
+              <td class="py-3 text-gray-600 hidden sm:table-cell"><?= Helpers::e($p['description'] ?? 'Subscription') ?></td>
               <td class="py-3 text-right font-semibold text-gray-900">$<?= number_format($p['amount'],2) ?> <?= $p['currency'] ?></td>
               <td class="py-3 text-right">
                 <span class="inline-flex text-xs font-semibold px-2 py-0.5 rounded-full <?= $p['status']==='succeeded'?'bg-green-50 text-green-700':'bg-red-50 text-red-700' ?>">
                   <?= ucfirst($p['status']) ?>
                 </span>
               </td>
-              <td class="py-3 text-right">
+              <td class="py-3 text-right hidden sm:table-cell">
                 <?php if ($p['invoice_url']): ?>
                 <a href="<?= Helpers::e($p['invoice_url']) ?>" target="_blank" class="text-primary-600 hover:text-primary-700 text-xs font-medium">View</a>
                 <?php else: ?>

@@ -2,7 +2,7 @@
 <section class="py-24 px-4">
   <div class="max-w-5xl mx-auto">
     <div class="text-center mb-16">
-      <h1 class="text-5xl font-extrabold text-gray-900 mb-4"><?= $c('title','Everything your screens need') ?></h1>
+      <h1 class="text-3xl sm:text-5xl font-extrabold text-gray-900 mb-4"><?= $c('title','Everything your screens need') ?></h1>
       <p class="text-xl text-gray-500 max-w-2xl mx-auto"><?= $c('subtitle') ?></p>
     </div>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -19,7 +19,7 @@
   </div>
 </section>
 <section class="bg-indigo-600 text-white py-20 px-4 text-center">
-  <h2 class="text-3xl font-bold mb-4"><?= $c('cta_title','Ready to get started?') ?></h2>
+  <h2 class="text-xl sm:text-3xl font-bold mb-4"><?= $c('cta_title','Ready to get started?') ?></h2>
   <p class="text-indigo-200 mb-8"><?= $c('cta_subtitle') ?></p>
   <a href="/register" class="inline-block bg-white text-indigo-600 font-bold px-10 py-4 rounded-xl hover:bg-gray-50 transition-all shadow-lg"><?= $c('cta_button','Start Free Trial →') ?></a>
 </section>
