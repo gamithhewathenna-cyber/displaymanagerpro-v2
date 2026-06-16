@@ -72,20 +72,35 @@ $trialDaysLeft= Subscription::trialDaysLeft($sub);
     <?php if (!$sub || empty($sub['stripe_subscription_id']) || $isTrialing): ?>
     <div class="bg-white rounded-2xl border border-gray-100 p-6">
       <h2 class="font-semibold text-gray-900 mb-1"><?= $isTrialing ? 'Activate your subscription' : 'Choose a plan' ?></h2>
-      <p class="text-sm text-gray-400 mb-5">Select a plan below, then click <strong>Continue to Payment</strong>.</p>
+      <p class="text-sm text-gray-400 mb-5">Select a billing cycle and plan, then click <strong>Continue to Payment</strong>.</p>
+
+      <!-- Billing cycle toggle -->
+      <div class="flex items-center gap-1 p-1 bg-gray-100 rounded-xl w-fit mb-5">
+        <button type="button" id="cycle-btn-monthly" onclick="setCycle('monthly')"
+          class="px-4 py-2 rounded-lg text-sm font-semibold transition-all bg-white text-gray-900 shadow-sm">
+          Monthly
+        </button>
+        <button type="button" id="cycle-btn-annual" onclick="setCycle('annual')"
+          class="px-4 py-2 rounded-lg text-sm font-semibold transition-all text-gray-500">
+          Annual &nbsp;<span class="text-green-600 font-semibold text-xs">Save ~17%</span>
+        </button>
+      </div>
 
       <form method="POST" action="/billing/subscribe" id="plan-form">
         <input type="hidden" name="_csrf_token" value="<?= Csrf::token() ?>">
-        <input type="hidden" name="billing_cycle" value="monthly">
+        <input type="hidden" name="billing_cycle" id="billing-cycle-input" value="monthly">
         <input type="hidden" name="plan_id" id="selected-plan-id" value="">
 
         <div class="space-y-3 mb-5" id="plan-cards">
-          <?php foreach ($plans as $plan): ?>
-          <?php $isCurrent = ($sub['plan_id'] ?? 0) == $plan['id']; ?>
+          <?php foreach ($plans as $plan):
+            $isCurrent      = ($sub['plan_id'] ?? 0) == $plan['id'];
+            $annualPerMonth = $plan['price_annual'] > 0 ? round($plan['price_annual'] / 12, 0) : 0;
+          ?>
           <label class="plan-card flex items-center gap-4 border-2 rounded-xl p-4 cursor-pointer transition-all
             <?= $isCurrent ? 'border-primary-400 bg-primary-50' : 'border-gray-100 hover:border-primary-200' ?>"
             data-plan-id="<?= $plan['id'] ?>"
-            data-has-paypal="<?= $plan['stripe_price_id_monthly'] ? '1' : '0' ?>">
+            data-has-monthly="<?= $plan['stripe_price_id_monthly'] ? '1' : '0' ?>"
+            data-has-annual="<?= $plan['stripe_price_id_annual'] ? '1' : '0' ?>">
 
             <!-- Radio dot -->
             <div class="w-5 h-5 rounded-full border-2 flex-shrink-0 flex items-center justify-center transition-all
@@ -99,9 +114,18 @@ $trialDaysLeft= Subscription::trialDaysLeft($sub);
                 <?php if ($isCurrent): ?>
                 <span class="bg-primary-100 text-primary-700 text-xs font-semibold px-2 py-0.5 rounded-full">Current</span>
                 <?php endif; ?>
-                <?php if (!$plan['stripe_price_id_monthly']): ?>
-                <span class="bg-amber-50 text-amber-600 text-xs px-2 py-0.5 rounded-full">PayPal not configured</span>
-                <?php endif; ?>
+                <span class="plan-badge-monthly <?= '' ?> text-xs">
+                  <?php if (!$plan['stripe_price_id_monthly']): ?>
+                  <span class="bg-amber-50 text-amber-600 px-2 py-0.5 rounded-full">PayPal not configured</span>
+                  <?php endif; ?>
+                </span>
+                <span class="plan-badge-annual hidden text-xs">
+                  <?php if (!$plan['stripe_price_id_annual']): ?>
+                  <span class="bg-amber-50 text-amber-600 px-2 py-0.5 rounded-full">Annual PayPal plan not configured</span>
+                  <?php else: ?>
+                  <span class="bg-green-50 text-green-700 font-semibold px-2 py-0.5 rounded-full">Save ~17%</span>
+                  <?php endif; ?>
+                </span>
               </div>
               <div class="text-xs text-gray-400 mt-0.5">
                 Up to <?= $plan['max_screens'] ?> screen<?= $plan['max_screens']>1?'s':'' ?>
@@ -109,12 +133,35 @@ $trialDaysLeft= Subscription::trialDaysLeft($sub);
               </div>
             </div>
 
-            <div class="flex items-baseline gap-0.5 flex-shrink-0 text-right">
-              <span class="text-xl font-bold text-gray-900">$<?= number_format($plan['price_monthly'],0) ?></span>
-              <span class="text-xs text-gray-400 ml-0.5">USD/mo</span>
+            <!-- Monthly price -->
+            <div class="plan-price-monthly flex flex-col items-end flex-shrink-0">
+              <div class="flex items-baseline gap-0.5">
+                <span class="text-xl font-bold text-gray-900">$<?= number_format($plan['price_monthly'], 0) ?></span>
+                <span class="text-xs text-gray-400 ml-0.5">USD/mo</span>
+              </div>
             </div>
+
+            <!-- Annual price (hidden by default) -->
+            <div class="plan-price-annual hidden flex flex-col items-end flex-shrink-0">
+              <?php if ($plan['price_annual'] > 0): ?>
+              <div class="flex items-baseline gap-0.5">
+                <span class="text-xl font-bold text-gray-900">$<?= number_format($annualPerMonth, 0) ?></span>
+                <span class="text-xs text-gray-400 ml-0.5">USD/mo</span>
+              </div>
+              <div class="text-xs text-green-600 font-medium">$<?= number_format($plan['price_annual'], 0) ?>/yr total</div>
+              <?php else: ?>
+              <div class="text-xs text-gray-400">No annual price set</div>
+              <?php endif; ?>
+            </div>
+
           </label>
           <?php endforeach; ?>
+        </div>
+
+        <!-- Annual note -->
+        <div id="annual-note" class="hidden bg-green-50 border border-green-200 rounded-xl px-4 py-3 text-xs text-green-700 mb-4 flex items-start gap-2">
+          <svg class="w-4 h-4 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+          <span>You're choosing an <strong>annual plan</strong> — a single payment for the full year, billed today via PayPal.</span>
         </div>
 
         <!-- Subscribe button -->
@@ -122,7 +169,7 @@ $trialDaysLeft= Subscription::trialDaysLeft($sub);
           class="w-full flex items-center justify-center gap-2 bg-[#0070ba] hover:bg-[#005ea6] text-white font-semibold py-3 rounded-xl text-sm transition-colors
                  disabled:opacity-40 disabled:cursor-not-allowed">
           <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M7.076 21.337H4.25a.641.641 0 0 1-.632-.712l1.562-9.888a.641.641 0 0 1 .632-.566h3.584c1.64 0 2.944.444 3.673 1.285.687.8.876 1.903.565 3.108-.603 2.366-2.445 3.773-5.558 3.773h-.73L7.076 21.337zm4.84-8.93c-.248.97-.96 1.59-2.2 1.59H8.6l.488-3.1h1.116c1.094 0 1.712.38 1.712 1.51zM19.97 12.407H17.144a.641.641 0 0 0-.632.566l-1.562 9.888a.641.641 0 0 0 .632.712h2.826a.641.641 0 0 0 .632-.712l1.562-9.888a.641.641 0 0 0-.632-.566z"/></svg>
-          Subscribe with PayPal
+          <span id="continue-btn-label">Subscribe with PayPal</span>
         </button>
         <p id="continue-hint" class="text-xs text-center text-gray-400 mt-2">Select a plan above to continue.</p>
       </form>
@@ -171,19 +218,79 @@ $trialDaysLeft= Subscription::trialDaysLeft($sub);
     <?php endif; ?>
   </div>
 
-  <!-- Plan selection JS -->
+  <!-- Plan selection + billing cycle JS -->
   <script>
   (function() {
-    const cards  = document.querySelectorAll('.plan-card');
-    const planId = document.getElementById('selected-plan-id');
-    const btn    = document.getElementById('continue-btn');
-    const hint   = document.getElementById('continue-hint');
+    const cards       = document.querySelectorAll('.plan-card');
+    const planIdInput = document.getElementById('selected-plan-id');
+    const cycleInput  = document.getElementById('billing-cycle-input');
+    const btn         = document.getElementById('continue-btn');
+    const btnLabel    = document.getElementById('continue-btn-label');
+    const hint        = document.getElementById('continue-hint');
+    const annualNote  = document.getElementById('annual-note');
     if (!cards.length) return;
 
+    let currentCycle    = 'monthly';
+    let selectedCard    = null;
+
+    // ── Billing cycle toggle ──────────────────────────────
+    window.setCycle = function(cycle) {
+      currentCycle = cycle;
+      cycleInput.value = cycle;
+      const isAnnual = cycle === 'annual';
+
+      // Toggle price blocks
+      document.querySelectorAll('.plan-price-monthly').forEach(el => el.classList.toggle('hidden', isAnnual));
+      document.querySelectorAll('.plan-price-annual').forEach(el => el.classList.toggle('hidden', !isAnnual));
+      document.querySelectorAll('.plan-badge-monthly').forEach(el => el.classList.toggle('hidden', isAnnual));
+      document.querySelectorAll('.plan-badge-annual').forEach(el => el.classList.toggle('hidden', !isAnnual));
+
+      // Toggle annual note
+      if (annualNote) annualNote.classList.toggle('hidden', !isAnnual);
+
+      // Toggle button styles
+      var btnMonthly = document.getElementById('cycle-btn-monthly');
+      var btnAnnual  = document.getElementById('cycle-btn-annual');
+      if (isAnnual) {
+        btnAnnual.classList.add('bg-white','text-gray-900','shadow-sm');
+        btnAnnual.classList.remove('text-gray-500');
+        btnMonthly.classList.remove('bg-white','text-gray-900','shadow-sm');
+        btnMonthly.classList.add('text-gray-500');
+      } else {
+        btnMonthly.classList.add('bg-white','text-gray-900','shadow-sm');
+        btnMonthly.classList.remove('text-gray-500');
+        btnAnnual.classList.remove('bg-white','text-gray-900','shadow-sm');
+        btnAnnual.classList.add('text-gray-500');
+      }
+
+      // Update button label
+      if (btnLabel) btnLabel.textContent = isAnnual ? 'Pay Annually with PayPal' : 'Subscribe with PayPal';
+
+      // Re-evaluate button state for selected card
+      if (selectedCard) evaluateCard(selectedCard);
+    };
+
+    // ── Evaluate whether the selected card+cycle has PayPal configured ──
+    function evaluateCard(card) {
+      const hasPaypal = currentCycle === 'annual'
+        ? card.dataset.hasAnnual === '1'
+        : card.dataset.hasMonthly === '1';
+      if (hasPaypal) {
+        btn.disabled = false;
+        hint.textContent = currentCycle === 'annual'
+          ? 'One payment for the full year — you\'ll be redirected to PayPal.'
+          : 'You\'ll be redirected to PayPal to complete payment.';
+      } else {
+        btn.disabled = true;
+        const which = currentCycle === 'annual' ? 'Annual' : 'Monthly';
+        hint.textContent = which + ' PayPal Plan ID not configured for this plan. Contact admin.';
+      }
+    }
+
+    // ── Plan card click ───────────────────────────────────
     cards.forEach(card => {
       card.addEventListener('click', () => {
-        const id        = card.dataset.planId;
-        const hasStripe = card.dataset.hasPaypal === '1';
+        const id = card.dataset.planId;
 
         // Reset all cards
         cards.forEach(c => {
@@ -202,15 +309,9 @@ $trialDaysLeft= Subscription::trialDaysLeft($sub);
         const dot = document.getElementById('radio-dot-' + id);
         if (dot) dot.classList.remove('hidden');
 
-        planId.value = id;
-
-        if (hasStripe) {
-          btn.disabled = false;
-          hint.textContent = 'You\'ll be redirected to PayPal to complete payment.';
-        } else {
-          btn.disabled = true;
-          hint.textContent = 'PayPal Plan ID not configured for this plan. Contact the site admin.';
-        }
+        planIdInput.value = id;
+        selectedCard = card;
+        evaluateCard(card);
       });
     });
   })();
