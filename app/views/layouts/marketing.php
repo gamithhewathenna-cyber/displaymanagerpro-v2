@@ -124,9 +124,16 @@
         </div>
         <p class="text-sm leading-relaxed"><?= Helpers::e(ContentController::get('footer', 'tagline', 'Cloud digital signage for restaurants, cafes, retail, and hospitality.')) ?></p>
       </div>
+      <?php
+        $_footerDefaults = [
+          1 => ['title' => 'Product',  'links' => "Features|/features\nPricing|/pricing\nIndustries|/industries\nFAQ|/faq"],
+          2 => ['title' => 'Company',  'links' => "Contact|/contact\nPrivacy Policy|/privacy-policy\nTerms & Conditions|/terms\nRefund Policy|/refund-policy"],
+          3 => ['title' => 'Account',  'links' => "Sign In|/login\nStart Free Trial|/register"],
+        ];
+      ?>
       <?php for ($col = 1; $col <= 3; $col++):
-        $colTitle = ContentController::get('footer', "col{$col}_title");
-        $colLinks = ContentController::get('footer', "col{$col}_links");
+        $colTitle = ContentController::get('footer', "col{$col}_title", $_footerDefaults[$col]['title']);
+        $colLinks = ContentController::get('footer', "col{$col}_links", $_footerDefaults[$col]['links']);
         if (!$colTitle && !$colLinks) continue;
         $links = array_filter(explode("\n", $colLinks));
       ?>
