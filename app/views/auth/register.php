@@ -12,8 +12,8 @@ if (!$_activePlan) $_activePlan = $plans[0] ?? null;
 $_initialHasTrial = (bool)($_activePlan['has_trial'] ?? 1);
 ?>
 
-<h2 class="text-2xl font-bold text-gray-900 mb-1">Start your free trial</h2>
-<p class="text-gray-500 text-sm mb-6">14 days free · No credit card required</p>
+<h2 class="text-2xl font-bold text-gray-900 mb-1" id="register-heading"><?= $_initialHasTrial ? 'Start your free trial' : 'Create your account' ?></h2>
+<p class="text-gray-500 text-sm mb-6" id="register-subheading"><?= $_initialHasTrial ? '14 days free · No credit card required' : 'Get started today' ?></p>
 
 <form method="POST" action="/register" class="space-y-4">
   <input type="hidden" name="_csrf_token" value="<?= Csrf::token() ?>">
@@ -105,10 +105,16 @@ $_initialHasTrial = (bool)($_activePlan['has_trial'] ?? 1);
 <script>
 document.querySelectorAll('input[name="plan"]').forEach(function(radio) {
   radio.addEventListener('change', function() {
-    var btn = document.getElementById('register-submit-btn');
-    btn.textContent = this.dataset.hasTrial === '1'
+    var hasTrial = this.dataset.hasTrial === '1';
+    document.getElementById('register-submit-btn').textContent = hasTrial
       ? 'Create Account – Free for 14 Days'
       : 'Create Account';
+    document.getElementById('register-heading').textContent = hasTrial
+      ? 'Start your free trial'
+      : 'Create your account';
+    document.getElementById('register-subheading').textContent = hasTrial
+      ? '14 days free · No credit card required'
+      : 'Get started today';
   });
 });
 

@@ -350,7 +350,7 @@ $trialDaysLeft= Subscription::trialDaysLeft($sub);
     <div class="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl p-6 text-white">
       <div class="text-sm font-medium text-indigo-200 mb-1">All plans include</div>
       <ul class="space-y-2.5 mt-4">
-        <?php foreach (['14-Day Free Trial','Unlimited Uploads','Auto Refresh Every 15 Min','Cloud Management','Secure Hosting','Software Updates','Email Support'] as $f): ?>
+        <?php foreach (['Unlimited Uploads','Auto Refresh Every 15 Min','Cloud Management','Secure Hosting','Software Updates','Email Support'] as $f): ?>
         <li class="flex items-center gap-2 text-sm">
           <svg class="w-4 h-4 text-indigo-200 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
           <?= $f ?>
