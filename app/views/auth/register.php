@@ -69,6 +69,7 @@ $_initialHasTrial = (bool)($_activePlan['has_trial'] ?? 1);
       <label class="flex items-center gap-3 border border-gray-200 rounded-xl p-3.5 cursor-pointer hover:border-primary-300 transition-colors has-[:checked]:border-primary-500 has-[:checked]:bg-primary-50">
         <input type="radio" name="plan" value="<?= Helpers::e($plan['slug']) ?>"
           <?= $isChecked ? 'checked' : '' ?>
+          data-has-trial="<?= (int)(bool)($plan['has_trial'] ?? 1) ?>"
           class="text-primary-500 focus:ring-primary-500">
         <div class="flex-1 flex items-center justify-between gap-2">
           <div>
@@ -90,8 +91,8 @@ $_initialHasTrial = (bool)($_activePlan['has_trial'] ?? 1);
     </div>
   </div>
 
-  <button type="submit" class="w-full bg-primary-500 hover:bg-primary-600 text-white font-semibold py-3 px-6 rounded-xl transition-colors text-sm mt-2">
-    Create Account – Free for 14 Days
+  <button type="submit" id="register-submit-btn" class="w-full bg-primary-500 hover:bg-primary-600 text-white font-semibold py-3 px-6 rounded-xl transition-colors text-sm mt-2">
+    <?= $_initialHasTrial ? 'Create Account – Free for 14 Days' : 'Create Account' ?>
   </button>
   <p class="text-xs text-gray-400 text-center">By creating an account you agree to our Terms of Service and Privacy Policy.</p>
 </form>
@@ -102,6 +103,15 @@ $_initialHasTrial = (bool)($_activePlan['has_trial'] ?? 1);
 </p>
 
 <script>
+document.querySelectorAll('input[name="plan"]').forEach(function(radio) {
+  radio.addEventListener('change', function() {
+    var btn = document.getElementById('register-submit-btn');
+    btn.textContent = this.dataset.hasTrial === '1'
+      ? 'Create Account – Free for 14 Days'
+      : 'Create Account';
+  });
+});
+
 function regSetCycle(cycle) {
   var isAnnual = cycle === 'annual';
   document.getElementById('register-cycle').value = cycle;
