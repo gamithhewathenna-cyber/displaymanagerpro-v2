@@ -52,10 +52,38 @@ $trialDaysLeft= Subscription::trialDaysLeft($sub);
 
       <?php if (!empty($sub['stripe_subscription_id']) && in_array($sub['status'], ['active','trialing'])): ?>
       <div class="mt-5 pt-5 border-t border-gray-50">
-        <form method="POST" action="/billing/cancel" onsubmit="return confirm('Cancel your subscription?')">
-          <input type="hidden" name="_csrf_token" value="<?= Csrf::token() ?>">
-          <button type="submit" class="text-sm text-red-500 hover:text-red-700 font-medium transition-colors">Cancel subscription</button>
-        </form>
+        <button type="button" onclick="document.getElementById('cancel-confirm').classList.remove('hidden')" id="cancel-trigger"
+          class="text-sm text-red-500 hover:text-red-700 font-medium transition-colors">Cancel subscription</button>
+
+        <div id="cancel-confirm" class="hidden mt-4 bg-red-50 border border-red-100 rounded-xl p-4">
+          <div class="flex items-start gap-3 mb-4">
+            <div class="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+              <svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
+            </div>
+            <div>
+              <div class="font-semibold text-red-900 text-sm mb-1">Cancel your subscription?</div>
+              <div class="text-red-700 text-xs leading-relaxed">Your screens will stop displaying at the end of the current billing period. You can reactivate at any time.</div>
+            </div>
+          </div>
+          <label class="flex items-center gap-2 mb-4 cursor-pointer">
+            <input type="checkbox" id="cancel-checkbox" onchange="document.getElementById('cancel-submit').disabled=!this.checked"
+              class="w-4 h-4 rounded text-red-500 border-red-300 focus:ring-red-400">
+            <span class="text-xs text-red-800 font-medium">I understand my screens will stop working</span>
+          </label>
+          <div class="flex gap-2">
+            <form method="POST" action="/billing/cancel">
+              <input type="hidden" name="_csrf_token" value="<?= Csrf::token() ?>">
+              <button type="submit" id="cancel-submit" disabled
+                class="bg-red-600 hover:bg-red-700 text-white text-xs font-semibold px-4 py-2 rounded-lg transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
+                Yes, cancel subscription
+              </button>
+            </form>
+            <button type="button" onclick="document.getElementById('cancel-confirm').classList.add('hidden');document.getElementById('cancel-checkbox').checked=false;document.getElementById('cancel-submit').disabled=true"
+              class="bg-white hover:bg-gray-50 border border-gray-200 text-gray-600 text-xs font-semibold px-4 py-2 rounded-lg transition-colors">
+              Keep subscription
+            </button>
+          </div>
+        </div>
       </div>
       <?php endif; ?>
 
