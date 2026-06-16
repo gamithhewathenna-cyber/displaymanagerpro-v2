@@ -71,9 +71,6 @@
       <h1 class="text-base font-semibold text-gray-800"><?= Helpers::e($title ?? 'Admin') ?></h1>
       <div class="flex items-center gap-3 text-sm text-gray-500">
         <?= Helpers::e(Session::get('user')['name'] ?? '') ?>
-        <?php if (Settings::get('stripe_mode') === 'test'): ?>
-          <span class="bg-yellow-100 text-yellow-700 text-xs font-semibold px-2 py-0.5 rounded-full">TEST MODE</span>
-        <?php endif; ?>
       </div>
     </header>
 

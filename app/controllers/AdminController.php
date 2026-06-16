@@ -136,40 +136,30 @@ class AdminController extends BaseController
         $plan = Plan::find((int)$id);
         if (!$plan) $this->abort(404);
 
-        $hasMaxSlides = (bool) Database::fetchOne("SHOW COLUMNS FROM plans LIKE 'max_slides'");
-
-        if ($hasMaxSlides) {
-            Database::execute(
-                'UPDATE plans SET name=?, price_monthly=?, price_annual=?, max_screens=?, max_slides=?,
-                 stripe_price_id_monthly=?, stripe_price_id_annual=?, is_active=? WHERE id=?',
-                [
-                    Helpers::sanitize($_POST['name'] ?? ''),
-                    (float)($_POST['price_monthly'] ?? 0),
-                    (float)($_POST['price_annual'] ?? 0),
-                    (int)($_POST['max_screens'] ?? 1),
-                    max(1, min(50, (int)($_POST['max_slides'] ?? 15))),
-                    Helpers::sanitize($_POST['stripe_price_id_monthly'] ?? ''),
-                    Helpers::sanitize($_POST['stripe_price_id_annual'] ?? ''),
-                    isset($_POST['is_active']) ? 1 : 0,
-                    (int)$id,
-                ]
-            );
-        } else {
-            Database::execute(
-                'UPDATE plans SET name=?, price_monthly=?, price_annual=?, max_screens=?,
-                 stripe_price_id_monthly=?, stripe_price_id_annual=?, is_active=? WHERE id=?',
-                [
-                    Helpers::sanitize($_POST['name'] ?? ''),
-                    (float)($_POST['price_monthly'] ?? 0),
-                    (float)($_POST['price_annual'] ?? 0),
-                    (int)($_POST['max_screens'] ?? 1),
-                    Helpers::sanitize($_POST['stripe_price_id_monthly'] ?? ''),
-                    Helpers::sanitize($_POST['stripe_price_id_annual'] ?? ''),
-                    isset($_POST['is_active']) ? 1 : 0,
-                    (int)$id,
-                ]
-            );
+        // Auto-add optional columns if they don't exist yet
+        if (!Database::fetchOne("SHOW COLUMNS FROM plans LIKE 'max_slides'")) {
+            try { Database::execute('ALTER TABLE plans ADD COLUMN max_slides TINYINT UNSIGNED NOT NULL DEFAULT 15'); } catch (Exception $e) { error_log('max_slides add: ' . $e->getMessage()); }
         }
+        if (!Database::fetchOne("SHOW COLUMNS FROM plans LIKE 'has_trial'")) {
+            try { Database::execute('ALTER TABLE plans ADD COLUMN has_trial TINYINT UNSIGNED NOT NULL DEFAULT 1'); } catch (Exception $e) { error_log('has_trial add: ' . $e->getMessage()); }
+        }
+
+        Database::execute(
+            'UPDATE plans SET name=?, price_monthly=?, price_annual=?, max_screens=?, max_slides=?,
+             stripe_price_id_monthly=?, stripe_price_id_annual=?, has_trial=?, is_active=? WHERE id=?',
+            [
+                Helpers::sanitize($_POST['name'] ?? ''),
+                (float)($_POST['price_monthly'] ?? 0),
+                (float)($_POST['price_annual'] ?? 0),
+                (int)($_POST['max_screens'] ?? 1),
+                max(1, min(50, (int)($_POST['max_slides'] ?? 15))),
+                Helpers::sanitize($_POST['stripe_price_id_monthly'] ?? ''),
+                Helpers::sanitize($_POST['stripe_price_id_annual'] ?? ''),
+                isset($_POST['has_trial']) ? 1 : 0,
+                isset($_POST['is_active']) ? 1 : 0,
+                (int)$id,
+            ]
+        );
         Session::flash('success', 'Plan updated.');
         $this->redirect('/admin/plans');
     }
@@ -191,44 +181,33 @@ class AdminController extends BaseController
             $this->redirect('/admin/plans/create');
         }
 
-        $hasMaxSlides = (bool) Database::fetchOne("SHOW COLUMNS FROM plans LIKE 'max_slides'");
+        // Auto-add optional columns if they don't exist yet
+        if (!Database::fetchOne("SHOW COLUMNS FROM plans LIKE 'max_slides'")) {
+            try { Database::execute('ALTER TABLE plans ADD COLUMN max_slides TINYINT UNSIGNED NOT NULL DEFAULT 15'); } catch (Exception $e) { error_log('max_slides add: ' . $e->getMessage()); }
+        }
+        if (!Database::fetchOne("SHOW COLUMNS FROM plans LIKE 'has_trial'")) {
+            try { Database::execute('ALTER TABLE plans ADD COLUMN has_trial TINYINT UNSIGNED NOT NULL DEFAULT 1'); } catch (Exception $e) { error_log('has_trial add: ' . $e->getMessage()); }
+        }
 
         $slug = strtolower(preg_replace('/[^a-z0-9]+/i', '-', $name));
 
-        if ($hasMaxSlides) {
-            Database::insert(
-                'INSERT INTO plans (name, slug, price_monthly, price_annual, max_screens, max_slides,
-                 stripe_price_id_monthly, stripe_price_id_annual, is_active)
-                 VALUES (?,?,?,?,?,?,?,?,?)',
-                [
-                    $name,
-                    $slug,
-                    (float)($_POST['price_monthly'] ?? 0),
-                    (float)($_POST['price_annual'] ?? 0),
-                    (int)($_POST['max_screens'] ?? 1),
-                    max(1, min(50, (int)($_POST['max_slides'] ?? 15))),
-                    Helpers::sanitize($_POST['stripe_price_id_monthly'] ?? ''),
-                    Helpers::sanitize($_POST['stripe_price_id_annual'] ?? ''),
-                    isset($_POST['is_active']) ? 1 : 0,
-                ]
-            );
-        } else {
-            Database::insert(
-                'INSERT INTO plans (name, slug, price_monthly, price_annual, max_screens,
-                 stripe_price_id_monthly, stripe_price_id_annual, is_active)
-                 VALUES (?,?,?,?,?,?,?,?)',
-                [
-                    $name,
-                    $slug,
-                    (float)($_POST['price_monthly'] ?? 0),
-                    (float)($_POST['price_annual'] ?? 0),
-                    (int)($_POST['max_screens'] ?? 1),
-                    Helpers::sanitize($_POST['stripe_price_id_monthly'] ?? ''),
-                    Helpers::sanitize($_POST['stripe_price_id_annual'] ?? ''),
-                    isset($_POST['is_active']) ? 1 : 0,
-                ]
-            );
-        }
+        Database::insert(
+            'INSERT INTO plans (name, slug, price_monthly, price_annual, max_screens, max_slides,
+             stripe_price_id_monthly, stripe_price_id_annual, has_trial, is_active)
+             VALUES (?,?,?,?,?,?,?,?,?,?)',
+            [
+                $name,
+                $slug,
+                (float)($_POST['price_monthly'] ?? 0),
+                (float)($_POST['price_annual'] ?? 0),
+                (int)($_POST['max_screens'] ?? 1),
+                max(1, min(50, (int)($_POST['max_slides'] ?? 15))),
+                Helpers::sanitize($_POST['stripe_price_id_monthly'] ?? ''),
+                Helpers::sanitize($_POST['stripe_price_id_annual'] ?? ''),
+                isset($_POST['has_trial']) ? 1 : 0,
+                isset($_POST['is_active']) ? 1 : 0,
+            ]
+        );
 
         ActivityLog::log('admin_create_plan', "Created plan: $name");
         Session::flash('success', 'Plan created successfully.');

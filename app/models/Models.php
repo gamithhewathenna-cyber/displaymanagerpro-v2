@@ -8,7 +8,11 @@ class Plan extends BaseModel
 
     public static function active(): array
     {
-        return Database::fetchAll('SELECT * FROM plans WHERE is_active = 1 ORDER BY sort_order ASC');
+        try {
+            return Database::fetchAll('SELECT * FROM plans WHERE is_active = 1 ORDER BY sort_order ASC, id ASC');
+        } catch (Exception $e) {
+            return Database::fetchAll('SELECT * FROM plans WHERE is_active = 1 ORDER BY id ASC');
+        }
     }
 
     public static function findBySlug(string $slug): ?array

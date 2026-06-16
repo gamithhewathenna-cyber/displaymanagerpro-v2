@@ -27,6 +27,11 @@
         <div class="col-span-2"><label class="block text-sm font-medium text-gray-700 mb-1">PayPal Plan ID (Annual)</label>
           <input type="text" name="stripe_price_id_annual" placeholder="P-XXXXXXXXXXXXXXXXXXXX" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary-500"></div>
         <div class="col-span-2"><label class="flex items-center gap-2 cursor-pointer">
+          <input type="checkbox" name="has_trial" value="1" checked class="rounded text-primary-500">
+          <span class="text-sm font-medium text-gray-700">Offer free trial for this plan</span>
+        </label>
+        <p class="text-xs text-gray-400 mt-1 ml-6">When checked, the sign-up button shows "Start Free Trial". Uncheck for plans that charge immediately.</p></div>
+        <div class="col-span-2"><label class="flex items-center gap-2 cursor-pointer">
           <input type="checkbox" name="is_active" value="1" checked class="rounded text-primary-500">
           <span class="text-sm font-medium text-gray-700">Plan is active (shown to customers)</span>
         </label></div>
