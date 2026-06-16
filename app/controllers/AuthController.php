@@ -71,10 +71,11 @@ class AuthController extends BaseController
     {
         $this->validateCsrf();
 
-        $name     = Helpers::sanitize($_POST['name'] ?? '');
-        $email    = strtolower(trim($_POST['email'] ?? ''));
-        $password = $_POST['password'] ?? '';
-        $planSlug = $_POST['plan'] ?? 'starter';
+        $name         = Helpers::sanitize($_POST['name'] ?? '');
+        $email        = strtolower(trim($_POST['email'] ?? ''));
+        $password     = $_POST['password'] ?? '';
+        $planSlug     = $_POST['plan'] ?? 'starter';
+        $billingCycle = ($_POST['cycle'] ?? 'monthly') === 'annual' ? 'annual' : 'monthly';
 
         // Validation
         $errors = [];
@@ -86,7 +87,8 @@ class AuthController extends BaseController
         if ($errors) {
             Session::flash('error', implode(' ', $errors));
             Session::flash('old', ['name' => $name, 'email' => $email]);
-            $this->redirect('/register');
+            $qs = http_build_query(array_filter(['plan' => $planSlug, 'cycle' => $billingCycle]));
+            $this->redirect('/register' . ($qs ? '?' . $qs : ''));
         }
 
         $plan = Plan::findBySlug($planSlug) ?? Plan::findBySlug('starter');
@@ -107,7 +109,7 @@ class AuthController extends BaseController
                 'user_id'        => $userId,
                 'plan_id'        => $plan['id'],
                 'status'         => 'trialing',
-                'billing_cycle'  => 'monthly',
+                'billing_cycle'  => $billingCycle,
                 'trial_ends_at'  => $trialEnd,
             ]);
 
