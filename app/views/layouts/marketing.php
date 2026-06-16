@@ -20,6 +20,7 @@
   $_gsc_code        = Settings::get('gsc_verification', '');
 ?>
 <title><?= $_full_title ?></title>
+<?php $_fav = Settings::get('site_favicon',''); if ($_fav): ?><link rel="icon" href="<?= Helpers::e($_fav) ?>?v=<?= filemtime(PUBLIC_PATH.$_fav) ?>"><?php endif; ?>
 <meta name="description" content="<?= Helpers::e($_meta_desc) ?>">
 <?php if ($_seo_keyphrase !== ''): ?>
 <meta name="keywords" content="<?= Helpers::e($_seo_keyphrase) ?>">

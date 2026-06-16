@@ -3,57 +3,96 @@
   <?php
     $g = $settings;
     function settingVal($s, $key) { foreach ($s as $group) { if (isset($group[$key])) return $group[$key]; } return ''; }
-    $currentLogo = Settings::get('company_logo', '');
+    $currentLogo    = Settings::get('company_logo', '');
+    $currentFavicon = Settings::get('site_favicon', '');
+    $companyName    = Settings::get('company_name', APP_NAME);
   ?>
 
   <!-- Branding -->
   <div class="bg-white rounded-xl border border-gray-100 p-6" id="branding">
     <h2 class="font-semibold text-gray-900 mb-1">Branding</h2>
-    <p class="text-sm text-gray-400 mb-4">Upload a logo to display in the sidebar. JPG, PNG, or WebP, max 2MB.</p>
+    <p class="text-sm text-gray-400 mb-6">Manage your logo and site favicon.</p>
 
-    <!-- Current logo preview -->
-    <div class="mb-5">
-      <?php if ($currentLogo): ?>
-        <div class="flex items-center gap-4">
-          <div class="border border-gray-200 rounded-xl p-3 bg-gray-50 flex items-center justify-center" style="min-width:120px;height:60px;">
-            <img src="<?= Helpers::e($currentLogo) ?>?v=<?= time() ?>" alt="Current logo" class="max-h-10 max-w-[200px] object-contain">
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+
+      <!-- Logo -->
+      <div class="border border-gray-100 rounded-xl p-4 space-y-4">
+        <div>
+          <div class="font-medium text-sm text-gray-800 mb-0.5">Site Logo</div>
+          <div class="text-xs text-gray-400">Shown in the sidebar &amp; navigation. JPG, PNG or WebP · max 2MB.</div>
+        </div>
+
+        <!-- Preview -->
+        <div class="flex items-center justify-center bg-gray-50 border border-dashed border-gray-200 rounded-xl" style="height:72px;">
+          <?php if ($currentLogo): ?>
+            <img src="<?= Helpers::e($currentLogo) ?>?v=<?= time() ?>" alt="Logo" class="max-h-10 max-w-[180px] object-contain">
+          <?php else: ?>
+            <span class="text-xs text-gray-400">No logo — app name shown</span>
+          <?php endif; ?>
+        </div>
+
+        <form method="POST" action="/admin/settings/logo" enctype="multipart/form-data">
+          <input type="hidden" name="_csrf_token" value="<?= Csrf::token() ?>">
+          <div class="flex items-center gap-2">
+            <input type="file" name="logo" accept="image/jpeg,image/png,image/webp"
+              class="block w-full text-xs text-gray-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100 cursor-pointer">
+            <button type="submit" class="bg-primary-500 hover:bg-primary-600 text-white font-semibold px-4 py-2 rounded-lg text-xs transition-colors whitespace-nowrap">Upload</button>
           </div>
-          <div class="text-sm text-gray-500">Current logo</div>
-        </div>
-      <?php else: ?>
-        <div class="inline-flex items-center gap-2 px-4 py-3 bg-gray-50 border border-dashed border-gray-300 rounded-xl text-sm text-gray-400">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-          No logo uploaded — the app name is shown instead.
-        </div>
-      <?php endif; ?>
-    </div>
-
-    <!-- Upload form -->
-    <form method="POST" action="/admin/settings/logo" enctype="multipart/form-data" class="space-y-3">
-      <input type="hidden" name="_csrf_token" value="<?= Csrf::token() ?>">
-      <div class="flex items-center gap-3">
-        <label class="block">
-          <span class="sr-only">Choose logo file</span>
-          <input type="file" name="logo" accept="image/jpeg,image/png,image/webp"
-            class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100 cursor-pointer">
-        </label>
-        <button type="submit" class="bg-primary-500 hover:bg-primary-600 text-white font-semibold px-5 py-2.5 rounded-xl text-sm transition-colors whitespace-nowrap">
-          Upload Logo
-        </button>
+        </form>
+        <?php if ($currentLogo): ?>
+        <form method="POST" action="/admin/settings/logo/remove">
+          <input type="hidden" name="_csrf_token" value="<?= Csrf::token() ?>">
+          <button type="submit" onclick="return confirm('Remove the current logo?')" class="text-xs text-red-500 hover:text-red-700 font-medium transition-colors">Remove logo</button>
+        </form>
+        <?php endif; ?>
       </div>
-    </form>
 
-    <!-- Remove form -->
-    <?php if ($currentLogo): ?>
-      <form method="POST" action="/admin/settings/logo/remove" class="mt-3">
-        <input type="hidden" name="_csrf_token" value="<?= Csrf::token() ?>">
-        <button type="submit"
-          onclick="return confirm('Remove the current logo?')"
-          class="text-sm text-red-500 hover:text-red-700 font-medium transition-colors">
-          Remove logo
-        </button>
-      </form>
-    <?php endif; ?>
+      <!-- Favicon -->
+      <div class="border border-gray-100 rounded-xl p-4 space-y-4">
+        <div>
+          <div class="font-medium text-sm text-gray-800 mb-0.5">Site Favicon</div>
+          <div class="text-xs text-gray-400">Shown in browser tabs &amp; bookmarks. ICO, PNG or SVG · max 1MB.</div>
+        </div>
+
+        <!-- Browser tab preview -->
+        <div>
+          <div class="text-xs text-gray-400 mb-2">Preview</div>
+          <div class="inline-flex flex-col">
+            <!-- Tab strip -->
+            <div class="flex items-center gap-1.5 bg-gray-200 rounded-t-lg px-3 py-2 border border-b-0 border-gray-300 max-w-[200px]">
+              <?php if ($currentFavicon): ?>
+                <img src="<?= Helpers::e($currentFavicon) ?>?v=<?= time() ?>" alt="Favicon" class="w-4 h-4 object-contain flex-shrink-0">
+              <?php else: ?>
+                <div class="w-4 h-4 bg-primary-400 rounded-sm flex-shrink-0"></div>
+              <?php endif; ?>
+              <span class="text-xs text-gray-700 font-medium truncate flex-1"><?= Helpers::e($companyName) ?></span>
+              <span class="text-gray-400 text-xs flex-shrink-0">✕</span>
+            </div>
+            <!-- Address bar -->
+            <div class="bg-white border border-gray-300 rounded-b-lg rounded-tr-lg px-3 py-1.5 flex items-center gap-1.5 max-w-[260px]">
+              <svg class="w-3 h-3 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/></svg>
+              <span class="text-xs text-gray-400 truncate">yourdomain.com</span>
+            </div>
+          </div>
+        </div>
+
+        <form method="POST" action="/admin/settings/favicon" enctype="multipart/form-data">
+          <input type="hidden" name="_csrf_token" value="<?= Csrf::token() ?>">
+          <div class="flex items-center gap-2">
+            <input type="file" name="favicon" accept="image/x-icon,image/png,image/svg+xml,.ico"
+              class="block w-full text-xs text-gray-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 cursor-pointer">
+            <button type="submit" class="bg-indigo-500 hover:bg-indigo-600 text-white font-semibold px-4 py-2 rounded-lg text-xs transition-colors whitespace-nowrap">Upload</button>
+          </div>
+        </form>
+        <?php if ($currentFavicon): ?>
+        <form method="POST" action="/admin/settings/favicon/remove">
+          <input type="hidden" name="_csrf_token" value="<?= Csrf::token() ?>">
+          <button type="submit" onclick="return confirm('Remove the current favicon?')" class="text-xs text-red-500 hover:text-red-700 font-medium transition-colors">Remove favicon</button>
+        </form>
+        <?php endif; ?>
+      </div>
+
+    </div>
   </div>
 
   <!-- Maintenance Mode -->

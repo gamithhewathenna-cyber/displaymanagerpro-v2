@@ -454,6 +454,78 @@ class AdminController extends BaseController
         $this->redirect('/admin/settings#branding');
     }
 
+    // ── Favicon ────────────────────────────────────────────────────────────
+
+    public function uploadFavicon(): void
+    {
+        $this->requireAdmin();
+        $this->validateCsrf();
+
+        if (empty($_FILES['favicon']) || $_FILES['favicon']['error'] === UPLOAD_ERR_NO_FILE) {
+            Session::flash('error', 'No file selected.');
+            $this->redirect('/admin/settings#branding');
+        }
+
+        $file = $_FILES['favicon'];
+        if ($file['error'] !== UPLOAD_ERR_OK) {
+            Session::flash('error', 'Upload failed (error code ' . $file['error'] . ').');
+            $this->redirect('/admin/settings#branding');
+        }
+
+        $ext          = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+        $allowedMimes = ['image/x-icon', 'image/vnd.microsoft.icon', 'image/png', 'image/svg+xml'];
+        $extMap       = ['ico' => true, 'png' => true, 'svg' => true];
+
+        if (!in_array($file['type'], $allowedMimes) || !isset($extMap[$ext])) {
+            Session::flash('error', 'Only ICO, PNG, and SVG files are allowed.');
+            $this->redirect('/admin/settings#branding');
+        }
+
+        if ($file['size'] > 1024 * 1024) {
+            Session::flash('error', 'Favicon must be under 1MB.');
+            $this->redirect('/admin/settings#branding');
+        }
+
+        $oldFavicon = Settings::get('site_favicon', '');
+        if ($oldFavicon && str_starts_with($oldFavicon, '/uploads/favicon/')) {
+            $oldPath = PUBLIC_PATH . $oldFavicon;
+            if (file_exists($oldPath)) @unlink($oldPath);
+        }
+
+        $faviconDir = UPLOAD_PATH . '/favicon/';
+        if (!is_dir($faviconDir)) mkdir($faviconDir, 0755, true);
+
+        $storedName = 'favicon_' . time() . '.' . $ext;
+        $dest       = $faviconDir . $storedName;
+
+        if (!move_uploaded_file($file['tmp_name'], $dest)) {
+            Session::flash('error', 'Failed to save favicon. Check directory permissions.');
+            $this->redirect('/admin/settings#branding');
+        }
+
+        Settings::set('site_favicon', '/uploads/favicon/' . $storedName);
+        ActivityLog::log('admin_settings_saved', 'Updated site favicon');
+        Session::flash('success', 'Favicon updated successfully.');
+        $this->redirect('/admin/settings#branding');
+    }
+
+    public function removeFavicon(): void
+    {
+        $this->requireAdmin();
+        $this->validateCsrf();
+
+        $oldFavicon = Settings::get('site_favicon', '');
+        if ($oldFavicon && str_starts_with($oldFavicon, '/uploads/favicon/')) {
+            $oldPath = PUBLIC_PATH . $oldFavicon;
+            if (file_exists($oldPath)) @unlink($oldPath);
+        }
+
+        Settings::set('site_favicon', '');
+        ActivityLog::log('admin_settings_saved', 'Removed site favicon');
+        Session::flash('success', 'Favicon removed.');
+        $this->redirect('/admin/settings#branding');
+    }
+
     // ── Revenue ────────────────────────────────────────────────────────────
 
     public function revenue(): void

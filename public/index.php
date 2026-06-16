@@ -143,6 +143,8 @@ $router->get('/admin/settings',                       'AdminController', 'settin
 $router->post('/admin/settings',                      'AdminController', 'saveSettings');
 $router->post('/admin/settings/logo',                 'AdminController', 'uploadLogo');
 $router->post('/admin/settings/logo/remove',          'AdminController', 'removeLogo');
+$router->post('/admin/settings/favicon',              'AdminController', 'uploadFavicon');
+$router->post('/admin/settings/favicon/remove',       'AdminController', 'removeFavicon');
 $router->post('/admin/settings/test-email',           'AdminController', 'testEmail');
 
 // ─ Content Manager (Admin CMS)
