@@ -151,7 +151,14 @@
       </div>
       <?php endfor; ?>
     </div>
-    <div class="border-t border-gray-800 pt-8 flex flex-col sm:flex-row items-center justify-between gap-5">
+    <!-- Policy links row -->
+    <div class="border-t border-gray-800 pt-6 pb-4 flex flex-wrap justify-center sm:justify-start gap-x-5 gap-y-1">
+      <a href="/privacy-policy" class="text-xs text-gray-500 hover:text-gray-300 transition-colors">Privacy Policy</a>
+      <a href="/terms"          class="text-xs text-gray-500 hover:text-gray-300 transition-colors">Terms &amp; Conditions</a>
+      <a href="/refund-policy"  class="text-xs text-gray-500 hover:text-gray-300 transition-colors">Refund Policy</a>
+    </div>
+
+    <div class="border-t border-gray-800 pt-6 flex flex-col sm:flex-row items-center justify-between gap-5">
       <div class="text-xs text-gray-500 text-center sm:text-left">
         <?= Helpers::e(ContentController::get('footer', 'copyright', '© ' . date('Y') . ' ' . Settings::get('company_name', APP_NAME) . '. All rights reserved.')) ?>
       </div>
