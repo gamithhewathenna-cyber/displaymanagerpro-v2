@@ -294,8 +294,8 @@ SET FOREIGN_KEY_CHECKS = 1;
 -- -----------------------------------------------
 INSERT INTO `plans` (`name`, `slug`, `description`, `price_monthly`, `price_annual`, `currency`, `max_screens`, `max_slides`, `max_storage_mb`, `features`, `is_active`, `sort_order`) VALUES
 ('Starter', 'starter', 'Perfect for single-screen setups', 75.00, 750.00, 'AUD', 1, 15, 512, '["14-Day Free Trial","1 TV Screen","Up to 15 Slides","500 MB Storage","Auto Refresh","Cloud Management","Secure Hosting","Software Updates"]', 1, 1),
-('Growth', 'growth', 'Great for small venues with multiple screens', 99.00, 990.00, 'AUD', 2, 15, 1024, '["14-Day Free Trial","Up to 2 TV Screens","Up to 15 Slides","1 GB Storage","Auto Refresh","Cloud Management","Secure Hosting","Software Updates"]', 1, 2),
-('Pro', 'pro', 'For businesses with multiple display zones', 119.00, 1190.00, 'AUD', 3, 15, 2048, '["14-Day Free Trial","Up to 3 TV Screens","Up to 15 Slides","2 GB Storage","Auto Refresh","Cloud Management","Secure Hosting","Software Updates","Priority Support"]', 1, 3);
+('Growth', 'growth', 'Great for small venues with multiple screens', 99.00, 990.00, 'AUD', 2, 15, 1024, '["Up to 2 TV Screens","Up to 15 Slides","1 GB Storage","Auto Refresh","Cloud Management","Secure Hosting","Software Updates"]', 1, 2),
+('Pro', 'pro', 'For businesses with multiple display zones', 119.00, 1190.00, 'AUD', 3, 15, 2048, '["Up to 3 TV Screens","Up to 15 Slides","2 GB Storage","Auto Refresh","Cloud Management","Secure Hosting","Software Updates","Priority Support"]', 1, 3);
 
 -- -----------------------------------------------
 -- Seed: Default Settings

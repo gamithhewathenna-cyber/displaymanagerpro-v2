@@ -53,7 +53,12 @@
           &nbsp;·&nbsp;<?= $storageLabel ?> storage
         </div>
 
-        <?php $feats = json_decode($plan['features'] ?? '[]', true); ?>
+        <?php
+          $feats = json_decode($plan['features'] ?? '[]', true);
+          if (!$hasTrial) {
+              $feats = array_values(array_filter($feats, fn($f) => !preg_match('/14.day|free trial/i', $f)));
+          }
+        ?>
         <ul class="space-y-3 mb-8">
           <?php if ($hasTrial): ?>
           <li class="flex items-center gap-2.5 text-sm text-green-700 font-medium">
