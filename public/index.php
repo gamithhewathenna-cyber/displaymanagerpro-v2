@@ -104,8 +104,9 @@ $router->post('/channels/{id}/slides/{sid}/rotate', 'ChannelController', 'rotate
 $router->post('/channels/{id}/reorder',             'ChannelController', 'reorderSlides');
 
 $router->get('/media',              'MediaController', 'index');
-$router->post('/media/upload',      'MediaController', 'upload');
-$router->post('/media/{id}/crop',   'MediaController', 'crop');
+$router->post('/media/upload',         'MediaController', 'upload');
+$router->post('/media/upload-cropped','MediaController', 'uploadCropped');
+$router->post('/media/{id}/crop',      'MediaController', 'crop');
 $router->post('/media/{id}/delete', 'MediaController', 'delete');
 
 $router->get('/billing',                    'BillingController', 'index');

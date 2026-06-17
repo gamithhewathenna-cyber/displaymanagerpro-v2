@@ -427,6 +427,81 @@ class MediaController extends BaseController
         $this->json(['success' => true]);
     }
 
+    public function uploadCropped(): void
+    {
+        $this->requireAuth();
+        $this->validateCsrf();
+        $user = $this->currentUser();
+        $sub  = Subscription::forUser($user['id']);
+
+        if (!Subscription::isActive($sub)) {
+            $this->json(['error' => 'Subscription required to upload media.'], 403);
+        }
+
+        if (empty($_FILES['files'])) {
+            $this->json(['error' => 'No files received.'], 400);
+        }
+
+        $maxStorageBytes = (int)($sub['max_storage_mb'] ?? 512) * 1024 * 1024;
+        $storageUsed     = Media::totalSizeForUser($user['id']);
+
+        if ($storageUsed >= $maxStorageBytes) {
+            $this->json(['error' => 'Storage limit of ' . Helpers::formatBytes($maxStorageBytes) . ' reached.'], 403);
+        }
+
+        $storage  = new StorageService();
+        $uploaded = [];
+        $errors   = [];
+        $maxCropBytes = 5 * 1024 * 1024; // 5MB — generous for 1920×1080 pre-cropped images
+
+        $files = $_FILES['files'];
+        $count = is_array($files['name']) ? count($files['name']) : 1;
+
+        for ($i = 0; $i < $count; $i++) {
+            $file = [
+                'name'     => is_array($files['name'])     ? $files['name'][$i]     : $files['name'],
+                'type'     => is_array($files['type'])     ? $files['type'][$i]     : $files['type'],
+                'tmp_name' => is_array($files['tmp_name']) ? $files['tmp_name'][$i] : $files['tmp_name'],
+                'error'    => is_array($files['error'])    ? $files['error'][$i]    : $files['error'],
+                'size'     => is_array($files['size'])     ? $files['size'][$i]     : $files['size'],
+            ];
+
+            if ($file['error'] !== UPLOAD_ERR_OK) {
+                $errors[] = $file['name'] . ': Upload error.';
+                continue;
+            }
+
+            if ($file['size'] > $maxCropBytes) {
+                $errors[] = $file['name'] . ': Too large after cropping (max 5MB).';
+                continue;
+            }
+
+            if ($storageUsed + $file['size'] > $maxStorageBytes) {
+                $errors[] = $file['name'] . ': Storage limit reached (' . Helpers::formatBytes($maxStorageBytes) . ' total).';
+                continue;
+            }
+
+            try {
+                $meta    = $storage->storeCropped($file, $user['id']);
+                $mediaId = Media::create($user['id'], $meta);
+                $media   = Media::find($mediaId);
+                $storageUsed += $meta['file_size'];
+                $uploaded[] = [
+                    'id'     => $mediaId,
+                    'name'   => $media['original_name'],
+                    'url'    => $media['public_url'],
+                    'size'   => Helpers::formatBytes($media['file_size']),
+                    'width'  => $media['width'],
+                    'height' => $media['height'],
+                ];
+            } catch (Exception $e) {
+                $errors[] = $file['name'] . ': ' . $e->getMessage();
+            }
+        }
+
+        $this->json(['uploaded' => $uploaded, 'errors' => $errors]);
+    }
+
     public function crop(string $id): void
     {
         $this->requireAuth();

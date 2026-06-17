@@ -47,6 +47,30 @@ class StorageService
         }
     }
 
+    // Store a pre-cropped image — skips the 1MB size check and image optimization
+    public function storeCropped(array $file, int $userId): array
+    {
+        $ext        = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+        $storedName = uniqid('img_', true) . '_' . $userId . '.' . $ext;
+
+        if (!in_array($file['type'], ALLOWED_MIME_TYPES)) {
+            throw new Exception('File type not allowed. Only JPG, PNG, WEBP accepted.');
+        }
+
+        $dimensions = @getimagesize($file['tmp_name']);
+        $width      = $dimensions[0] ?? null;
+        $height     = $dimensions[1] ?? null;
+
+        switch ($this->driver) {
+            case 's3':
+                return $this->storeOnS3($file['tmp_name'], $storedName, $file, $userId, $width, $height, false);
+            case 'r2':
+                return $this->storeOnS3($file['tmp_name'], $storedName, $file, $userId, $width, $height, true);
+            default:
+                return $this->storeLocally($file['tmp_name'], $storedName, $file, $userId, $width, $height);
+        }
+    }
+
     private function storeLocally(string $tmpPath, string $storedName, array $file, int $userId, ?int $w, ?int $h): array
     {
         $dir = UPLOAD_PATH . '/' . $userId . '/';
