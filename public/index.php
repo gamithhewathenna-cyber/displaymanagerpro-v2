@@ -105,6 +105,7 @@ $router->post('/channels/{id}/reorder',             'ChannelController', 'reorde
 
 $router->get('/media',              'MediaController', 'index');
 $router->post('/media/upload',      'MediaController', 'upload');
+$router->post('/media/{id}/crop',   'MediaController', 'crop');
 $router->post('/media/{id}/delete', 'MediaController', 'delete');
 
 $router->get('/billing',                    'BillingController', 'index');

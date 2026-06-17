@@ -163,6 +163,64 @@ class StorageService
         ];
     }
 
+    public function putContent(string $content, string $storagePath, string $mimeType, string $driver): void
+    {
+        if ($driver === 's3' || $driver === 'r2') {
+            $isR2 = ($driver === 'r2');
+            if ($isR2) {
+                $accessKey = Settings::get('r2_access_key');
+                $secretKey = Settings::get('r2_secret_key');
+                $bucket    = Settings::get('r2_bucket');
+                $endpoint  = 'https://' . Settings::get('r2_account_id') . '.r2.cloudflarestorage.com';
+                $region    = 'auto';
+            } else {
+                $accessKey = Settings::get('s3_access_key');
+                $secretKey = Settings::get('s3_secret_key');
+                $bucket    = Settings::get('s3_bucket');
+                $region    = Settings::get('s3_region', 'us-east-1');
+                $endpoint  = 'https://s3.' . $region . '.amazonaws.com';
+            }
+
+            $key        = $storagePath;
+            $contentLen = strlen($content);
+            $payloadHash = hash('sha256', $content);
+            $amzDate    = gmdate('Ymd\THis\Z');
+            $dateStamp  = gmdate('Ymd');
+            $service    = 's3';
+            $host       = parse_url($endpoint, PHP_URL_HOST) . '/' . $bucket;
+
+            $canonHeaders  = "content-type:$mimeType\nhost:$host\nx-amz-content-sha256:$payloadHash\nx-amz-date:$amzDate\n";
+            $signedHeaders  = 'content-type;host;x-amz-content-sha256;x-amz-date';
+            $canonRequest   = "PUT\n/$key\n\n$canonHeaders\n$signedHeaders\n$payloadHash";
+            $credScope      = "$dateStamp/$region/$service/aws4_request";
+            $strToSign      = "AWS4-HMAC-SHA256\n$amzDate\n$credScope\n" . hash('sha256', $canonRequest);
+            $sigKey         = hash_hmac('sha256', 'aws4_request',
+                              hash_hmac('sha256', $service,
+                              hash_hmac('sha256', $region,
+                              hash_hmac('sha256', $dateStamp, 'AWS4' . $secretKey, true), true), true), true);
+            $sig            = hash_hmac('sha256', $strToSign, $sigKey);
+            $authHeader     = "AWS4-HMAC-SHA256 Credential=$accessKey/$credScope, SignedHeaders=$signedHeaders, Signature=$sig";
+
+            $ch = curl_init("$endpoint/$bucket/$key");
+            curl_setopt_array($ch, [
+                CURLOPT_CUSTOMREQUEST  => 'PUT',
+                CURLOPT_POSTFIELDS     => $content,
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_TIMEOUT        => 60,
+                CURLOPT_HTTPHEADER     => [
+                    "Authorization: $authHeader",
+                    "Content-Type: $mimeType",
+                    "Content-Length: $contentLen",
+                    "x-amz-content-sha256: $payloadHash",
+                    "x-amz-date: $amzDate",
+                    "x-amz-acl: public-read",
+                ],
+            ]);
+            curl_exec($ch);
+            curl_close($ch);
+        }
+    }
+
     private function optimizeImage(string $tmpPath, string $mimeType): string
     {
         if (!extension_loaded('gd')) return $tmpPath;

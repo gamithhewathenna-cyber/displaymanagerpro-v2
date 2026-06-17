@@ -426,4 +426,110 @@ class MediaController extends BaseController
 
         $this->json(['success' => true]);
     }
+
+    public function crop(string $id): void
+    {
+        $this->requireAuth();
+        $this->validateCsrf();
+        $user  = $this->currentUser();
+        $media = Media::find((int)$id);
+
+        if (!$media || !Media::userOwns((int)$id, $user['id'])) {
+            $this->json(['error' => 'Not found.'], 404);
+        }
+
+        if (!extension_loaded('gd')) {
+            $this->json(['error' => 'Image processing (GD extension) is not available on this server.'], 500);
+        }
+
+        $x      = (int) round((float) ($_POST['x']      ?? 0));
+        $y      = (int) round((float) ($_POST['y']      ?? 0));
+        $w      = (int) round((float) ($_POST['width']  ?? 0));
+        $h      = (int) round((float) ($_POST['height'] ?? 0));
+        $rotate = (int) ($_POST['rotate'] ?? 0);
+
+        if ($w < 1 || $h < 1) {
+            $this->json(['error' => 'Invalid crop selection.'], 400);
+        }
+
+        $mime   = $media['mime_type'];
+        $driver = $media['storage_driver'] ?? 'local';
+
+        // Load source image
+        if ($driver === 'local') {
+            $filePath = PUBLIC_PATH . '/' . $media['storage_path'];
+            $src = match($mime) {
+                'image/jpeg' => @imagecreatefromjpeg($filePath),
+                'image/png'  => @imagecreatefrompng($filePath),
+                'image/webp' => @imagecreatefromwebp($filePath),
+                default      => null,
+            };
+        } else {
+            $raw = @file_get_contents($media['public_url']);
+            $src = $raw ? @imagecreatefromstring($raw) : null;
+        }
+
+        if (!$src) {
+            $this->json(['error' => 'Could not read image file.'], 500);
+        }
+
+        // Apply rotation (Cropper.js rotate is CW, imagerotate is CCW)
+        if ($rotate !== 0) {
+            $src = imagerotate($src, -$rotate, 0);
+        }
+
+        // Clamp crop box to image bounds
+        $srcW = imagesx($src);
+        $srcH = imagesy($src);
+        $x = max(0, min($x, $srcW - 1));
+        $y = max(0, min($y, $srcH - 1));
+        $w = min($w, $srcW - $x);
+        $h = min($h, $srcH - $y);
+
+        // Crop + resize to 1920×1080
+        $out = imagecreatetruecolor(1920, 1080);
+
+        if ($mime === 'image/png') {
+            imagealphablending($out, false);
+            imagesavealpha($out, true);
+            $bg = imagecolorallocatealpha($out, 0, 0, 0, 127);
+            imagefilledrectangle($out, 0, 0, 1920, 1080, $bg);
+        }
+
+        imagecopyresampled($out, $src, 0, 0, $x, $y, 1920, 1080, $w, $h);
+        imagedestroy($src);
+
+        // Encode to temp file
+        $tmp = tempnam(sys_get_temp_dir(), 'crop_');
+        $ok  = match($mime) {
+            'image/png'  => imagepng($out, $tmp, 8),
+            'image/webp' => imagewebp($out, $tmp, 85),
+            default      => imagejpeg($out, $tmp, 90),
+        };
+        imagedestroy($out);
+
+        if (!$ok) {
+            @unlink($tmp);
+            $this->json(['error' => 'Failed to encode cropped image.'], 500);
+        }
+
+        $newSize = filesize($tmp);
+
+        // Save back to storage
+        if ($driver === 'local') {
+            copy($tmp, $filePath);
+        } else {
+            $storage = new StorageService($driver);
+            $storage->putContent(file_get_contents($tmp), $media['storage_path'], $mime, $driver);
+        }
+        @unlink($tmp);
+
+        // Update DB record
+        Database::execute(
+            'UPDATE media SET width = 1920, height = 1080, file_size = ? WHERE id = ?',
+            [$newSize, (int)$id]
+        );
+
+        $this->json(['success' => true, 'url' => $media['public_url'] . '?v=' . time()]);
+    }
 }
