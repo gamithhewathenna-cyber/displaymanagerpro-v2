@@ -290,6 +290,7 @@ class AdminController extends BaseController
             'maintenance' => Settings::getGroup('maintenance'),
             'media'       => Settings::getGroup('media'),
             'seo'         => Settings::getGroup('seo'),
+            'social'      => Settings::getGroup('social'),
         ];
         $this->view('admin/settings', ['title' => 'System Settings', 'settings' => $settings], 'admin');
     }
@@ -309,6 +310,7 @@ class AdminController extends BaseController
             'media'       => ['max_upload_size_kb'],
             'maintenance' => ['maintenance_mode','maintenance_message'],
             'seo'         => ['ga_measurement_id','gsc_verification','meta_pixel_code'],
+            'social'      => ['facebook_url','instagram_url','google_business_url'],
         ];
 
         if (!isset($allowed[$group])) $this->abort(400, 'Invalid settings group.');
