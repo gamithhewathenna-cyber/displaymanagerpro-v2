@@ -273,19 +273,18 @@
           <span class="text-sm font-semibold text-gray-800">Meta Pixel (Facebook)</span>
         </div>
         <div>
-          <label class="block text-xs font-medium text-gray-600 mb-1">Pixel ID</label>
-          <input type="text" name="meta_pixel_id"
-            value="<?= Helpers::e($g['seo']['meta_pixel_id'] ?? '') ?>"
-            placeholder="123456789012345"
-            class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary-500">
-          <p class="text-xs text-gray-400 mt-1">Found in Meta Business Suite → Events Manager → your Pixel → Settings. Paste the numeric ID only (e.g. <code class="bg-gray-100 px-1 rounded">123456789012345</code>).</p>
+          <label class="block text-xs font-medium text-gray-600 mb-1">Pixel Code</label>
+          <textarea name="meta_pixel_code" rows="6"
+            placeholder="Paste the full Meta Pixel code snippet here…"
+            class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-xs font-mono leading-relaxed focus:outline-none focus:ring-2 focus:ring-primary-500 resize-y"><?= htmlspecialchars($g['seo']['meta_pixel_code'] ?? '') ?></textarea>
+          <p class="text-xs text-gray-400 mt-1">Go to Meta Business Suite → Events Manager → your Pixel → Set up → Copy the full code snippet and paste it above. It will be injected into the <code class="bg-gray-100 px-1 rounded">&lt;head&gt;</code> of every public page.</p>
         </div>
       </div>
 
       <?php
         $gaSet    = !empty($g['seo']['ga_measurement_id']);
         $gscSet   = !empty($g['seo']['gsc_verification']);
-        $pixelSet = !empty($g['seo']['meta_pixel_id']);
+        $pixelSet = !empty($g['seo']['meta_pixel_code']);
       ?>
       <?php if ($gaSet || $gscSet || $pixelSet): ?>
       <div class="flex flex-wrap gap-3 text-xs">
