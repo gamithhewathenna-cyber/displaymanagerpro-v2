@@ -70,10 +70,19 @@
 <!-- Nav -->
 <nav class="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-100">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between h-20">
-    <?php $__logo = Settings::get('website_logo', '') ?: Settings::get('company_logo', ''); ?>
+    <?php
+      $__logo       = Settings::get('website_logo', '') ?: Settings::get('company_logo', '');
+      $__mobileLogo = Settings::get('website_logo_mobile', '') ?: $__logo;
+      $__altText    = Helpers::e(Settings::get('company_name', APP_NAME));
+    ?>
     <a href="/" class="flex items-center gap-2.5 font-bold text-2xl min-w-0">
-      <?php if ($__logo): ?>
-        <img src="<?= Helpers::e($__logo) ?>" alt="<?= Helpers::e(Settings::get('company_name', APP_NAME)) ?>" class="max-h-12 max-w-[210px] object-contain">
+      <?php if ($__logo || $__mobileLogo): ?>
+        <?php if ($__mobileLogo && $__mobileLogo !== $__logo): ?>
+          <img src="<?= Helpers::e($__mobileLogo) ?>" alt="<?= $__altText ?>" class="block md:hidden max-h-10 max-w-[44px] object-contain">
+          <img src="<?= Helpers::e($__logo) ?>"       alt="<?= $__altText ?>" class="hidden md:block max-h-12 max-w-[210px] object-contain">
+        <?php else: ?>
+          <img src="<?= Helpers::e($__logo) ?>" alt="<?= $__altText ?>" class="max-h-12 max-w-[210px] object-contain">
+        <?php endif; ?>
       <?php else: ?>
         <div class="w-10 h-10 bg-primary-500 rounded-lg flex items-center justify-center flex-shrink-0">
           <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>

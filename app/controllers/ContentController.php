@@ -124,6 +124,76 @@ class ContentController extends BaseController
         $this->redirect('/admin/content/branding');
     }
 
+    public function uploadMobileWebsiteLogo(): void
+    {
+        $this->requireAdmin();
+        $this->validateCsrf();
+
+        if (empty($_FILES['mobile_logo']) || $_FILES['mobile_logo']['error'] === UPLOAD_ERR_NO_FILE) {
+            Session::flash('error', 'No file selected.');
+            $this->redirect('/admin/content/branding');
+        }
+
+        $file = $_FILES['mobile_logo'];
+        if ($file['error'] !== UPLOAD_ERR_OK) {
+            Session::flash('error', 'Upload failed (error code ' . $file['error'] . ').');
+            $this->redirect('/admin/content/branding');
+        }
+
+        $allowedMimes = ['image/jpeg', 'image/png', 'image/webp'];
+        $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+        $extMap = ['jpg' => true, 'jpeg' => true, 'png' => true, 'webp' => true];
+
+        if (!in_array($file['type'], $allowedMimes) || !isset($extMap[$ext])) {
+            Session::flash('error', 'Only JPG, PNG, and WebP files are allowed.');
+            $this->redirect('/admin/content/branding');
+        }
+
+        if ($file['size'] > 2 * 1024 * 1024) {
+            Session::flash('error', 'Logo must be under 2MB.');
+            $this->redirect('/admin/content/branding');
+        }
+
+        $old = Settings::get('website_logo_mobile', '');
+        if ($old && str_starts_with($old, '/uploads/logo/')) {
+            $oldPath = PUBLIC_PATH . $old;
+            if (file_exists($oldPath)) @unlink($oldPath);
+        }
+
+        $logoDir = UPLOAD_PATH . '/logo/';
+        if (!is_dir($logoDir)) mkdir($logoDir, 0755, true);
+
+        $storedName = 'mobile_logo_' . time() . '.' . $ext;
+        $dest       = $logoDir . $storedName;
+
+        if (!move_uploaded_file($file['tmp_name'], $dest)) {
+            Session::flash('error', 'Failed to save logo. Check directory permissions.');
+            $this->redirect('/admin/content/branding');
+        }
+
+        Settings::set('website_logo_mobile', '/uploads/logo/' . $storedName);
+        ActivityLog::log('admin_content_saved', 'Updated mobile website logo');
+        Session::flash('success', 'Mobile logo updated successfully.');
+        $this->redirect('/admin/content/branding');
+    }
+
+    public function removeMobileWebsiteLogo(): void
+    {
+        $this->requireAdmin();
+        $this->validateCsrf();
+
+        $old = Settings::get('website_logo_mobile', '');
+        if ($old && str_starts_with($old, '/uploads/logo/')) {
+            $oldPath = PUBLIC_PATH . $old;
+            if (file_exists($oldPath)) @unlink($oldPath);
+        }
+
+        Settings::set('website_logo_mobile', '');
+        ActivityLog::log('admin_content_saved', 'Removed mobile website logo');
+        Session::flash('success', 'Mobile logo removed.');
+        $this->redirect('/admin/content/branding');
+    }
+
     public static function get(string $page, string $key, string $default = ''): string
     {
         $val = Settings::get("content_{$page}_{$key}", null);

@@ -152,8 +152,10 @@ $router->post('/admin/settings/test-email',           'AdminController', 'testEm
 
 // ─ Content Manager (Admin CMS)
 $router->get('/admin/content',                          'ContentController', 'index');
-$router->post('/admin/content/branding/logo',           'ContentController', 'uploadWebsiteLogo');
-$router->post('/admin/content/branding/logo/remove',    'ContentController', 'removeWebsiteLogo');
+$router->post('/admin/content/branding/logo',                  'ContentController', 'uploadWebsiteLogo');
+$router->post('/admin/content/branding/logo/remove',           'ContentController', 'removeWebsiteLogo');
+$router->post('/admin/content/branding/mobile-logo',           'ContentController', 'uploadMobileWebsiteLogo');
+$router->post('/admin/content/branding/mobile-logo/remove',    'ContentController', 'removeMobileWebsiteLogo');
 $router->get('/admin/content/{page}',                   'ContentController', 'page');
 $router->post('/admin/content/{page}/save',             'ContentController', 'savePage');
 
