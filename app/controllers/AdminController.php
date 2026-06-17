@@ -308,7 +308,7 @@ class AdminController extends BaseController
                               'r2_bucket','r2_account_id','r2_access_key','r2_secret_key','r2_url'],
             'media'       => ['max_upload_size_kb'],
             'maintenance' => ['maintenance_mode','maintenance_message'],
-            'seo'         => ['ga_measurement_id','gsc_verification'],
+            'seo'         => ['ga_measurement_id','gsc_verification','meta_pixel_code'],
         ];
 
         if (!isset($allowed[$group])) $this->abort(400, 'Invalid settings group.');
@@ -319,12 +319,17 @@ class AdminController extends BaseController
             if (in_array($key, $checkboxFields)) {
                 Settings::set($key, isset($_POST[$key]) ? '1' : '0', $group);
             } elseif (isset($_POST[$key])) {
-                $val = Helpers::sanitize($_POST[$key]);
-                // If the user pasted the full <meta> tag instead of just the content value,
-                // strip_tags() in sanitize() would have erased it — re-extract from the raw input.
-                if ($key === 'gsc_verification' && $val === '') {
-                    if (preg_match('/content=["\']([^"\']+)["\']/', $_POST[$key], $m)) {
-                        $val = trim($m[1]);
+                // meta_pixel_code contains raw HTML/JS — skip strip_tags
+                if ($key === 'meta_pixel_code') {
+                    $val = trim($_POST[$key]);
+                } else {
+                    $val = Helpers::sanitize($_POST[$key]);
+                    // If the user pasted the full <meta> tag instead of just the content value,
+                    // strip_tags() in sanitize() would have erased it — re-extract from the raw input.
+                    if ($key === 'gsc_verification' && $val === '') {
+                        if (preg_match('/content=["\']([^"\']+)["\']/', $_POST[$key], $m)) {
+                            $val = trim($m[1]);
+                        }
                     }
                 }
                 Settings::set($key, $val, $group);
