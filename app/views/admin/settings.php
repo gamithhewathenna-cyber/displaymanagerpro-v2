@@ -266,14 +266,32 @@
         </div>
       </div>
 
+      <!-- Meta Pixel -->
+      <div class="border border-gray-100 rounded-xl p-4 space-y-3">
+        <div class="flex items-center gap-2 mb-1">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="#1877F2"><path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047v-2.66c0-3.025 1.791-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.97h-1.513c-1.491 0-1.956.93-1.956 1.886v2.265h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/></svg>
+          <span class="text-sm font-semibold text-gray-800">Meta Pixel (Facebook)</span>
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-600 mb-1">Pixel ID</label>
+          <input type="text" name="meta_pixel_id"
+            value="<?= Helpers::e($g['seo']['meta_pixel_id'] ?? '') ?>"
+            placeholder="123456789012345"
+            class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary-500">
+          <p class="text-xs text-gray-400 mt-1">Found in Meta Business Suite → Events Manager → your Pixel → Settings. Paste the numeric ID only (e.g. <code class="bg-gray-100 px-1 rounded">123456789012345</code>).</p>
+        </div>
+      </div>
+
       <?php
-        $gaSet  = !empty($g['seo']['ga_measurement_id']);
-        $gscSet = !empty($g['seo']['gsc_verification']);
+        $gaSet    = !empty($g['seo']['ga_measurement_id']);
+        $gscSet   = !empty($g['seo']['gsc_verification']);
+        $pixelSet = !empty($g['seo']['meta_pixel_id']);
       ?>
-      <?php if ($gaSet || $gscSet): ?>
+      <?php if ($gaSet || $gscSet || $pixelSet): ?>
       <div class="flex flex-wrap gap-3 text-xs">
         <?php if ($gaSet): ?><span class="inline-flex items-center gap-1.5 bg-green-50 text-green-700 font-medium px-3 py-1.5 rounded-full"><span class="w-1.5 h-1.5 bg-green-500 rounded-full"></span>Google Analytics connected</span><?php endif; ?>
         <?php if ($gscSet): ?><span class="inline-flex items-center gap-1.5 bg-blue-50 text-blue-700 font-medium px-3 py-1.5 rounded-full"><span class="w-1.5 h-1.5 bg-blue-500 rounded-full"></span>Search Console verification set</span><?php endif; ?>
+        <?php if ($pixelSet): ?><span class="inline-flex items-center gap-1.5 bg-indigo-50 text-indigo-700 font-medium px-3 py-1.5 rounded-full"><span class="w-1.5 h-1.5 bg-indigo-500 rounded-full"></span>Meta Pixel active</span><?php endif; ?>
       </div>
       <?php endif; ?>
 

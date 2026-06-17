@@ -18,6 +18,7 @@
     : 'Cloud digital signage management for restaurants, cafes, and retail. Manage all your TV screens from one dashboard.';
   $_ga_id           = Settings::get('ga_measurement_id', '');
   $_gsc_code        = Settings::get('gsc_verification', '');
+  $_pixel_id        = Settings::get('meta_pixel_id', '');
 ?>
 <title><?= $_full_title ?></title>
 <?php $_fav = Settings::get('site_favicon',''); if ($_fav): ?><link rel="icon" href="<?= Helpers::e($_fav) ?>?v=<?= filemtime(PUBLIC_PATH.$_fav) ?>"><?php endif; ?>
@@ -36,6 +37,18 @@
   gtag('js', new Date());
   gtag('config', '<?= Helpers::e($_ga_id) ?>');
 </script>
+<?php endif; ?>
+<?php if ($_pixel_id !== ''): ?>
+<script>
+!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+document,'script','https://connect.facebook.net/en_US/fbevents.js');
+fbq('init','<?= Helpers::e($_pixel_id) ?>');
+fbq('track','PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=<?= Helpers::e($_pixel_id) ?>&ev=PageView&noscript=1"></noscript>
 <?php endif; ?>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
