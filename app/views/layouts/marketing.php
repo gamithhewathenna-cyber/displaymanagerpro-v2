@@ -78,7 +78,7 @@
     <a href="/" class="flex items-center gap-2.5 font-bold text-2xl min-w-0">
       <?php if ($__logo || $__mobileLogo): ?>
         <?php if ($__mobileLogo && $__mobileLogo !== $__logo): ?>
-          <img src="<?= Helpers::e($__mobileLogo) ?>" alt="<?= $__altText ?>" class="block md:hidden max-h-10 max-w-[44px] object-contain">
+          <img src="<?= Helpers::e($__mobileLogo) ?>" alt="<?= $__altText ?>" class="block md:hidden max-h-12 max-w-[160px] object-contain">
           <img src="<?= Helpers::e($__logo) ?>"       alt="<?= $__altText ?>" class="hidden md:block max-h-12 max-w-[210px] object-contain">
         <?php else: ?>
           <img src="<?= Helpers::e($__logo) ?>" alt="<?= $__altText ?>" class="max-h-12 max-w-[210px] object-contain">
