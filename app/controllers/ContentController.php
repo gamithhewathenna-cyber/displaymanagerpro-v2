@@ -4,7 +4,7 @@
  */
 class ContentController extends BaseController
 {
-    private array $pages = ['home', 'features', 'industries', 'faq', 'contact', 'pricing', 'footer', 'branding', 'privacy', 'terms', 'refund'];
+    private array $pages = ['home', 'features', 'industries', 'faq', 'contact', 'pricing', 'footer', 'branding', 'privacy', 'terms', 'refund', 'slider'];
 
     public function index(): void
     {
@@ -194,6 +194,77 @@ class ContentController extends BaseController
         $this->redirect('/admin/content/branding');
     }
 
+    public function uploadSliderImage(string $slot): void
+    {
+        $this->requireAdmin();
+        $this->validateCsrf();
+
+        $slot = (int) $slot;
+        if ($slot < 1 || $slot > 6) $this->abort(404);
+
+        if (empty($_FILES['slider_image']) || $_FILES['slider_image']['error'] === UPLOAD_ERR_NO_FILE) {
+            Session::flash('error', 'No file selected.');
+            $this->redirect('/admin/content/slider');
+        }
+
+        $file = $_FILES['slider_image'];
+        if ($file['error'] !== UPLOAD_ERR_OK) {
+            Session::flash('error', 'Upload failed (error code ' . $file['error'] . ').');
+            $this->redirect('/admin/content/slider');
+        }
+
+        $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+        if (!in_array($file['type'], ['image/png']) || $ext !== 'png') {
+            Session::flash('error', 'Only PNG images are allowed for the slider.');
+            $this->redirect('/admin/content/slider');
+        }
+
+        if ($file['size'] > 5 * 1024 * 1024) {
+            Session::flash('error', 'Image must be under 5 MB.');
+            $this->redirect('/admin/content/slider');
+        }
+
+        $old = Settings::get("content_slider_image_{$slot}", '');
+        if ($old && str_starts_with($old, '/uploads/slider/')) {
+            $oldPath = PUBLIC_PATH . $old;
+            if (file_exists($oldPath)) @unlink($oldPath);
+        }
+
+        $dir = UPLOAD_PATH . '/slider/';
+        if (!is_dir($dir)) mkdir($dir, 0755, true);
+
+        $name = "slide_{$slot}_" . time() . '.png';
+        if (!move_uploaded_file($file['tmp_name'], $dir . $name)) {
+            Session::flash('error', 'Failed to save image. Check directory permissions.');
+            $this->redirect('/admin/content/slider');
+        }
+
+        Settings::set("content_slider_image_{$slot}", '/uploads/slider/' . $name, 'content');
+        ActivityLog::log('admin_content_saved', "Updated feature slider image slot $slot");
+        Session::flash('success', "Slide $slot updated successfully.");
+        $this->redirect('/admin/content/slider');
+    }
+
+    public function removeSliderImage(string $slot): void
+    {
+        $this->requireAdmin();
+        $this->validateCsrf();
+
+        $slot = (int) $slot;
+        if ($slot < 1 || $slot > 6) $this->abort(404);
+
+        $old = Settings::get("content_slider_image_{$slot}", '');
+        if ($old && str_starts_with($old, '/uploads/slider/')) {
+            $oldPath = PUBLIC_PATH . $old;
+            if (file_exists($oldPath)) @unlink($oldPath);
+        }
+
+        Settings::set("content_slider_image_{$slot}", '', 'content');
+        ActivityLog::log('admin_content_saved', "Removed feature slider image slot $slot");
+        Session::flash('success', "Slide $slot removed.");
+        $this->redirect('/admin/content/slider');
+    }
+
     public static function get(string $page, string $key, string $default = ''): string
     {
         $val = Settings::get("content_{$page}_{$key}", null);
@@ -261,6 +332,10 @@ class ContentController extends BaseController
                 'testimonial_3_quote' => '"Finally ditched the TV running PowerPoint from a laptop."',
                 'testimonial_3_name'  => 'Lisa T.',
                 'testimonial_3_role'  => 'Bar Owner, Melbourne',
+                'showcase_heading'     => 'Powerful platform, built for simplicity',
+                'showcase_subtext'     => 'From uploading images to displaying them across all your screens — everything happens in one clean dashboard. No technical skills required.',
+                'showcase_cta_text'   => 'Start Free Trial →',
+                'showcase_cta_url'    => '/register',
                 'cta_title'           => 'Ready to modernise your screens?',
                 'cta_subtitle'        => 'Start your free 14-day trial. No credit card required. Cancel anytime.',
                 'cta_button'          => 'Get Started Free →',
@@ -361,6 +436,10 @@ class ContentController extends BaseController
                 'seo_title'       => '',
                 'seo_description' => '',
                 'seo_keyphrase'   => '',
+            ],
+            'slider' => [
+                'label_1' => '', 'label_2' => '', 'label_3' => '',
+                'label_4' => '', 'label_5' => '', 'label_6' => '',
             ],
             'branding' => [],
             'privacy' => [

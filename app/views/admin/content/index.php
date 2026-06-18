@@ -25,6 +25,7 @@
     <?php
       $pages = [
         ['home',       '🏠', 'Homepage',    'Hero, stats, features, how-it-works, testimonials, CTA'],
+        ['slider',     '🖼️', 'Feature Slider', 'Upload up to 6 PNG screenshots for the homepage showcase carousel'],
         ['features',   '⚡', 'Features',    '12 feature cards, page title, CTA section'],
         ['industries', '🏢', 'Industries',  '6 industry sections with descriptions'],
         ['pricing',    '💳', 'Pricing',     'SEO title, meta description, focus keyphrase'],

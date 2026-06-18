@@ -66,6 +66,200 @@ $c = function($key, $default='') { return htmlspecialchars(ContentController::ge
   </div>
 </section>
 
+<!-- FEATURE SHOWCASE / SLIDER -->
+<?php
+  $_sc_heading  = $c('showcase_heading', 'Powerful platform, built for simplicity');
+  $_sc_subtext  = $c('showcase_subtext',  'From uploading images to displaying them across all your screens — everything happens in one clean dashboard. No technical skills required.');
+  $_sc_cta_text = $c('showcase_cta_text', 'Start Free Trial →');
+  $_sc_cta_url  = $c('showcase_cta_url',  '/register');
+
+  $_sliderImgs = [];
+  for ($_si = 1; $_si <= 6; $_si++) {
+      $_img = Settings::get("content_slider_image_{$_si}", '');
+      if ($_img) $_sliderImgs[] = ['src' => $_img, 'label' => ContentController::get('slider', "label_{$_si}", '')];
+  }
+  $_slideCount = !empty($_sliderImgs) ? count($_sliderImgs) : 4;
+?>
+<section class="py-24 px-4 bg-white overflow-hidden">
+  <div class="max-w-6xl mx-auto">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+
+      <!-- Left: Text content -->
+      <div class="order-2 lg:order-1">
+        <div class="inline-flex items-center gap-2 bg-primary-50 text-primary-700 rounded-full px-4 py-1.5 text-xs font-bold mb-6 tracking-widest uppercase">
+          Platform Preview
+        </div>
+        <h2 class="text-4xl font-bold text-gray-900 mb-5 leading-tight">
+          <?= $_sc_heading ?>
+        </h2>
+        <p class="text-lg text-gray-500 mb-8 leading-relaxed">
+          <?= $_sc_subtext ?>
+        </p>
+        <a href="<?= $_sc_cta_url ?>"
+           class="inline-flex items-center gap-2 bg-primary-500 hover:bg-primary-600 text-white font-bold text-lg px-8 py-4 rounded-xl transition-all shadow-lg shadow-primary-500/30 hover:-translate-y-0.5">
+          <?= $_sc_cta_text ?>
+        </a>
+        <div class="mt-10 grid grid-cols-2 gap-4">
+          <?php foreach ([
+            'No USB drives needed',
+            'Update from anywhere',
+            'Works on any Smart TV',
+            'Auto-refresh every 15 min',
+          ] as $_f): ?>
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 bg-primary-50 rounded-lg flex items-center justify-center flex-shrink-0">
+              <svg class="w-4 h-4 text-primary-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+            </div>
+            <span class="text-sm text-gray-600"><?= $_f ?></span>
+          </div>
+          <?php endforeach; ?>
+        </div>
+      </div>
+
+      <!-- Right: Carousel -->
+      <div class="order-1 lg:order-2 relative">
+        <div class="absolute -inset-4 bg-gradient-to-r from-primary-500/20 to-violet-500/20 rounded-3xl blur-2xl pointer-events-none"></div>
+        <div class="relative bg-gray-900 rounded-2xl overflow-hidden shadow-2xl border border-white/10">
+          <!-- Browser chrome -->
+          <div class="flex items-center gap-2 px-4 py-3 bg-gray-800/80 border-b border-white/10">
+            <div class="flex gap-1.5">
+              <div class="w-3 h-3 rounded-full bg-red-400/70"></div>
+              <div class="w-3 h-3 rounded-full bg-yellow-400/70"></div>
+              <div class="w-3 h-3 rounded-full bg-green-400/70"></div>
+            </div>
+            <div class="flex-1 mx-3 bg-gray-700/60 rounded px-3 py-1 text-xs text-gray-400">dashboard.signagecloud.com</div>
+          </div>
+          <!-- Slides -->
+          <div id="showcase-slides" class="relative" style="aspect-ratio:16/10;">
+            <?php if (!empty($_sliderImgs)): ?>
+              <?php foreach ($_sliderImgs as $_idx => $_slide): ?>
+              <div class="slide absolute inset-0 transition-opacity duration-700 <?= $_idx === 0 ? 'opacity-100' : 'opacity-0' ?>">
+                <img src="<?= Helpers::e($_slide['src']) ?>" alt="<?= Helpers::e($_slide['label']) ?>" class="w-full h-full object-cover">
+                <?php if ($_slide['label']): ?>
+                <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/70 to-transparent px-5 py-4">
+                  <span class="text-white text-sm font-medium"><?= Helpers::e($_slide['label']) ?></span>
+                </div>
+                <?php endif; ?>
+              </div>
+              <?php endforeach; ?>
+            <?php else: ?>
+              <!-- Placeholder slide 1: Dashboard -->
+              <div class="slide absolute inset-0 transition-opacity duration-700 opacity-100 bg-gradient-to-br from-indigo-950 to-violet-950 p-5">
+                <div class="text-[10px] text-gray-500 mb-3 font-semibold tracking-widest uppercase">Dashboard Overview</div>
+                <div class="grid grid-cols-3 gap-2 mb-3">
+                  <div class="bg-white/10 rounded-xl p-3"><div class="text-[10px] text-gray-400 mb-1">Active Screens</div><div class="text-xl font-bold text-white">3</div><div class="text-[10px] text-green-400">● All live</div></div>
+                  <div class="bg-white/10 rounded-xl p-3"><div class="text-[10px] text-gray-400 mb-1">Total Slides</div><div class="text-xl font-bold text-white">24</div><div class="text-[10px] text-gray-400">Across channels</div></div>
+                  <div class="bg-white/10 rounded-xl p-3"><div class="text-[10px] text-gray-400 mb-1">Auto Refresh</div><div class="text-xl font-bold text-white">15m</div><div class="text-[10px] text-blue-400">Enabled</div></div>
+                </div>
+                <div class="bg-white/5 rounded-xl p-3">
+                  <div class="flex items-center justify-between mb-2"><span class="text-xs text-gray-300 font-medium">My Channels</span><span class="text-[10px] text-primary-400">View all →</span></div>
+                  <div class="space-y-1.5">
+                    <div class="flex items-center gap-2 bg-white/5 rounded-lg px-3 py-1.5"><div class="w-1.5 h-1.5 rounded-full bg-green-400"></div><span class="text-xs text-gray-300 flex-1">Main Menu Board</span><span class="text-[10px] text-gray-500">8 slides</span></div>
+                    <div class="flex items-center gap-2 bg-white/5 rounded-lg px-3 py-1.5"><div class="w-1.5 h-1.5 rounded-full bg-green-400"></div><span class="text-xs text-gray-300 flex-1">Daily Specials</span><span class="text-[10px] text-gray-500">3 slides</span></div>
+                    <div class="flex items-center gap-2 bg-white/5 rounded-lg px-3 py-1.5"><div class="w-1.5 h-1.5 rounded-full bg-yellow-400"></div><span class="text-xs text-gray-300 flex-1">Promotions</span><span class="text-[10px] text-gray-500">5 slides</span></div>
+                  </div>
+                </div>
+              </div>
+              <!-- Placeholder slide 2: Channel Editor -->
+              <div class="slide absolute inset-0 transition-opacity duration-700 opacity-0 bg-gradient-to-br from-blue-950 to-cyan-950 p-5">
+                <div class="text-[10px] text-gray-500 mb-3 font-semibold tracking-widest uppercase">Channel Editor</div>
+                <div class="bg-white/5 rounded-xl p-4 mb-3">
+                  <div class="flex items-center justify-between mb-3"><span class="text-sm font-semibold text-white">Main Menu Board</span><span class="text-[10px] bg-green-500/20 text-green-400 px-2 py-0.5 rounded-full">Live</span></div>
+                  <div class="flex gap-2">
+                    <div class="flex-1 bg-gradient-to-br from-indigo-600/50 to-purple-600/50 rounded-lg flex items-center justify-center text-[10px] text-gray-300 border border-white/10" style="aspect-ratio:16/9;">Slide 1</div>
+                    <div class="flex-1 bg-gradient-to-br from-blue-600/50 to-cyan-600/50 rounded-lg flex items-center justify-center text-[10px] text-gray-300 border border-white/10" style="aspect-ratio:16/9;">Slide 2</div>
+                    <div class="flex-1 bg-gradient-to-br from-emerald-600/50 to-teal-600/50 rounded-lg flex items-center justify-center text-[10px] text-gray-300 border border-white/10" style="aspect-ratio:16/9;">Slide 3</div>
+                    <div class="flex-1 border-2 border-dashed border-white/20 rounded-lg flex items-center justify-center text-gray-500 text-lg" style="aspect-ratio:16/9;">+</div>
+                  </div>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                  <div class="bg-white/5 rounded-xl p-3"><div class="text-[10px] text-gray-400 mb-1">Display Duration</div><div class="text-sm font-semibold text-white">8 seconds</div></div>
+                  <div class="bg-white/5 rounded-xl p-3"><div class="text-[10px] text-gray-400 mb-1">Transition</div><div class="text-sm font-semibold text-white">Fade</div></div>
+                </div>
+              </div>
+              <!-- Placeholder slide 3: Media Library -->
+              <div class="slide absolute inset-0 transition-opacity duration-700 opacity-0 bg-gradient-to-br from-violet-950 to-pink-950 p-5">
+                <div class="text-[10px] text-gray-500 mb-3 font-semibold tracking-widest uppercase">Media Library</div>
+                <div class="grid grid-cols-3 gap-2 mb-3">
+                  <?php foreach (['from-indigo-600/40 to-purple-600/40','from-blue-600/40 to-cyan-600/40','from-emerald-600/40 to-teal-600/40','from-amber-600/40 to-orange-600/40','from-pink-600/40 to-rose-600/40','from-violet-600/40 to-indigo-600/40'] as $_pc): ?>
+                  <div class="bg-gradient-to-br <?= $_pc ?> rounded-lg border border-white/10 flex items-center justify-center" style="aspect-ratio:16/9;">
+                    <svg class="w-5 h-5 text-white/30" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"/></svg>
+                  </div>
+                  <?php endforeach; ?>
+                </div>
+                <div class="flex items-center justify-between bg-white/5 rounded-xl px-4 py-2.5">
+                  <span class="text-xs text-gray-400">6 images · 18.4 MB used</span>
+                  <span class="text-[10px] bg-primary-500/20 text-primary-400 px-2 py-0.5 rounded-full font-semibold">+ Upload</span>
+                </div>
+              </div>
+              <!-- Placeholder slide 4: Live Display -->
+              <div class="slide absolute inset-0 transition-opacity duration-700 opacity-0 bg-gradient-to-br from-emerald-950 to-teal-950 p-5">
+                <div class="text-[10px] text-gray-500 mb-3 font-semibold tracking-widest uppercase">Live TV Display</div>
+                <div class="bg-black/40 rounded-xl border border-white/10 overflow-hidden mb-3" style="aspect-ratio:16/9;">
+                  <div class="w-full h-full bg-gradient-to-br from-indigo-800/60 to-violet-800/60 flex flex-col items-center justify-center gap-2">
+                    <div class="text-white/20 text-4xl">📺</div>
+                    <div class="text-white text-sm font-semibold">Today's Specials</div>
+                    <div class="text-white/40 text-xs">Live · Auto-refreshes every 15 min</div>
+                  </div>
+                </div>
+                <div class="flex items-center gap-2 bg-white/5 rounded-xl px-4 py-2.5">
+                  <div class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
+                  <span class="text-xs text-gray-300 flex-1">Display is live</span>
+                  <span class="text-[10px] text-gray-500">Open on any Smart TV</span>
+                </div>
+              </div>
+            <?php endif; ?>
+          </div>
+          <!-- Navigation -->
+          <div class="absolute bottom-3 inset-x-0 flex items-center justify-center gap-3 z-20">
+            <button id="showcase-prev" class="w-7 h-7 rounded-full bg-black/50 hover:bg-black/80 border border-white/20 flex items-center justify-center transition-colors">
+              <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
+            </button>
+            <div id="showcase-dots" class="flex items-center gap-1.5">
+              <?php for ($_di = 0; $_di < $_slideCount; $_di++): ?>
+              <button class="h-1.5 rounded-full transition-all duration-300 <?= $_di === 0 ? 'w-5 bg-white' : 'w-1.5 bg-white/40' ?>"></button>
+              <?php endfor; ?>
+            </div>
+            <button id="showcase-next" class="w-7 h-7 rounded-full bg-black/50 hover:bg-black/80 border border-white/20 flex items-center justify-center transition-colors">
+              <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+<script>
+(function() {
+  var slides  = document.querySelectorAll('#showcase-slides .slide');
+  var dots    = document.querySelectorAll('#showcase-dots button');
+  var current = 0;
+  var timer;
+  if (slides.length < 2) return;
+
+  function goTo(n) {
+    slides[current].classList.remove('opacity-100');
+    slides[current].classList.add('opacity-0');
+    dots[current].classList.remove('bg-white', 'w-5');
+    dots[current].classList.add('bg-white/40', 'w-1.5');
+    current = (n + slides.length) % slides.length;
+    slides[current].classList.remove('opacity-0');
+    slides[current].classList.add('opacity-100');
+    dots[current].classList.remove('bg-white/40', 'w-1.5');
+    dots[current].classList.add('bg-white', 'w-5');
+  }
+
+  function startTimer() { timer = setInterval(function() { goTo(current + 1); }, 4500); }
+  function resetTimer() { clearInterval(timer); startTimer(); }
+
+  document.getElementById('showcase-prev').addEventListener('click', function() { goTo(current - 1); resetTimer(); });
+  document.getElementById('showcase-next').addEventListener('click', function() { goTo(current + 1); resetTimer(); });
+  dots.forEach(function(dot, i) { dot.addEventListener('click', function() { goTo(i); resetTimer(); }); });
+  startTimer();
+})();
+</script>
+
 <!-- FEATURES -->
 <section class="py-24 px-4">
   <div class="max-w-6xl mx-auto">
