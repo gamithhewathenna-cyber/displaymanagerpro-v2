@@ -160,6 +160,8 @@ $router->post('/admin/content/branding/mobile-logo',           'ContentControlle
 $router->post('/admin/content/branding/mobile-logo/remove',    'ContentController', 'removeMobileWebsiteLogo');
 $router->post('/admin/content/home/slide/{slot}',              'ContentController', 'uploadHomeSlide');
 $router->post('/admin/content/home/slide/{slot}/remove',       'ContentController', 'removeHomeSlide');
+$router->post('/admin/content/home/banner',                    'ContentController', 'uploadHomeBanner');
+$router->post('/admin/content/home/banner/remove',             'ContentController', 'removeHomeBanner');
 $router->get('/admin/content/{page}',                   'ContentController', 'page');
 $router->post('/admin/content/{page}/save',             'ContentController', 'savePage');
 

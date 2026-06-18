@@ -265,6 +265,69 @@ class ContentController extends BaseController
         $this->redirect('/admin/content/home');
     }
 
+    public function uploadHomeBanner(): void
+    {
+        $this->requireAdmin();
+        $this->validateCsrf();
+
+        $file = $_FILES['banner_image'] ?? null;
+        if (!$file || $file['error'] !== UPLOAD_ERR_OK) {
+            Session::flash('error', 'No file uploaded.');
+            $this->redirect('/admin/content/home');
+            return;
+        }
+
+        $mime = mime_content_type($file['tmp_name']);
+        $ext  = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+        if ($mime !== 'image/png' || $ext !== 'png') {
+            Session::flash('error', 'Only PNG images are accepted.');
+            $this->redirect('/admin/content/home');
+            return;
+        }
+        if ($file['size'] > 10 * 1024 * 1024) {
+            Session::flash('error', 'File exceeds 10 MB limit.');
+            $this->redirect('/admin/content/home');
+            return;
+        }
+
+        $old = Settings::get('content_home_banner', '');
+        if ($old && str_starts_with($old, '/uploads/banner/')) {
+            $oldPath = PUBLIC_PATH . $old;
+            if (file_exists($oldPath)) @unlink($oldPath);
+        }
+
+        $dir  = PUBLIC_PATH . '/uploads/banner/';
+        if (!is_dir($dir)) mkdir($dir, 0755, true);
+        $name = 'home_banner_' . time() . '.png';
+        if (!move_uploaded_file($file['tmp_name'], $dir . $name)) {
+            Session::flash('error', 'Failed to save image.');
+            $this->redirect('/admin/content/home');
+            return;
+        }
+
+        Settings::set('content_home_banner', '/uploads/banner/' . $name, 'content');
+        ActivityLog::log('admin_content_saved', 'Updated homepage static banner image');
+        Session::flash('success', 'Banner image updated.');
+        $this->redirect('/admin/content/home');
+    }
+
+    public function removeHomeBanner(): void
+    {
+        $this->requireAdmin();
+        $this->validateCsrf();
+
+        $old = Settings::get('content_home_banner', '');
+        if ($old && str_starts_with($old, '/uploads/banner/')) {
+            $oldPath = PUBLIC_PATH . $old;
+            if (file_exists($oldPath)) @unlink($oldPath);
+        }
+
+        Settings::set('content_home_banner', '', 'content');
+        ActivityLog::log('admin_content_saved', 'Removed homepage static banner image');
+        Session::flash('success', 'Banner removed.');
+        $this->redirect('/admin/content/home');
+    }
+
     public static function get(string $page, string $key, string $default = ''): string
     {
         $val = Settings::get("content_{$page}_{$key}", null);
@@ -335,6 +398,18 @@ class ContentController extends BaseController
                 'cta_title'           => 'Ready to modernise your screens?',
                 'cta_subtitle'        => 'Start your free 14-day trial. No credit card required. Cancel anytime.',
                 'cta_button'          => 'Get Started Free →',
+                'slide_1_heading'     => '',
+                'slide_1_sub'         => '',
+                'slide_2_heading'     => '',
+                'slide_2_sub'         => '',
+                'slide_3_heading'     => '',
+                'slide_3_sub'         => '',
+                'slide_4_heading'     => '',
+                'slide_4_sub'         => '',
+                'slide_5_heading'     => '',
+                'slide_5_sub'         => '',
+                'slide_6_heading'     => '',
+                'slide_6_sub'         => '',
             ],
             'features' => [
                 'seo_title'       => '',

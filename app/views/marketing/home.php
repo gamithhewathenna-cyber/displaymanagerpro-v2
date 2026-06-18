@@ -1,66 +1,134 @@
 <?php
 $c = function($key, $default='') { return htmlspecialchars(ContentController::get('home', $key, $default)); };
-?>
-<!-- HERO -->
-<?php
-  $_sliderImgs = [];
-  for ($_si = 1; $_si <= 6; $_si++) {
-      $_img = Settings::get("content_home_slide_{$_si}", '');
-      if ($_img) $_sliderImgs[] = $_img;
-  }
-  $_slideCount = !empty($_sliderImgs) ? count($_sliderImgs) : 4;
-?>
-<section class="hero-gradient text-white py-16 md:py-24 px-4 overflow-hidden relative">
-  <div class="absolute inset-0 opacity-10" style="background-image:radial-gradient(circle at 15% 50%, #6366f1 0%, transparent 50%), radial-gradient(circle at 85% 20%, #8b5cf6 0%, transparent 40%)"></div>
-  <div class="max-w-6xl mx-auto relative z-10">
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 xl:gap-16 items-center">
 
-      <!-- Left: Text -->
-      <div class="order-2 lg:order-1">
-        <div class="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-1.5 text-sm mb-7">
-          <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
-          <?= $c('badge_text', '14-day free trial · No credit card required') ?>
-        </div>
-        <h1 class="text-4xl md:text-5xl xl:text-6xl font-extrabold leading-tight mb-5">
-          <?= $c('hero_title_1', 'Update Every Restaurant Screen') ?><br>
-          <span style="background:linear-gradient(90deg,#a78bfa,#60a5fa);-webkit-background-clip:text;-webkit-text-fill-color:transparent"><?= $c('hero_title_2', 'In Seconds') ?></span>
-        </h1>
-        <p class="text-xl text-gray-300 mb-3 font-light"><?= $c('hero_subtitle', 'No USB Drives. No Complicated Software.') ?></p>
-        <p class="text-base text-gray-400 mb-9 max-w-lg"><?= $c('hero_description', 'Manage menus, specials, promotions and announcements across all your TV screens from one simple cloud dashboard.') ?></p>
-        <div class="flex flex-col sm:flex-row gap-4">
-          <a href="/register" class="bg-primary-500 hover:bg-primary-600 text-white font-bold text-lg px-9 py-4 rounded-xl transition-all shadow-lg shadow-primary-500/30 hover:-translate-y-0.5 text-center">
-            <?= $c('cta_primary', 'Start Free 14-Day Trial →') ?>
-          </a>
-          <a href="/pricing" class="bg-white/10 hover:bg-white/20 border border-white/20 text-white font-semibold text-lg px-9 py-4 rounded-xl transition-all text-center">
-            <?= $c('cta_secondary', 'View Pricing') ?>
-          </a>
-        </div>
-      </div>
+// Build hero slides — each slide has its own text + image
+$_hs = [];
+for ($_si = 1; $_si <= 6; $_si++) {
+    $_sh = ContentController::get('home', "slide_{$_si}_heading", '');
+    $_ss = ContentController::get('home', "slide_{$_si}_sub", '');
+    $_si_img = Settings::get("content_home_slide_{$_si}", '');
+    if ($_sh || $_si_img) {
+        $_hs[] = ['heading' => $_sh, 'sub' => $_ss, 'img' => $_si_img];
+    }
+}
+// Fallback: 3 built-in slides
+if (empty($_hs)) {
+    $_hs = [
+        ['heading' => null, 'sub' => null, 'img' => ''],
+        ['heading' => 'Manage All Your Channels',   'sub' => 'Create channels, upload images, and every screen updates automatically — no tech skills needed.', 'img' => ''],
+        ['heading' => 'Works on Any TV or Device',  'sub' => 'Smart TVs, Fire Stick, Android TV boxes, Chrome browsers — one URL powers them all.', 'img' => ''],
+    ];
+}
+$_hsCount = count($_hs);
 
-      <!-- Right: Image carousel -->
-      <div class="order-1 lg:order-2 relative">
-        <div class="absolute -inset-3 bg-gradient-to-r from-violet-600/25 to-blue-600/25 rounded-3xl blur-2xl pointer-events-none"></div>
-        <div class="relative rounded-2xl overflow-hidden shadow-2xl border border-white/10" style="background:#111827;">
-          <!-- Browser chrome bar -->
-          <div class="flex items-center gap-2 px-4 py-3 border-b border-white/10" style="background:rgba(31,41,55,0.9);">
-            <div class="flex gap-1.5">
-              <div class="w-3 h-3 rounded-full bg-red-400/80"></div>
-              <div class="w-3 h-3 rounded-full bg-yellow-400/80"></div>
-              <div class="w-3 h-3 rounded-full bg-green-400/80"></div>
-            </div>
-            <div class="flex-1 mx-3 bg-white/10 rounded-md px-3 py-1 text-xs text-gray-400 truncate">dashboard.signagecloud.com</div>
+// Static banner image
+$_staticBanner = Settings::get('content_home_banner', '');
+?>
+<!-- HERO SLIDER -->
+<section class="hero-gradient text-white overflow-hidden relative" style="min-height:600px;">
+  <div class="absolute inset-0 pointer-events-none opacity-10" style="background-image:radial-gradient(circle at 15% 50%,#6366f1 0%,transparent 50%),radial-gradient(circle at 85% 20%,#8b5cf6 0%,transparent 40%)"></div>
+
+  <!-- Slide track -->
+  <div id="hs-track" class="relative" style="min-height:600px;">
+    <?php foreach ($_hs as $_hi => $_hsl): ?>
+    <div class="hs-slide absolute inset-0 flex items-center transition-opacity duration-700 <?= $_hi === 0 ? 'opacity-100 z-10 pointer-events-auto' : 'opacity-0 z-0 pointer-events-none' ?>">
+      <div class="max-w-6xl mx-auto w-full px-4 sm:px-6 py-20 grid grid-cols-1 lg:grid-cols-2 gap-10 xl:gap-16 items-center">
+
+        <!-- Text -->
+        <div class="order-2 lg:order-1">
+          <div class="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-1.5 text-sm mb-7">
+            <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+            <?= $c('badge_text', '14-day free trial · No credit card required') ?>
           </div>
-          <!-- Slides container -->
-          <div id="hero-slides" class="relative" style="aspect-ratio:16/10;">
-            <?php if (!empty($_sliderImgs)): ?>
-              <?php foreach ($_sliderImgs as $_idx => $_src): ?>
-              <div class="slide absolute inset-0 transition-opacity duration-700 <?= $_idx === 0 ? 'opacity-100' : 'opacity-0' ?>">
-                <img src="<?= Helpers::e($_src) ?>" alt="" class="w-full h-full object-cover">
+
+          <?php if ($_hsl['heading'] === null): ?>
+            <h1 class="text-4xl md:text-5xl xl:text-6xl font-extrabold leading-tight mb-5">
+              <?= $c('hero_title_1', 'Update Every Restaurant Screen') ?><br>
+              <span style="background:linear-gradient(90deg,#a78bfa,#60a5fa);-webkit-background-clip:text;-webkit-text-fill-color:transparent"><?= $c('hero_title_2', 'In Seconds') ?></span>
+            </h1>
+            <p class="text-xl text-gray-300 mb-3 font-light"><?= $c('hero_subtitle', 'No USB Drives. No Complicated Software.') ?></p>
+            <p class="text-base text-gray-400 mb-9 max-w-lg"><?= $c('hero_description', 'Manage menus, specials, promotions and announcements across all your TV screens from one simple cloud dashboard.') ?></p>
+          <?php else: ?>
+            <h1 class="text-4xl md:text-5xl xl:text-6xl font-extrabold leading-tight mb-6">
+              <?= Helpers::e($_hsl['heading']) ?>
+            </h1>
+            <?php if ($_hsl['sub']): ?>
+            <p class="text-xl text-gray-300 mb-9 max-w-lg leading-relaxed"><?= Helpers::e($_hsl['sub']) ?></p>
+            <?php endif; ?>
+          <?php endif; ?>
+
+          <div class="flex flex-col sm:flex-row gap-4">
+            <a href="/register" class="bg-primary-500 hover:bg-primary-600 text-white font-bold text-lg px-9 py-4 rounded-xl transition-all shadow-lg shadow-primary-500/30 hover:-translate-y-0.5 text-center">
+              <?= $c('cta_primary', 'Start Free 14-Day Trial →') ?>
+            </a>
+            <a href="/pricing" class="bg-white/10 hover:bg-white/20 border border-white/20 text-white font-semibold text-lg px-9 py-4 rounded-xl transition-all text-center">
+              <?= $c('cta_secondary', 'View Pricing') ?>
+            </a>
+          </div>
+        </div>
+
+        <!-- Image / mockup -->
+        <div class="order-1 lg:order-2 relative">
+          <?php if ($_hsl['img']): ?>
+            <div class="absolute -inset-3 rounded-3xl blur-2xl pointer-events-none" style="background:linear-gradient(135deg,rgba(99,102,241,.3),rgba(139,92,246,.3))"></div>
+            <div class="relative rounded-2xl overflow-hidden shadow-2xl ring-1 ring-white/10">
+              <img src="<?= Helpers::e($_hsl['img']) ?>" alt="" class="w-full h-auto block">
+            </div>
+          <?php elseif ($_hi % 3 === 1): ?>
+            <!-- Channel editor mockup -->
+            <div class="relative rounded-2xl overflow-hidden shadow-2xl ring-1 ring-white/10" style="background:#111827;">
+              <div class="px-4 py-3 border-b border-white/10 flex items-center gap-2" style="background:rgba(31,41,55,.9)">
+                <div class="flex gap-1.5"><div class="w-3 h-3 rounded-full bg-red-400/80"></div><div class="w-3 h-3 rounded-full bg-yellow-400/80"></div><div class="w-3 h-3 rounded-full bg-green-400/80"></div></div>
+                <div class="flex-1 ml-2 bg-white/10 rounded px-3 py-1 text-xs text-gray-400 truncate">dashboard.signagecloud.com/channels</div>
               </div>
-              <?php endforeach; ?>
-            <?php else: ?>
-              <!-- Placeholder: Dashboard -->
-              <div class="slide absolute inset-0 transition-opacity duration-700 opacity-100 p-5" style="background:linear-gradient(135deg,#1e1b4b,#2e1065);">
+              <div class="p-5" style="background:linear-gradient(135deg,#0c1a2e,#0a2540)">
+                <div class="text-[10px] text-blue-400/70 mb-3 font-bold tracking-widest uppercase">Channel Editor</div>
+                <div class="bg-white/5 rounded-xl p-4 mb-3">
+                  <div class="flex items-center justify-between mb-3"><span class="text-sm font-semibold text-white">Main Menu Board</span><span class="text-[10px] bg-green-500/20 text-green-400 px-2 py-0.5 rounded-full">Live</span></div>
+                  <div class="flex gap-2">
+                    <div class="flex-1 bg-gradient-to-br from-indigo-600/50 to-purple-600/50 rounded-lg flex items-center justify-center text-[10px] text-gray-300" style="aspect-ratio:16/9;">Slide 1</div>
+                    <div class="flex-1 bg-gradient-to-br from-blue-600/50 to-cyan-600/50 rounded-lg flex items-center justify-center text-[10px] text-gray-300" style="aspect-ratio:16/9;">Slide 2</div>
+                    <div class="flex-1 bg-gradient-to-br from-emerald-600/50 to-teal-600/50 rounded-lg flex items-center justify-center text-[10px] text-gray-300" style="aspect-ratio:16/9;">Slide 3</div>
+                    <div class="flex-1 border-2 border-dashed border-white/20 rounded-lg flex items-center justify-center text-gray-500 text-xl" style="aspect-ratio:16/9;">+</div>
+                  </div>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                  <div class="bg-white/5 rounded-xl p-3"><div class="text-[10px] text-gray-400 mb-1">Slide Duration</div><div class="text-sm font-bold text-white">8 seconds</div></div>
+                  <div class="bg-white/5 rounded-xl p-3"><div class="text-[10px] text-gray-400 mb-1">Transition</div><div class="text-sm font-bold text-white">Fade</div></div>
+                </div>
+              </div>
+            </div>
+          <?php elseif ($_hi % 3 === 2): ?>
+            <!-- Live display mockup -->
+            <div class="relative rounded-2xl overflow-hidden shadow-2xl ring-1 ring-white/10" style="background:#111827;">
+              <div class="px-4 py-3 border-b border-white/10 flex items-center gap-2" style="background:rgba(31,41,55,.9)">
+                <div class="flex gap-1.5"><div class="w-3 h-3 rounded-full bg-red-400/80"></div><div class="w-3 h-3 rounded-full bg-yellow-400/80"></div><div class="w-3 h-3 rounded-full bg-green-400/80"></div></div>
+                <div class="flex-1 ml-2 bg-white/10 rounded px-3 py-1 text-xs text-gray-400 truncate">display.signagecloud.com/main-board</div>
+              </div>
+              <div class="p-5" style="background:linear-gradient(135deg,#052e16,#064e3b)">
+                <div class="text-[10px] text-emerald-400/70 mb-3 font-bold tracking-widest uppercase">Live TV Display</div>
+                <div class="bg-black/40 rounded-xl overflow-hidden mb-3" style="aspect-ratio:16/9;">
+                  <div class="w-full h-full flex flex-col items-center justify-center gap-2" style="background:linear-gradient(135deg,rgba(79,70,229,.6),rgba(109,40,217,.6))">
+                    <div class="text-white/20 text-4xl">📺</div>
+                    <div class="text-white text-sm font-semibold">Today's Specials</div>
+                    <div class="text-white/40 text-xs">Auto-refreshes every 15 min</div>
+                  </div>
+                </div>
+                <div class="flex items-center gap-2 bg-white/5 rounded-xl px-4 py-2.5">
+                  <div class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
+                  <span class="text-xs text-gray-300 flex-1">Display is live on 3 screens</span>
+                  <span class="text-[10px] text-gray-500">QR code active</span>
+                </div>
+              </div>
+            </div>
+          <?php else: ?>
+            <!-- Dashboard mockup -->
+            <div class="relative rounded-2xl overflow-hidden shadow-2xl ring-1 ring-white/10" style="background:#111827;">
+              <div class="px-4 py-3 border-b border-white/10 flex items-center gap-2" style="background:rgba(31,41,55,.9)">
+                <div class="flex gap-1.5"><div class="w-3 h-3 rounded-full bg-red-400/80"></div><div class="w-3 h-3 rounded-full bg-yellow-400/80"></div><div class="w-3 h-3 rounded-full bg-green-400/80"></div></div>
+                <div class="flex-1 ml-2 bg-white/10 rounded px-3 py-1 text-xs text-gray-400 truncate">dashboard.signagecloud.com</div>
+              </div>
+              <div class="p-5" style="background:linear-gradient(135deg,#1e1b4b,#2e1065)">
                 <div class="text-[10px] text-indigo-400/70 mb-3 font-bold tracking-widest uppercase">Dashboard Overview</div>
                 <div class="grid grid-cols-3 gap-2 mb-3">
                   <div class="bg-white/10 rounded-xl p-3"><div class="text-[10px] text-gray-400 mb-1">Active Screens</div><div class="text-xl font-bold text-white">3</div><div class="text-[10px] text-green-400">● All live</div></div>
@@ -76,102 +144,60 @@ $c = function($key, $default='') { return htmlspecialchars(ContentController::ge
                   </div>
                 </div>
               </div>
-              <!-- Placeholder: Channel Editor -->
-              <div class="slide absolute inset-0 transition-opacity duration-700 opacity-0 p-5" style="background:linear-gradient(135deg,#0c1a2e,#0a2540);">
-                <div class="text-[10px] text-blue-400/70 mb-3 font-bold tracking-widest uppercase">Channel Editor</div>
-                <div class="bg-white/5 rounded-xl p-4 mb-3">
-                  <div class="flex items-center justify-between mb-3"><span class="text-sm font-semibold text-white">Main Menu Board</span><span class="text-[10px] bg-green-500/20 text-green-400 px-2 py-0.5 rounded-full">Live</span></div>
-                  <div class="flex gap-2">
-                    <div class="flex-1 bg-gradient-to-br from-indigo-600/50 to-purple-600/50 rounded-lg flex items-center justify-center text-[10px] text-gray-300 border border-white/10" style="aspect-ratio:16/9;">Slide 1</div>
-                    <div class="flex-1 bg-gradient-to-br from-blue-600/50 to-cyan-600/50 rounded-lg flex items-center justify-center text-[10px] text-gray-300 border border-white/10" style="aspect-ratio:16/9;">Slide 2</div>
-                    <div class="flex-1 bg-gradient-to-br from-emerald-600/50 to-teal-600/50 rounded-lg flex items-center justify-center text-[10px] text-gray-300 border border-white/10" style="aspect-ratio:16/9;">Slide 3</div>
-                    <div class="flex-1 border-2 border-dashed border-white/20 rounded-lg flex items-center justify-center text-gray-500 text-xl" style="aspect-ratio:16/9;">+</div>
-                  </div>
-                </div>
-                <div class="grid grid-cols-2 gap-2">
-                  <div class="bg-white/5 rounded-xl p-3"><div class="text-[10px] text-gray-400 mb-1">Slide Duration</div><div class="text-sm font-semibold text-white">8 seconds</div></div>
-                  <div class="bg-white/5 rounded-xl p-3"><div class="text-[10px] text-gray-400 mb-1">Transition</div><div class="text-sm font-semibold text-white">Fade</div></div>
-                </div>
-              </div>
-              <!-- Placeholder: Media Library -->
-              <div class="slide absolute inset-0 transition-opacity duration-700 opacity-0 p-5" style="background:linear-gradient(135deg,#1a0a2e,#2d0a3e);">
-                <div class="text-[10px] text-purple-400/70 mb-3 font-bold tracking-widest uppercase">Media Library</div>
-                <div class="grid grid-cols-3 gap-2 mb-3">
-                  <?php foreach (['from-indigo-600/40 to-purple-600/40','from-blue-600/40 to-cyan-600/40','from-emerald-600/40 to-teal-600/40','from-amber-600/40 to-orange-600/40','from-pink-600/40 to-rose-600/40','from-violet-600/40 to-indigo-600/40'] as $_pc): ?>
-                  <div class="bg-gradient-to-br <?= $_pc ?> rounded-lg border border-white/10 flex items-center justify-center" style="aspect-ratio:16/9;">
-                    <svg class="w-5 h-5 text-white/30" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"/></svg>
-                  </div>
-                  <?php endforeach; ?>
-                </div>
-                <div class="flex items-center justify-between bg-white/5 rounded-xl px-4 py-2.5">
-                  <span class="text-xs text-gray-400">6 images · 18.4 MB used</span>
-                  <span class="text-[10px] bg-indigo-500/20 text-indigo-400 px-2 py-0.5 rounded-full font-semibold">+ Upload</span>
-                </div>
-              </div>
-              <!-- Placeholder: Live Display -->
-              <div class="slide absolute inset-0 transition-opacity duration-700 opacity-0 p-5" style="background:linear-gradient(135deg,#052e16,#064e3b);">
-                <div class="text-[10px] text-emerald-400/70 mb-3 font-bold tracking-widest uppercase">Live TV Display</div>
-                <div class="bg-black/40 rounded-xl border border-white/10 overflow-hidden mb-3" style="aspect-ratio:16/9;">
-                  <div class="w-full h-full bg-gradient-to-br from-indigo-800/60 to-violet-800/60 flex flex-col items-center justify-center gap-2">
-                    <div class="text-white/20 text-4xl">📺</div>
-                    <div class="text-white text-sm font-semibold">Today's Specials</div>
-                    <div class="text-white/40 text-xs">Auto-refreshes every 15 min</div>
-                  </div>
-                </div>
-                <div class="flex items-center gap-2 bg-white/5 rounded-xl px-4 py-2.5">
-                  <div class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
-                  <span class="text-xs text-gray-300 flex-1">Display is live</span>
-                  <span class="text-[10px] text-gray-500">Open on any Smart TV</span>
-                </div>
-              </div>
-            <?php endif; ?>
-          </div>
-          <!-- Carousel controls -->
-          <div class="absolute bottom-3 inset-x-0 flex items-center justify-center gap-3 z-20">
-            <button id="hero-prev" class="w-7 h-7 rounded-full bg-black/50 hover:bg-black/80 border border-white/20 flex items-center justify-center transition-colors">
-              <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
-            </button>
-            <div id="hero-dots" class="flex items-center gap-1.5">
-              <?php for ($_di = 0; $_di < $_slideCount; $_di++): ?>
-              <button class="h-1.5 rounded-full transition-all duration-300 <?= $_di === 0 ? 'w-5 bg-white' : 'w-1.5 bg-white/40' ?>"></button>
-              <?php endfor; ?>
             </div>
-            <button id="hero-next" class="w-7 h-7 rounded-full bg-black/50 hover:bg-black/80 border border-white/20 flex items-center justify-center transition-colors">
-              <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
-            </button>
-          </div>
+          <?php endif; ?>
         </div>
-      </div>
 
+      </div>
     </div>
+    <?php endforeach; ?>
   </div>
+
+  <!-- Navigation dots + arrows -->
+  <?php if ($_hsCount > 1): ?>
+  <div class="absolute bottom-6 inset-x-0 flex items-center justify-center gap-3 z-20">
+    <button id="hs-prev" class="w-9 h-9 rounded-full bg-white/10 hover:bg-white/25 border border-white/20 flex items-center justify-center transition-colors backdrop-blur-sm">
+      <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
+    </button>
+    <div id="hs-dots" class="flex items-center gap-2">
+      <?php for ($_di = 0; $_di < $_hsCount; $_di++): ?>
+      <button class="h-2 rounded-full transition-all duration-300 <?= $_di === 0 ? 'w-7 bg-white' : 'w-2 bg-white/40' ?>"></button>
+      <?php endfor; ?>
+    </div>
+    <button id="hs-next" class="w-9 h-9 rounded-full bg-white/10 hover:bg-white/25 border border-white/20 flex items-center justify-center transition-colors backdrop-blur-sm">
+      <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+    </button>
+  </div>
+  <?php endif; ?>
 </section>
 <script>
 (function() {
-  var slides  = document.querySelectorAll('#hero-slides .slide');
-  var dots    = document.querySelectorAll('#hero-dots button');
+  var slides  = document.querySelectorAll('#hs-track .hs-slide');
+  var dots    = document.querySelectorAll('#hs-dots button');
+  var prev    = document.getElementById('hs-prev');
+  var next    = document.getElementById('hs-next');
   var current = 0;
   var timer;
   if (slides.length < 2) return;
 
   function goTo(n) {
-    slides[current].classList.remove('opacity-100');
-    slides[current].classList.add('opacity-0');
-    dots[current].classList.remove('bg-white', 'w-5');
-    dots[current].classList.add('bg-white/40', 'w-1.5');
+    slides[current].classList.remove('opacity-100','z-10','pointer-events-auto');
+    slides[current].classList.add('opacity-0','z-0','pointer-events-none');
+    dots[current].classList.remove('bg-white','w-7');
+    dots[current].classList.add('bg-white/40','w-2');
     current = (n + slides.length) % slides.length;
-    slides[current].classList.remove('opacity-0');
-    slides[current].classList.add('opacity-100');
-    dots[current].classList.remove('bg-white/40', 'w-1.5');
-    dots[current].classList.add('bg-white', 'w-5');
+    slides[current].classList.remove('opacity-0','z-0','pointer-events-none');
+    slides[current].classList.add('opacity-100','z-10','pointer-events-auto');
+    dots[current].classList.remove('bg-white/40','w-2');
+    dots[current].classList.add('bg-white','w-7');
   }
 
-  function startTimer() { timer = setInterval(function() { goTo(current + 1); }, 4500); }
+  function startTimer() { timer = setInterval(function(){ goTo(current+1); }, 5000); }
   function resetTimer() { clearInterval(timer); startTimer(); }
 
-  document.getElementById('hero-prev').addEventListener('click', function() { goTo(current - 1); resetTimer(); });
-  document.getElementById('hero-next').addEventListener('click', function() { goTo(current + 1); resetTimer(); });
-  dots.forEach(function(dot, i) { dot.addEventListener('click', function() { goTo(i); resetTimer(); }); });
+  if (prev) prev.addEventListener('click', function(){ goTo(current-1); resetTimer(); });
+  if (next) next.addEventListener('click', function(){ goTo(current+1); resetTimer(); });
+  dots.forEach(function(dot,i){ dot.addEventListener('click', function(){ goTo(i); resetTimer(); }); });
   startTimer();
 })();
 </script>
@@ -189,6 +215,13 @@ $c = function($key, $default='') { return htmlspecialchars(ContentController::ge
     </div>
   </div>
 </section>
+
+<!-- STATIC BANNER IMAGE -->
+<?php if ($_staticBanner): ?>
+<section class="overflow-hidden">
+  <img src="<?= Helpers::e($_staticBanner) ?>" alt="" class="w-full h-auto block">
+</section>
+<?php endif; ?>
 
 <!-- FEATURES -->
 <section class="py-24 px-4">
