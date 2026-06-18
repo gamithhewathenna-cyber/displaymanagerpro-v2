@@ -70,10 +70,7 @@ $_staticBanner = Settings::get('content_home_banner', '');
         <!-- Image / mockup -->
         <div class="relative order-1 lg:order-2">
           <?php if ($_hsl['img']): ?>
-            <div class="absolute -inset-3 rounded-3xl blur-2xl pointer-events-none" style="background:linear-gradient(135deg,rgba(99,102,241,.3),rgba(139,92,246,.3))"></div>
-            <div class="relative rounded-2xl overflow-hidden shadow-2xl ring-1 ring-white/10 max-h-64 sm:max-h-80 lg:max-h-none">
-              <img src="<?= Helpers::e($_hsl['img']) ?>" alt="" class="w-full h-auto block">
-            </div>
+            <img src="<?= Helpers::e($_hsl['img']) ?>" alt="" class="w-full h-auto block max-h-64 sm:max-h-80 lg:max-h-none object-contain">
           <?php elseif ($_hi % 3 === 1): ?>
             <!-- Channel editor mockup -->
             <div class="relative rounded-2xl overflow-hidden shadow-2xl ring-1 ring-white/10 max-h-64 sm:max-h-80 lg:max-h-none" style="background:#111827;">
