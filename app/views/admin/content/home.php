@@ -90,24 +90,6 @@
     </div>
   </div>
 
-  <!-- Feature Showcase text -->
-  <div class="bg-white rounded-2xl border border-gray-100 p-6">
-    <h2 class="font-semibold text-gray-900 mb-1 flex items-center gap-2">🖼️ Feature Showcase Section</h2>
-    <p class="text-xs text-gray-400 mb-5">Two-column section below the stats bar: text on the left, image carousel on the right. Upload slide images in the section below.</p>
-    <div class="space-y-4">
-      <div><label class="block text-xs font-medium text-gray-500 mb-1">Heading</label>
-        <input type="text" name="showcase_heading" value="<?= htmlspecialchars($content['showcase_heading'] ?? 'Powerful platform, built for simplicity') ?>" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"></div>
-      <div><label class="block text-xs font-medium text-gray-500 mb-1">Description</label>
-        <textarea name="showcase_subtext" rows="2" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none"><?= htmlspecialchars($content['showcase_subtext'] ?? 'From uploading images to displaying them across all your screens — everything happens in one clean dashboard. No technical skills required.') ?></textarea></div>
-      <div class="grid grid-cols-2 gap-4">
-        <div><label class="block text-xs font-medium text-gray-500 mb-1">CTA Button Text</label>
-          <input type="text" name="showcase_cta_text" value="<?= htmlspecialchars($content['showcase_cta_text'] ?? 'Start Free Trial →') ?>" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"></div>
-        <div><label class="block text-xs font-medium text-gray-500 mb-1">CTA Button URL</label>
-          <input type="text" name="showcase_cta_url" value="<?= htmlspecialchars($content['showcase_cta_url'] ?? '/register') ?>" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"></div>
-      </div>
-    </div>
-  </div>
-
   <!-- Bottom CTA -->
   <div class="bg-white rounded-2xl border border-gray-100 p-6">
     <h2 class="font-semibold text-gray-900 mb-5">🚀 Bottom CTA</h2>
@@ -132,8 +114,8 @@
   for ($i = 1; $i <= 6; $i++) $_hSlots[$i] = Settings::get("content_home_slide_{$i}", '');
 ?>
 <div class="bg-white rounded-2xl border border-gray-100 p-6 mt-6">
-  <h2 class="font-semibold text-gray-900 mb-1 flex items-center gap-2">🖼️ Feature Showcase — Slide Images</h2>
-  <p class="text-xs text-gray-400 mb-5">Upload up to 6 PNG screenshots. Only uploaded slots are shown — empty slots are skipped. Recommended size: <strong>1280 × 800 px</strong> (landscape).</p>
+  <h2 class="font-semibold text-gray-900 mb-1 flex items-center gap-2">🖼️ Hero Slider Images</h2>
+  <p class="text-xs text-gray-400 mb-5">Upload up to 6 PNG screenshots shown in the hero carousel (right side). Empty slots are skipped. Recommended: <strong>1280 × 800 px</strong> (16:10 landscape).</p>
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
     <?php for ($i = 1; $i <= 6; $i++): ?>
     <?php $cur = $_hSlots[$i]; ?>
