@@ -75,8 +75,8 @@ $c = function($key, $default='') { return htmlspecialchars(ContentController::ge
 
   $_sliderImgs = [];
   for ($_si = 1; $_si <= 6; $_si++) {
-      $_img = Settings::get("content_slider_image_{$_si}", '');
-      if ($_img) $_sliderImgs[] = ['src' => $_img, 'label' => ContentController::get('slider', "label_{$_si}", '')];
+      $_img = Settings::get("content_home_slide_{$_si}", '');
+      if ($_img) $_sliderImgs[] = ['src' => $_img, 'label' => ''];
   }
   $_slideCount = !empty($_sliderImgs) ? count($_sliderImgs) : 4;
 ?>

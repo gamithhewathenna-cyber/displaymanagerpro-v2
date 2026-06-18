@@ -4,7 +4,7 @@
  */
 class ContentController extends BaseController
 {
-    private array $pages = ['home', 'features', 'industries', 'faq', 'contact', 'pricing', 'footer', 'branding', 'privacy', 'terms', 'refund', 'slider'];
+    private array $pages = ['home', 'features', 'industries', 'faq', 'contact', 'pricing', 'footer', 'branding', 'privacy', 'terms', 'refund'];
 
     public function index(): void
     {
@@ -194,7 +194,7 @@ class ContentController extends BaseController
         $this->redirect('/admin/content/branding');
     }
 
-    public function uploadSliderImage(string $slot): void
+    public function uploadHomeSlide(string $slot): void
     {
         $this->requireAdmin();
         $this->validateCsrf();
@@ -202,29 +202,29 @@ class ContentController extends BaseController
         $slot = (int) $slot;
         if ($slot < 1 || $slot > 6) $this->abort(404);
 
-        if (empty($_FILES['slider_image']) || $_FILES['slider_image']['error'] === UPLOAD_ERR_NO_FILE) {
+        if (empty($_FILES['slide_image']) || $_FILES['slide_image']['error'] === UPLOAD_ERR_NO_FILE) {
             Session::flash('error', 'No file selected.');
-            $this->redirect('/admin/content/slider');
+            $this->redirect('/admin/content/home');
         }
 
-        $file = $_FILES['slider_image'];
+        $file = $_FILES['slide_image'];
         if ($file['error'] !== UPLOAD_ERR_OK) {
             Session::flash('error', 'Upload failed (error code ' . $file['error'] . ').');
-            $this->redirect('/admin/content/slider');
+            $this->redirect('/admin/content/home');
         }
 
         $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
-        if (!in_array($file['type'], ['image/png']) || $ext !== 'png') {
+        if ($file['type'] !== 'image/png' || $ext !== 'png') {
             Session::flash('error', 'Only PNG images are allowed for the slider.');
-            $this->redirect('/admin/content/slider');
+            $this->redirect('/admin/content/home');
         }
 
         if ($file['size'] > 5 * 1024 * 1024) {
             Session::flash('error', 'Image must be under 5 MB.');
-            $this->redirect('/admin/content/slider');
+            $this->redirect('/admin/content/home');
         }
 
-        $old = Settings::get("content_slider_image_{$slot}", '');
+        $old = Settings::get("content_home_slide_{$slot}", '');
         if ($old && str_starts_with($old, '/uploads/slider/')) {
             $oldPath = PUBLIC_PATH . $old;
             if (file_exists($oldPath)) @unlink($oldPath);
@@ -233,19 +233,19 @@ class ContentController extends BaseController
         $dir = UPLOAD_PATH . '/slider/';
         if (!is_dir($dir)) mkdir($dir, 0755, true);
 
-        $name = "slide_{$slot}_" . time() . '.png';
+        $name = "home_slide_{$slot}_" . time() . '.png';
         if (!move_uploaded_file($file['tmp_name'], $dir . $name)) {
             Session::flash('error', 'Failed to save image. Check directory permissions.');
-            $this->redirect('/admin/content/slider');
+            $this->redirect('/admin/content/home');
         }
 
-        Settings::set("content_slider_image_{$slot}", '/uploads/slider/' . $name, 'content');
-        ActivityLog::log('admin_content_saved', "Updated feature slider image slot $slot");
-        Session::flash('success', "Slide $slot updated successfully.");
-        $this->redirect('/admin/content/slider');
+        Settings::set("content_home_slide_{$slot}", '/uploads/slider/' . $name, 'content');
+        ActivityLog::log('admin_content_saved', "Updated homepage slider image slot $slot");
+        Session::flash('success', "Slide $slot updated.");
+        $this->redirect('/admin/content/home');
     }
 
-    public function removeSliderImage(string $slot): void
+    public function removeHomeSlide(string $slot): void
     {
         $this->requireAdmin();
         $this->validateCsrf();
@@ -253,16 +253,16 @@ class ContentController extends BaseController
         $slot = (int) $slot;
         if ($slot < 1 || $slot > 6) $this->abort(404);
 
-        $old = Settings::get("content_slider_image_{$slot}", '');
+        $old = Settings::get("content_home_slide_{$slot}", '');
         if ($old && str_starts_with($old, '/uploads/slider/')) {
             $oldPath = PUBLIC_PATH . $old;
             if (file_exists($oldPath)) @unlink($oldPath);
         }
 
-        Settings::set("content_slider_image_{$slot}", '', 'content');
-        ActivityLog::log('admin_content_saved', "Removed feature slider image slot $slot");
+        Settings::set("content_home_slide_{$slot}", '', 'content');
+        ActivityLog::log('admin_content_saved', "Removed homepage slider image slot $slot");
         Session::flash('success', "Slide $slot removed.");
-        $this->redirect('/admin/content/slider');
+        $this->redirect('/admin/content/home');
     }
 
     public static function get(string $page, string $key, string $default = ''): string
@@ -436,10 +436,6 @@ class ContentController extends BaseController
                 'seo_title'       => '',
                 'seo_description' => '',
                 'seo_keyphrase'   => '',
-            ],
-            'slider' => [
-                'label_1' => '', 'label_2' => '', 'label_3' => '',
-                'label_4' => '', 'label_5' => '', 'label_6' => '',
             ],
             'branding' => [],
             'privacy' => [

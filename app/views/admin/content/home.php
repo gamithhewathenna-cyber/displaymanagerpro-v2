@@ -90,6 +90,24 @@
     </div>
   </div>
 
+  <!-- Feature Showcase text -->
+  <div class="bg-white rounded-2xl border border-gray-100 p-6">
+    <h2 class="font-semibold text-gray-900 mb-1 flex items-center gap-2">🖼️ Feature Showcase Section</h2>
+    <p class="text-xs text-gray-400 mb-5">Two-column section below the stats bar: text on the left, image carousel on the right. Upload slide images in the section below.</p>
+    <div class="space-y-4">
+      <div><label class="block text-xs font-medium text-gray-500 mb-1">Heading</label>
+        <input type="text" name="showcase_heading" value="<?= htmlspecialchars($content['showcase_heading'] ?? 'Powerful platform, built for simplicity') ?>" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"></div>
+      <div><label class="block text-xs font-medium text-gray-500 mb-1">Description</label>
+        <textarea name="showcase_subtext" rows="2" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none"><?= htmlspecialchars($content['showcase_subtext'] ?? 'From uploading images to displaying them across all your screens — everything happens in one clean dashboard. No technical skills required.') ?></textarea></div>
+      <div class="grid grid-cols-2 gap-4">
+        <div><label class="block text-xs font-medium text-gray-500 mb-1">CTA Button Text</label>
+          <input type="text" name="showcase_cta_text" value="<?= htmlspecialchars($content['showcase_cta_text'] ?? 'Start Free Trial →') ?>" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"></div>
+        <div><label class="block text-xs font-medium text-gray-500 mb-1">CTA Button URL</label>
+          <input type="text" name="showcase_cta_url" value="<?= htmlspecialchars($content['showcase_cta_url'] ?? '/register') ?>" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"></div>
+      </div>
+    </div>
+  </div>
+
   <!-- Bottom CTA -->
   <div class="bg-white rounded-2xl border border-gray-100 p-6">
     <h2 class="font-semibold text-gray-900 mb-5">🚀 Bottom CTA</h2>
@@ -107,3 +125,65 @@
 
   <button type="submit" class="bg-primary-500 hover:bg-primary-600 text-white font-semibold px-8 py-3 rounded-xl transition-colors">Save Homepage Content</button>
 </form>
+
+<!-- Feature Showcase — Slide Images (separate upload forms) -->
+<?php
+  $_hSlots = [];
+  for ($i = 1; $i <= 6; $i++) $_hSlots[$i] = Settings::get("content_home_slide_{$i}", '');
+?>
+<div class="bg-white rounded-2xl border border-gray-100 p-6 mt-6">
+  <h2 class="font-semibold text-gray-900 mb-1 flex items-center gap-2">🖼️ Feature Showcase — Slide Images</h2>
+  <p class="text-xs text-gray-400 mb-5">Upload up to 6 PNG screenshots. Only uploaded slots are shown — empty slots are skipped. Recommended size: <strong>1280 × 800 px</strong> (landscape).</p>
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+    <?php for ($i = 1; $i <= 6; $i++): ?>
+    <?php $cur = $_hSlots[$i]; ?>
+    <div class="border border-gray-100 rounded-xl p-4">
+      <!-- Header -->
+      <div class="flex items-center justify-between mb-3">
+        <div class="flex items-center gap-2">
+          <span class="w-6 h-6 rounded-lg bg-primary-50 text-primary-600 font-bold text-xs flex items-center justify-center"><?= $i ?></span>
+          <span class="text-sm font-medium text-gray-700">Slide <?= $i ?></span>
+        </div>
+        <?php if ($cur): ?>
+        <span class="text-xs bg-green-100 text-green-700 font-semibold px-2 py-0.5 rounded-full">Uploaded</span>
+        <?php else: ?>
+        <span class="text-xs bg-gray-100 text-gray-400 px-2 py-0.5 rounded-full">Empty</span>
+        <?php endif; ?>
+      </div>
+      <!-- Preview -->
+      <div class="rounded-lg overflow-hidden bg-gray-100 border border-gray-200 mb-3" style="aspect-ratio:16/10;">
+        <?php if ($cur): ?>
+          <img src="<?= Helpers::e($cur) ?>?v=<?= time() ?>" alt="Slide <?= $i ?>" class="w-full h-full object-cover">
+        <?php else: ?>
+          <div class="w-full h-full flex flex-col items-center justify-center gap-1.5 text-gray-300">
+            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+            <span class="text-xs text-gray-400">No image</span>
+          </div>
+        <?php endif; ?>
+      </div>
+      <!-- Upload -->
+      <form method="POST" action="/admin/content/home/slide/<?= $i ?>" enctype="multipart/form-data" class="space-y-2">
+        <input type="hidden" name="_csrf_token" value="<?= Csrf::token() ?>">
+        <div class="flex items-center gap-2">
+          <label class="flex-1 min-w-0 block">
+            <span class="sr-only">Choose PNG</span>
+            <input type="file" name="slide_image" accept="image/png"
+              class="block w-full text-xs text-gray-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100 cursor-pointer">
+          </label>
+          <button type="submit" class="bg-primary-500 hover:bg-primary-600 text-white font-semibold px-3 py-1.5 rounded-lg text-xs transition-colors whitespace-nowrap">
+            <?= $cur ? 'Replace' : 'Upload' ?>
+          </button>
+        </div>
+      </form>
+      <!-- Remove -->
+      <?php if ($cur): ?>
+      <form method="POST" action="/admin/content/home/slide/<?= $i ?>/remove" class="mt-2">
+        <input type="hidden" name="_csrf_token" value="<?= Csrf::token() ?>">
+        <button type="submit" onclick="return confirm('Remove slide <?= $i ?>?')"
+          class="text-xs text-red-500 hover:text-red-700 font-medium transition-colors">Remove image</button>
+      </form>
+      <?php endif; ?>
+    </div>
+    <?php endfor; ?>
+  </div>
+</div>

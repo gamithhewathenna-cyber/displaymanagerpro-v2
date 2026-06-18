@@ -24,8 +24,7 @@
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
     <?php
       $pages = [
-        ['home',       '🏠', 'Homepage',    'Hero, stats, features, how-it-works, testimonials, CTA'],
-        ['slider',     '🖼️', 'Feature Slider', 'Upload up to 6 PNG screenshots for the homepage showcase carousel'],
+        ['home',       '🏠', 'Homepage',    'Hero, stats, features, how-it-works, showcase slider, testimonials, CTA'],
         ['features',   '⚡', 'Features',    '12 feature cards, page title, CTA section'],
         ['industries', '🏢', 'Industries',  '6 industry sections with descriptions'],
         ['pricing',    '💳', 'Pricing',     'SEO title, meta description, focus keyphrase'],
