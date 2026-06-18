@@ -36,24 +36,24 @@ $_staticBanner = Settings::get('content_home_banner', '');
 
         <!-- Text -->
         <div class="order-2 lg:order-1">
-          <div class="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-1.5 text-sm mb-7">
+          <div class="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-3 py-1 text-xs sm:text-sm sm:px-4 sm:py-1.5 mb-4 sm:mb-7">
             <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
             <?= $c('badge_text', '14-day free trial · No credit card required') ?>
           </div>
 
           <?php if ($_hsl['heading'] === null): ?>
-            <h1 class="text-3xl sm:text-4xl md:text-5xl xl:text-6xl font-extrabold leading-tight mb-5">
+            <h1 class="text-xl sm:text-3xl md:text-5xl xl:text-6xl font-extrabold leading-tight mb-4">
               <?= $c('hero_title_1', 'Update Every Restaurant Screen') ?><br>
               <span style="background:linear-gradient(90deg,#a78bfa,#60a5fa);-webkit-background-clip:text;-webkit-text-fill-color:transparent"><?= $c('hero_title_2', 'In Seconds') ?></span>
             </h1>
-            <p class="text-lg sm:text-xl text-gray-300 mb-3 font-light"><?= $c('hero_subtitle', 'No USB Drives. No Complicated Software.') ?></p>
-            <p class="text-sm sm:text-base text-gray-400 mb-7 max-w-lg"><?= $c('hero_description', 'Manage menus, specials, promotions and announcements across all your TV screens from one simple cloud dashboard.') ?></p>
+            <p class="text-sm sm:text-xl text-gray-300 mb-2 font-light"><?= $c('hero_subtitle', 'No USB Drives. No Complicated Software.') ?></p>
+            <p class="text-xs sm:text-base text-gray-400 mb-6 max-w-lg"><?= $c('hero_description', 'Manage menus, specials, promotions and announcements across all your TV screens from one simple cloud dashboard.') ?></p>
           <?php else: ?>
-            <h1 class="text-3xl sm:text-4xl md:text-5xl xl:text-6xl font-extrabold leading-tight mb-6">
+            <h1 class="text-xl sm:text-3xl md:text-5xl xl:text-6xl font-extrabold leading-tight mb-4">
               <?= Helpers::e($_hsl['heading']) ?>
             </h1>
             <?php if ($_hsl['sub']): ?>
-            <p class="text-base sm:text-xl text-gray-300 mb-7 max-w-lg leading-relaxed"><?= Helpers::e($_hsl['sub']) ?></p>
+            <p class="text-xs sm:text-xl text-gray-300 mb-6 max-w-lg leading-relaxed"><?= Helpers::e($_hsl['sub']) ?></p>
             <?php endif; ?>
           <?php endif; ?>
 
