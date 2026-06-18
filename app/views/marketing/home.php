@@ -25,58 +25,58 @@ $_hsCount = count($_hs);
 $_staticBanner = Settings::get('content_home_banner', '');
 ?>
 <!-- HERO SLIDER -->
-<section class="hero-gradient text-white overflow-hidden relative" style="min-height:600px;">
+<section class="hero-gradient text-white overflow-hidden relative">
   <div class="absolute inset-0 pointer-events-none opacity-10" style="background-image:radial-gradient(circle at 15% 50%,#6366f1 0%,transparent 50%),radial-gradient(circle at 85% 20%,#8b5cf6 0%,transparent 40%)"></div>
 
-  <!-- Slide track -->
-  <div id="hs-track" class="relative" style="min-height:600px;">
+  <!-- Slide track — CSS grid stacking so height = tallest slide content -->
+  <div id="hs-track" class="relative" style="display:grid;">
     <?php foreach ($_hs as $_hi => $_hsl): ?>
-    <div class="hs-slide absolute inset-0 flex items-center transition-opacity duration-700 <?= $_hi === 0 ? 'opacity-100 z-10 pointer-events-auto' : 'opacity-0 z-0 pointer-events-none' ?>">
-      <div class="max-w-6xl mx-auto w-full px-4 sm:px-6 py-20 grid grid-cols-1 lg:grid-cols-2 gap-10 xl:gap-16 items-center">
+    <div class="hs-slide transition-opacity duration-700 <?= $_hi === 0 ? 'opacity-100 z-10 pointer-events-auto' : 'opacity-0 z-0 pointer-events-none' ?>" style="grid-area:1/1;">
+      <div class="max-w-6xl mx-auto w-full px-4 sm:px-6 pt-10 pb-16 lg:py-20 grid grid-cols-1 lg:grid-cols-2 gap-8 xl:gap-16 items-center">
 
         <!-- Text -->
-        <div class="order-2 lg:order-1">
+        <div>
           <div class="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-1.5 text-sm mb-7">
             <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
             <?= $c('badge_text', '14-day free trial · No credit card required') ?>
           </div>
 
           <?php if ($_hsl['heading'] === null): ?>
-            <h1 class="text-4xl md:text-5xl xl:text-6xl font-extrabold leading-tight mb-5">
+            <h1 class="text-3xl sm:text-4xl md:text-5xl xl:text-6xl font-extrabold leading-tight mb-5">
               <?= $c('hero_title_1', 'Update Every Restaurant Screen') ?><br>
               <span style="background:linear-gradient(90deg,#a78bfa,#60a5fa);-webkit-background-clip:text;-webkit-text-fill-color:transparent"><?= $c('hero_title_2', 'In Seconds') ?></span>
             </h1>
-            <p class="text-xl text-gray-300 mb-3 font-light"><?= $c('hero_subtitle', 'No USB Drives. No Complicated Software.') ?></p>
-            <p class="text-base text-gray-400 mb-9 max-w-lg"><?= $c('hero_description', 'Manage menus, specials, promotions and announcements across all your TV screens from one simple cloud dashboard.') ?></p>
+            <p class="text-lg sm:text-xl text-gray-300 mb-3 font-light"><?= $c('hero_subtitle', 'No USB Drives. No Complicated Software.') ?></p>
+            <p class="text-sm sm:text-base text-gray-400 mb-7 max-w-lg"><?= $c('hero_description', 'Manage menus, specials, promotions and announcements across all your TV screens from one simple cloud dashboard.') ?></p>
           <?php else: ?>
-            <h1 class="text-4xl md:text-5xl xl:text-6xl font-extrabold leading-tight mb-6">
+            <h1 class="text-3xl sm:text-4xl md:text-5xl xl:text-6xl font-extrabold leading-tight mb-6">
               <?= Helpers::e($_hsl['heading']) ?>
             </h1>
             <?php if ($_hsl['sub']): ?>
-            <p class="text-xl text-gray-300 mb-9 max-w-lg leading-relaxed"><?= Helpers::e($_hsl['sub']) ?></p>
+            <p class="text-base sm:text-xl text-gray-300 mb-7 max-w-lg leading-relaxed"><?= Helpers::e($_hsl['sub']) ?></p>
             <?php endif; ?>
           <?php endif; ?>
 
-          <div class="flex flex-col sm:flex-row gap-4">
-            <a href="/register" class="bg-primary-500 hover:bg-primary-600 text-white font-bold text-lg px-9 py-4 rounded-xl transition-all shadow-lg shadow-primary-500/30 hover:-translate-y-0.5 text-center">
+          <div class="flex flex-col sm:flex-row gap-3 sm:gap-4">
+            <a href="/register" class="bg-primary-500 hover:bg-primary-600 text-white font-bold text-base sm:text-lg px-7 sm:px-9 py-3 sm:py-4 rounded-xl transition-all shadow-lg shadow-primary-500/30 hover:-translate-y-0.5 text-center">
               <?= $c('cta_primary', 'Start Free 14-Day Trial →') ?>
             </a>
-            <a href="/pricing" class="bg-white/10 hover:bg-white/20 border border-white/20 text-white font-semibold text-lg px-9 py-4 rounded-xl transition-all text-center">
+            <a href="/pricing" class="bg-white/10 hover:bg-white/20 border border-white/20 text-white font-semibold text-base sm:text-lg px-7 sm:px-9 py-3 sm:py-4 rounded-xl transition-all text-center">
               <?= $c('cta_secondary', 'View Pricing') ?>
             </a>
           </div>
         </div>
 
         <!-- Image / mockup -->
-        <div class="order-1 lg:order-2 relative">
+        <div class="relative">
           <?php if ($_hsl['img']): ?>
             <div class="absolute -inset-3 rounded-3xl blur-2xl pointer-events-none" style="background:linear-gradient(135deg,rgba(99,102,241,.3),rgba(139,92,246,.3))"></div>
-            <div class="relative rounded-2xl overflow-hidden shadow-2xl ring-1 ring-white/10">
+            <div class="relative rounded-2xl overflow-hidden shadow-2xl ring-1 ring-white/10 max-h-64 sm:max-h-80 lg:max-h-none">
               <img src="<?= Helpers::e($_hsl['img']) ?>" alt="" class="w-full h-auto block">
             </div>
           <?php elseif ($_hi % 3 === 1): ?>
             <!-- Channel editor mockup -->
-            <div class="relative rounded-2xl overflow-hidden shadow-2xl ring-1 ring-white/10" style="background:#111827;">
+            <div class="relative rounded-2xl overflow-hidden shadow-2xl ring-1 ring-white/10 max-h-64 sm:max-h-80 lg:max-h-none" style="background:#111827;">
               <div class="px-4 py-3 border-b border-white/10 flex items-center gap-2" style="background:rgba(31,41,55,.9)">
                 <div class="flex gap-1.5"><div class="w-3 h-3 rounded-full bg-red-400/80"></div><div class="w-3 h-3 rounded-full bg-yellow-400/80"></div><div class="w-3 h-3 rounded-full bg-green-400/80"></div></div>
                 <div class="flex-1 ml-2 bg-white/10 rounded px-3 py-1 text-xs text-gray-400 truncate">dashboard.signagecloud.com/channels</div>
@@ -100,7 +100,7 @@ $_staticBanner = Settings::get('content_home_banner', '');
             </div>
           <?php elseif ($_hi % 3 === 2): ?>
             <!-- Live display mockup -->
-            <div class="relative rounded-2xl overflow-hidden shadow-2xl ring-1 ring-white/10" style="background:#111827;">
+            <div class="relative rounded-2xl overflow-hidden shadow-2xl ring-1 ring-white/10 max-h-64 sm:max-h-80 lg:max-h-none" style="background:#111827;">
               <div class="px-4 py-3 border-b border-white/10 flex items-center gap-2" style="background:rgba(31,41,55,.9)">
                 <div class="flex gap-1.5"><div class="w-3 h-3 rounded-full bg-red-400/80"></div><div class="w-3 h-3 rounded-full bg-yellow-400/80"></div><div class="w-3 h-3 rounded-full bg-green-400/80"></div></div>
                 <div class="flex-1 ml-2 bg-white/10 rounded px-3 py-1 text-xs text-gray-400 truncate">display.signagecloud.com/main-board</div>
@@ -123,7 +123,7 @@ $_staticBanner = Settings::get('content_home_banner', '');
             </div>
           <?php else: ?>
             <!-- Dashboard mockup -->
-            <div class="relative rounded-2xl overflow-hidden shadow-2xl ring-1 ring-white/10" style="background:#111827;">
+            <div class="relative rounded-2xl overflow-hidden shadow-2xl ring-1 ring-white/10 max-h-64 sm:max-h-80 lg:max-h-none" style="background:#111827;">
               <div class="px-4 py-3 border-b border-white/10 flex items-center gap-2" style="background:rgba(31,41,55,.9)">
                 <div class="flex gap-1.5"><div class="w-3 h-3 rounded-full bg-red-400/80"></div><div class="w-3 h-3 rounded-full bg-yellow-400/80"></div><div class="w-3 h-3 rounded-full bg-green-400/80"></div></div>
                 <div class="flex-1 ml-2 bg-white/10 rounded px-3 py-1 text-xs text-gray-400 truncate">dashboard.signagecloud.com</div>
