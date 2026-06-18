@@ -35,7 +35,7 @@ $_staticBanner = Settings::get('content_home_banner', '');
       <div class="max-w-6xl mx-auto w-full px-4 sm:px-6 pt-10 pb-16 lg:py-20 grid grid-cols-1 lg:grid-cols-2 gap-8 xl:gap-16 items-center">
 
         <!-- Text -->
-        <div>
+        <div class="order-2 lg:order-1">
           <div class="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-1.5 text-sm mb-7">
             <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
             <?= $c('badge_text', '14-day free trial · No credit card required') ?>
@@ -68,7 +68,7 @@ $_staticBanner = Settings::get('content_home_banner', '');
         </div>
 
         <!-- Image / mockup -->
-        <div class="relative">
+        <div class="relative order-1 lg:order-2">
           <?php if ($_hsl['img']): ?>
             <div class="absolute -inset-3 rounded-3xl blur-2xl pointer-events-none" style="background:linear-gradient(135deg,rgba(99,102,241,.3),rgba(139,92,246,.3))"></div>
             <div class="relative rounded-2xl overflow-hidden shadow-2xl ring-1 ring-white/10 max-h-64 sm:max-h-80 lg:max-h-none">
