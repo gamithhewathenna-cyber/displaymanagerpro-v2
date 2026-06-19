@@ -58,10 +58,10 @@ $_staticBanner = Settings::get('content_home_banner', '');
           <?php endif; ?>
 
           <div class="flex flex-col sm:flex-row gap-3 sm:gap-4">
-            <a href="/register" class="bg-primary-500 hover:bg-primary-600 text-white font-bold text-base sm:text-lg px-7 sm:px-9 py-3 sm:py-4 rounded-xl transition-all shadow-lg shadow-primary-500/30 hover:-translate-y-0.5 text-center">
+            <a href="/register" class="bg-primary-500 hover:bg-primary-600 text-white font-bold text-sm sm:text-base px-5 sm:px-7 py-2.5 sm:py-3 rounded-xl transition-all shadow-lg shadow-primary-500/30 hover:-translate-y-0.5 text-center">
               <?= $c('cta_primary', 'Start Free 14-Day Trial →') ?>
             </a>
-            <a href="/pricing" class="bg-white/10 hover:bg-white/20 border border-white/20 text-white font-semibold text-base sm:text-lg px-7 sm:px-9 py-3 sm:py-4 rounded-xl transition-all text-center">
+            <a href="/pricing" class="bg-white/10 hover:bg-white/20 border border-white/20 text-white font-semibold text-sm sm:text-base px-5 sm:px-7 py-2.5 sm:py-3 rounded-xl transition-all text-center">
               <?= $c('cta_secondary', 'View Pricing') ?>
             </a>
           </div>
