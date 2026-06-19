@@ -257,28 +257,35 @@ class StorageService
         };
         if (!$img) return $tmpPath;
 
-        // Auto-orient based on EXIF
+        // Auto-orient JPEG from EXIF
         if ($mimeType === 'image/jpeg' && function_exists('exif_read_data')) {
             $exif = @exif_read_data($tmpPath);
-            $orientation = $exif['Orientation'] ?? 1;
-            $img = $this->rotateByExif($img, $orientation);
+            $img  = match((int)($exif['Orientation'] ?? 1)) {
+                3       => imagerotate($img, 180, 0),
+                6       => imagerotate($img, -90, 0),
+                8       => imagerotate($img, 90, 0),
+                default => $img,
+            };
         }
 
-        $outPath = sys_get_temp_dir() . '/' . uniqid('sc_opt_') . '.jpg';
-        imagejpeg($img, $outPath, 82);
+        // Preserve PNG/WebP alpha channel
+        if ($mimeType === 'image/png' || $mimeType === 'image/webp') {
+            imagealphablending($img, false);
+            imagesavealpha($img, true);
+        }
+
+        $ext     = match($mimeType) { 'image/png' => 'png', 'image/webp' => 'webp', default => 'jpg' };
+        $outPath = sys_get_temp_dir() . '/' . uniqid('sc_opt_') . '.' . $ext;
+
+        $ok = match($mimeType) {
+            'image/jpeg' => imagejpeg($img, $outPath, 82),
+            'image/png'  => imagepng($img, $outPath, 7),
+            'image/webp' => imagewebp($img, $outPath, 82),
+            default      => false,
+        };
         imagedestroy($img);
 
-        return $outPath;
-    }
-
-    private function rotateByExif($img, int $orientation)
-    {
-        return match($orientation) {
-            3 => imagerotate($img, 180, 0),
-            6 => imagerotate($img, -90, 0),
-            8 => imagerotate($img, 90, 0),
-            default => $img,
-        };
+        return $ok ? $outPath : $tmpPath;
     }
 
     public function delete(array $media): bool

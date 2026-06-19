@@ -202,6 +202,57 @@ class Helpers
         header('Location: ' . $url);
         exit;
     }
+
+    /**
+     * Re-encode an uploaded image at reduced quality, preserving format and dimensions.
+     * JPEG → quality 82, PNG → deflate level 7 (lossless, strips metadata),
+     * WebP → quality 82. Alpha transparency is preserved for PNG/WebP.
+     * Falls back silently to move_uploaded_file() when GD is unavailable.
+     */
+    public static function moveOptimizedImage(string $tmpPath, string $mimeType, string $dest): bool
+    {
+        if (!extension_loaded('gd')) {
+            return move_uploaded_file($tmpPath, $dest);
+        }
+
+        $img = match($mimeType) {
+            'image/jpeg' => @imagecreatefromjpeg($tmpPath),
+            'image/png'  => @imagecreatefrompng($tmpPath),
+            'image/webp' => @imagecreatefromwebp($tmpPath),
+            default      => null,
+        };
+
+        if (!$img) {
+            return move_uploaded_file($tmpPath, $dest);
+        }
+
+        // Auto-orient JPEG from EXIF (re-encoding strips raw EXIF metadata)
+        if ($mimeType === 'image/jpeg' && function_exists('exif_read_data')) {
+            $exif = @exif_read_data($tmpPath);
+            $img  = match((int)($exif['Orientation'] ?? 1)) {
+                3       => imagerotate($img, 180, 0),
+                6       => imagerotate($img, -90, 0),
+                8       => imagerotate($img, 90, 0),
+                default => $img,
+            };
+        }
+
+        // Preserve PNG/WebP alpha channel
+        if ($mimeType === 'image/png' || $mimeType === 'image/webp') {
+            imagealphablending($img, false);
+            imagesavealpha($img, true);
+        }
+
+        $ok = match($mimeType) {
+            'image/jpeg' => imagejpeg($img, $dest, 82),
+            'image/png'  => imagepng($img, $dest, 7),
+            'image/webp' => imagewebp($img, $dest, 82),
+            default      => false,
+        };
+        imagedestroy($img);
+
+        return (bool) $ok;
+    }
 }
 
 /**

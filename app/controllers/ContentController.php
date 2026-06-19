@@ -96,7 +96,7 @@ class ContentController extends BaseController
         $storedName = 'website_logo_' . time() . '.' . $ext;
         $dest       = $logoDir . $storedName;
 
-        if (!move_uploaded_file($file['tmp_name'], $dest)) {
+        if (!Helpers::moveOptimizedImage($file['tmp_name'], $file['type'], $dest)) {
             Session::flash('error', 'Failed to save logo. Check directory permissions.');
             $this->redirect('/admin/content/branding');
         }
@@ -166,7 +166,7 @@ class ContentController extends BaseController
         $storedName = 'mobile_logo_' . time() . '.' . $ext;
         $dest       = $logoDir . $storedName;
 
-        if (!move_uploaded_file($file['tmp_name'], $dest)) {
+        if (!Helpers::moveOptimizedImage($file['tmp_name'], $file['type'], $dest)) {
             Session::flash('error', 'Failed to save logo. Check directory permissions.');
             $this->redirect('/admin/content/branding');
         }
@@ -234,7 +234,7 @@ class ContentController extends BaseController
         if (!is_dir($dir)) mkdir($dir, 0755, true);
 
         $name = "home_slide_{$slot}_" . time() . '.png';
-        if (!move_uploaded_file($file['tmp_name'], $dir . $name)) {
+        if (!Helpers::moveOptimizedImage($file['tmp_name'], 'image/png', $dir . $name)) {
             Session::flash('error', 'Failed to save image. Check directory permissions.');
             $this->redirect('/admin/content/home');
         }
@@ -299,7 +299,7 @@ class ContentController extends BaseController
         $dir  = PUBLIC_PATH . '/uploads/banner/';
         if (!is_dir($dir)) mkdir($dir, 0755, true);
         $name = 'home_banner_' . time() . '.png';
-        if (!move_uploaded_file($file['tmp_name'], $dir . $name)) {
+        if (!Helpers::moveOptimizedImage($file['tmp_name'], 'image/png', $dir . $name)) {
             Session::flash('error', 'Failed to save image.');
             $this->redirect('/admin/content/home');
             return;
@@ -370,7 +370,7 @@ class ContentController extends BaseController
         if (!is_dir($dir)) mkdir($dir, 0755, true);
 
         $name = "about_image{$slot}_" . time() . '.' . $ext;
-        if (!move_uploaded_file($file['tmp_name'], $dir . $name)) {
+        if (!Helpers::moveOptimizedImage($file['tmp_name'], $file['type'], $dir . $name)) {
             Session::flash('error', 'Failed to save image. Check directory permissions.');
             $this->redirect('/admin/content/about');
         }
@@ -444,7 +444,7 @@ class ContentController extends BaseController
         if (!is_dir($dir)) mkdir($dir, 0755, true);
 
         $name = "industries_image{$slot}_" . time() . '.' . $ext;
-        if (!move_uploaded_file($file['tmp_name'], $dir . $name)) {
+        if (!Helpers::moveOptimizedImage($file['tmp_name'], $file['type'], $dir . $name)) {
             Session::flash('error', 'Failed to save image. Check directory permissions.');
             $this->redirect('/admin/content/industries');
         }

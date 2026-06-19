@@ -433,7 +433,7 @@ class AdminController extends BaseController
         $storedName = 'logo_' . time() . '.' . $ext;
         $dest       = $logoDir . $storedName;
 
-        if (!move_uploaded_file($file['tmp_name'], $dest)) {
+        if (!Helpers::moveOptimizedImage($file['tmp_name'], $file['type'], $dest)) {
             Session::flash('error', 'Failed to save logo. Check directory permissions.');
             $this->redirect('/admin/settings#branding');
         }
@@ -505,7 +505,7 @@ class AdminController extends BaseController
         $storedName = 'favicon_' . time() . '.' . $ext;
         $dest       = $faviconDir . $storedName;
 
-        if (!move_uploaded_file($file['tmp_name'], $dest)) {
+        if (!Helpers::moveOptimizedImage($file['tmp_name'], $file['type'], $dest)) {
             Session::flash('error', 'Failed to save favicon. Check directory permissions.');
             $this->redirect('/admin/settings#branding');
         }
