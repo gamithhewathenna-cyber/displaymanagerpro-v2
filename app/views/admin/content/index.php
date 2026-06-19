@@ -25,6 +25,7 @@
     <?php
       $pages = [
         ['home',       '🏠', 'Homepage',    'Hero, stats, features, how-it-works, showcase slider, testimonials, CTA'],
+        ['about',      '👥', 'About Us',    'Hero, who we help, smarter way, why choose us, vision, CTA + 2 images'],
         ['features',   '⚡', 'Features',    '12 feature cards, page title, CTA section'],
         ['industries', '🏢', 'Industries',  '6 industry sections with descriptions'],
         ['pricing',    '💳', 'Pricing',     'SEO title, meta description, focus keyphrase'],

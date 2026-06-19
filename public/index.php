@@ -163,6 +163,8 @@ $router->post('/admin/content/home/slide/{slot}',              'ContentControlle
 $router->post('/admin/content/home/slide/{slot}/remove',       'ContentController', 'removeHomeSlide');
 $router->post('/admin/content/home/banner',                    'ContentController', 'uploadHomeBanner');
 $router->post('/admin/content/home/banner/remove',             'ContentController', 'removeHomeBanner');
+$router->post('/admin/content/about/image/{slot}',        'ContentController', 'uploadAboutImage');
+$router->post('/admin/content/about/image/{slot}/remove','ContentController', 'removeAboutImage');
 $router->get('/admin/content/{page}',                   'ContentController', 'page');
 $router->post('/admin/content/{page}/save',             'ContentController', 'savePage');
 

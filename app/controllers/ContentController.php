@@ -4,7 +4,7 @@
  */
 class ContentController extends BaseController
 {
-    private array $pages = ['home', 'features', 'industries', 'faq', 'contact', 'pricing', 'footer', 'branding', 'privacy', 'terms', 'refund'];
+    private array $pages = ['home', 'features', 'industries', 'faq', 'contact', 'pricing', 'footer', 'branding', 'privacy', 'terms', 'refund', 'about'];
 
     public function index(): void
     {
@@ -328,6 +328,80 @@ class ContentController extends BaseController
         $this->redirect('/admin/content/home');
     }
 
+    public function uploadAboutImage(string $slot): void
+    {
+        $this->requireAdmin();
+        $this->validateCsrf();
+
+        $slot = (int) $slot;
+        if ($slot < 1 || $slot > 2) $this->abort(404);
+
+        $file = $_FILES['about_image'] ?? null;
+        if (!$file || $file['error'] === UPLOAD_ERR_NO_FILE) {
+            Session::flash('error', 'No file selected.');
+            $this->redirect('/admin/content/about');
+        }
+        if ($file['error'] !== UPLOAD_ERR_OK) {
+            Session::flash('error', 'Upload failed (error code ' . $file['error'] . ').');
+            $this->redirect('/admin/content/about');
+        }
+
+        $allowedMimes = ['image/jpeg', 'image/png', 'image/webp'];
+        $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+        $extMap = ['jpg' => true, 'jpeg' => true, 'png' => true, 'webp' => true];
+
+        if (!in_array($file['type'], $allowedMimes) || !isset($extMap[$ext])) {
+            Session::flash('error', 'Only JPG, PNG, and WebP images are allowed.');
+            $this->redirect('/admin/content/about');
+        }
+        if ($file['size'] > 5 * 1024 * 1024) {
+            Session::flash('error', 'Image must be under 5 MB.');
+            $this->redirect('/admin/content/about');
+        }
+
+        $key = "content_about_image{$slot}";
+        $old = Settings::get($key, '');
+        if ($old && str_starts_with($old, '/uploads/about/')) {
+            $oldPath = PUBLIC_PATH . $old;
+            if (file_exists($oldPath)) @unlink($oldPath);
+        }
+
+        $dir = UPLOAD_PATH . '/about/';
+        if (!is_dir($dir)) mkdir($dir, 0755, true);
+
+        $name = "about_image{$slot}_" . time() . '.' . $ext;
+        if (!move_uploaded_file($file['tmp_name'], $dir . $name)) {
+            Session::flash('error', 'Failed to save image. Check directory permissions.');
+            $this->redirect('/admin/content/about');
+        }
+
+        Settings::set($key, '/uploads/about/' . $name, 'content');
+        ActivityLog::log('admin_content_saved', "Updated About page image $slot");
+        Session::flash('success', "Image $slot updated.");
+        $this->redirect('/admin/content/about');
+    }
+
+    public function removeAboutImage(string $slot): void
+    {
+        $this->requireAdmin();
+        $this->validateCsrf();
+
+        $slot = (int) $slot;
+        if ($slot < 1 || $slot > 2) $this->abort(404);
+
+        $key = "content_about_image{$slot}";
+        $old = Settings::get($key, '');
+        if ($old && str_starts_with($old, '/uploads/about/')) {
+            $oldPath = PUBLIC_PATH . $old;
+            if (file_exists($oldPath)) @unlink($oldPath);
+        }
+
+        Settings::set($key, '', 'content');
+        ActivityLog::log('admin_content_saved', "Removed About page image $slot");
+        Session::flash('success', "Image $slot removed.");
+        $this->redirect('/admin/content/about');
+    }
+
     public static function get(string $page, string $key, string $default = ''): string
     {
         $val = Settings::get("content_{$page}_{$key}", null);
@@ -507,6 +581,44 @@ class ContentController extends BaseController
                 'seo_title'       => '',
                 'seo_description' => '',
                 'seo_keyphrase'   => '',
+            ],
+            'about' => [
+                'seo_title'         => '',
+                'seo_description'   => '',
+                'seo_keyphrase'     => '',
+                'hero_subtitle'     => 'At Display Manager Pro, we help businesses update TV screens, digital menu boards, promotions, announcements, and in-store displays from one simple cloud-based dashboard.',
+                's1_badge'          => 'Who We Help',
+                's1_title'          => 'Built for businesses of all sizes',
+                's1_body1'          => 'Whether you operate a restaurant, café, salon, retail store, clinic, hotel, showroom, or multi-location business, Display Manager Pro makes it easy to keep your content fresh, engaging, and up to date — without USB drives, printing costs, or manual screen updates.',
+                's1_body2'          => 'Our mission is simple: make digital signage affordable, easy to manage, and accessible for businesses of all sizes.',
+                's1_stat_num'       => '500+',
+                's1_stat_label'     => 'Businesses worldwide',
+                's1_industries'     => "Restaurants & Cafés\nRetail Stores\nSalons & Spas\nHotels & Resorts\nMedical Clinics\nFitness Centers\nCorporate Offices\nSupermarkets\nShowrooms\nMulti-Location Businesses",
+                's2_badge'          => 'The Smarter Way',
+                's2_title'          => 'The smarter way to manage digital signage',
+                's2_body1'          => 'Traditional screen management can be time-consuming and costly. Businesses often rely on USB drives, manual updates, and staff intervention to change menus, promotions, pricing, and announcements.',
+                's2_body2'          => 'Display Manager Pro eliminates these challenges with a powerful cloud digital signage platform. With just a few clicks, your content is automatically updated across all connected screens.',
+                's2_stat_num'       => '14-day',
+                's2_stat_label'     => 'Free trial, no card needed',
+                's2_bullets'        => "Update screens remotely from any device\nManage multiple TV displays from one dashboard\nSchedule and organise content effortlessly\nDisplay menus, promotions, announcements & advertising\nKeep every location consistent and up to date\nSave time and reduce operational costs",
+                's3_badge'          => 'Why Choose Us',
+                's3_title'          => 'Why businesses choose Display Manager Pro',
+                's3_subtitle'       => 'Enterprise-level digital signage without enterprise-level complexity or pricing.',
+                's3_r1_icon'        => '☁️', 's3_r1_title' => 'Easy Cloud Management',       's3_r1_desc' => 'Update digital displays anytime, anywhere through a secure web-based dashboard.',
+                's3_r2_icon'        => '🖥️', 's3_r2_title' => 'Multi-Screen Control',         's3_r2_desc' => 'Manage multiple TV screens and locations from a single account.',
+                's3_r3_icon'        => '⚡', 's3_r3_title' => 'Instant Content Updates',      's3_r3_desc' => 'Change menus, promotions, pricing, and announcements in seconds.',
+                's3_r4_icon'        => '👆', 's3_r4_title' => 'No Technical Skills Required', 's3_r4_desc' => 'Simple, user-friendly software designed for business owners and staff.',
+                's3_r5_icon'        => '🔒', 's3_r5_title' => 'Secure & Reliable',            's3_r5_desc' => 'Your content is securely hosted and delivered to connected screens automatically.',
+                's3_r6_icon'        => '💰', 's3_r6_title' => 'Affordable Digital Signage',   's3_r6_desc' => 'Enterprise-level features without enterprise-level pricing.',
+                'vision_badge'      => 'Our Vision',
+                'vision_title'      => 'Every business deserves great digital signage',
+                'vision_body1'      => 'We believe every business should have access to professional digital signage technology without expensive hardware, complicated software, or long-term contracts.',
+                'vision_body2'      => 'Our goal is to help businesses communicate more effectively, increase customer engagement, promote products and services, and create better in-store experiences through modern digital display solutions.',
+                'vision_body3'      => 'As businesses continue to embrace digital transformation, Display Manager Pro is committed to providing an easy-to-use, reliable, and scalable platform that grows with your needs.',
+                'cta_title'         => 'Start Your Free 14-Day Trial',
+                'cta_body1'         => 'Experience the easiest way to manage digital signage, TV displays, digital menu boards, and promotional screens.',
+                'cta_body2'         => 'Join businesses worldwide using Display Manager Pro to simplify screen management, improve customer engagement, and keep their content fresh.',
+                'cta_button'        => 'Start Free Trial Today →',
             ],
             'branding' => [],
             'privacy' => [
