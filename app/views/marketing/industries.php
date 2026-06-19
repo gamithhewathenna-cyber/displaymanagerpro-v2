@@ -175,6 +175,36 @@ $_img2 = Settings::get('content_industries_image2','');
   </div>
 </section>
 
+<!-- RELATED PAGES -->
+<section class="bg-white border-y border-gray-100 py-10 px-4">
+  <div class="max-w-5xl mx-auto">
+    <p class="text-center text-xs font-semibold text-gray-400 uppercase tracking-widest mb-6">Explore Further</p>
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <a href="/features" class="bg-gray-50 border border-gray-100 hover:border-primary-300 rounded-2xl p-5 flex items-center gap-4 transition-all group hover:shadow-md">
+        <span class="text-3xl flex-shrink-0">⚡</span>
+        <div>
+          <div class="text-sm font-semibold text-gray-800 group-hover:text-primary-600 transition-colors">Platform Features</div>
+          <div class="text-xs text-gray-400 mt-0.5">See everything DisplayManagerPro can do</div>
+        </div>
+      </a>
+      <a href="/pricing" class="bg-gray-50 border border-gray-100 hover:border-primary-300 rounded-2xl p-5 flex items-center gap-4 transition-all group hover:shadow-md">
+        <span class="text-3xl flex-shrink-0">💳</span>
+        <div>
+          <div class="text-sm font-semibold text-gray-800 group-hover:text-primary-600 transition-colors">Pricing & Plans</div>
+          <div class="text-xs text-gray-400 mt-0.5">Simple plans that scale with your business</div>
+        </div>
+      </a>
+      <a href="/faq" class="bg-gray-50 border border-gray-100 hover:border-primary-300 rounded-2xl p-5 flex items-center gap-4 transition-all group hover:shadow-md">
+        <span class="text-3xl flex-shrink-0">❓</span>
+        <div>
+          <div class="text-sm font-semibold text-gray-800 group-hover:text-primary-600 transition-colors">Common Questions</div>
+          <div class="text-xs text-gray-400 mt-0.5">Quick answers about setup, pricing and compatibility</div>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
 <!-- CTA -->
 <section class="hero-gradient text-white py-24 px-4">
   <div class="max-w-3xl mx-auto text-center">

@@ -25,6 +25,13 @@
       <h3 class="font-bold text-gray-900 text-lg mb-2"><?= $c('still_title','Still have questions?') ?></h3>
       <p class="text-gray-500 text-sm mb-5"><?= $c('still_subtitle') ?></p>
       <a href="/contact" class="inline-block bg-indigo-500 hover:bg-indigo-600 text-white font-semibold px-6 py-3 rounded-xl text-sm transition-colors"><?= $c('still_button','Contact Us') ?></a>
+      <div class="flex flex-wrap items-center justify-center gap-4 mt-5 pt-5 border-t border-indigo-100">
+        <a href="/pricing" class="text-sm text-indigo-600 hover:text-indigo-700 font-medium transition-colors">💳 View Pricing Plans</a>
+        <span class="text-indigo-200">·</span>
+        <a href="/features" class="text-sm text-indigo-600 hover:text-indigo-700 font-medium transition-colors">⚡ See All Features</a>
+        <span class="text-indigo-200">·</span>
+        <a href="/industries" class="text-sm text-indigo-600 hover:text-indigo-700 font-medium transition-colors">🏢 Industries We Serve</a>
+      </div>
     </div>
   </div>
 </section>

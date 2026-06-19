@@ -362,6 +362,35 @@ $_staticBanner = Settings::get('content_home_banner', '');
 })();
 </script>
 
+<!-- INTERNAL LINK STRIP -->
+<section class="bg-white border-y border-gray-100 py-8 px-4">
+  <div class="max-w-5xl mx-auto">
+    <p class="text-center text-xs font-semibold text-gray-400 uppercase tracking-widest mb-5">Explore DisplayManagerPro</p>
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+      <a href="/features" class="flex flex-col items-center gap-2 bg-gray-50 hover:bg-primary-50 border border-gray-100 hover:border-primary-200 rounded-xl p-4 text-center transition-all group">
+        <span class="text-2xl">⚡</span>
+        <span class="text-xs font-semibold text-gray-700 group-hover:text-primary-600 transition-colors">All Features</span>
+      </a>
+      <a href="/pricing" class="flex flex-col items-center gap-2 bg-gray-50 hover:bg-primary-50 border border-gray-100 hover:border-primary-200 rounded-xl p-4 text-center transition-all group">
+        <span class="text-2xl">💳</span>
+        <span class="text-xs font-semibold text-gray-700 group-hover:text-primary-600 transition-colors">Pricing Plans</span>
+      </a>
+      <a href="/industries" class="flex flex-col items-center gap-2 bg-gray-50 hover:bg-primary-50 border border-gray-100 hover:border-primary-200 rounded-xl p-4 text-center transition-all group">
+        <span class="text-2xl">🏢</span>
+        <span class="text-xs font-semibold text-gray-700 group-hover:text-primary-600 transition-colors">Industries We Serve</span>
+      </a>
+      <a href="/about" class="flex flex-col items-center gap-2 bg-gray-50 hover:bg-primary-50 border border-gray-100 hover:border-primary-200 rounded-xl p-4 text-center transition-all group">
+        <span class="text-2xl">👥</span>
+        <span class="text-xs font-semibold text-gray-700 group-hover:text-primary-600 transition-colors">About Us</span>
+      </a>
+      <a href="/faq" class="flex flex-col items-center gap-2 bg-gray-50 hover:bg-primary-50 border border-gray-100 hover:border-primary-200 rounded-xl p-4 text-center transition-all group">
+        <span class="text-2xl">❓</span>
+        <span class="text-xs font-semibold text-gray-700 group-hover:text-primary-600 transition-colors">FAQ</span>
+      </a>
+    </div>
+  </div>
+</section>
+
 <!-- TESTIMONIALS -->
 <section class="bg-gray-50 py-24 px-4">
   <div class="max-w-5xl mx-auto">
@@ -389,5 +418,6 @@ $_staticBanner = Settings::get('content_home_banner', '');
     <a href="/register" class="inline-block bg-white text-primary-600 font-bold text-lg px-12 py-4 rounded-xl hover:bg-gray-50 transition-all shadow-lg">
       <?= $c('cta_button', 'Get Started Free →') ?>
     </a>
+    <p class="mt-6 text-sm text-gray-400">Have questions? <a href="/faq" class="text-white/80 hover:text-white underline underline-offset-2 transition-colors">Read our FAQ</a> or <a href="/contact" class="text-white/80 hover:text-white underline underline-offset-2 transition-colors">contact us</a>.</p>
   </div>
 </section>

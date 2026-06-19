@@ -18,8 +18,38 @@
     </div>
   </div>
 </section>
+<!-- RELATED PAGES -->
+<section class="bg-gray-50 border-y border-gray-100 py-10 px-4">
+  <div class="max-w-5xl mx-auto">
+    <p class="text-center text-xs font-semibold text-gray-400 uppercase tracking-widest mb-6">You May Also Be Interested In</p>
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <a href="/pricing" class="bg-white border border-gray-100 hover:border-primary-300 rounded-2xl p-5 flex items-center gap-4 transition-all group hover:shadow-md">
+        <span class="text-3xl flex-shrink-0">💳</span>
+        <div>
+          <div class="text-sm font-semibold text-gray-800 group-hover:text-primary-600 transition-colors">Pricing & Plans</div>
+          <div class="text-xs text-gray-400 mt-0.5">Find the right plan for your business</div>
+        </div>
+      </a>
+      <a href="/industries" class="bg-white border border-gray-100 hover:border-primary-300 rounded-2xl p-5 flex items-center gap-4 transition-all group hover:shadow-md">
+        <span class="text-3xl flex-shrink-0">🏢</span>
+        <div>
+          <div class="text-sm font-semibold text-gray-800 group-hover:text-primary-600 transition-colors">Industries We Serve</div>
+          <div class="text-xs text-gray-400 mt-0.5">See how businesses in your industry use digital signage</div>
+        </div>
+      </a>
+      <a href="/faq" class="bg-white border border-gray-100 hover:border-primary-300 rounded-2xl p-5 flex items-center gap-4 transition-all group hover:shadow-md">
+        <span class="text-3xl flex-shrink-0">❓</span>
+        <div>
+          <div class="text-sm font-semibold text-gray-800 group-hover:text-primary-600 transition-colors">Frequently Asked Questions</div>
+          <div class="text-xs text-gray-400 mt-0.5">Answers to common questions about our platform</div>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
 <section class="bg-indigo-600 text-white py-20 px-4 text-center">
   <h2 class="text-xl sm:text-3xl font-bold mb-4"><?= $c('cta_title','Ready to get started?') ?></h2>
   <p class="text-indigo-200 mb-8"><?= $c('cta_subtitle') ?></p>
   <a href="/register" class="inline-block bg-white text-indigo-600 font-bold px-10 py-4 rounded-xl hover:bg-gray-50 transition-all shadow-lg"><?= $c('cta_button','Start Free Trial →') ?></a>
+  <p class="mt-5 text-sm text-indigo-300">Compare plans on our <a href="/pricing" class="text-white hover:underline">pricing page</a> · <a href="/contact" class="text-white hover:underline">Contact us</a> for questions</p>
 </section>
