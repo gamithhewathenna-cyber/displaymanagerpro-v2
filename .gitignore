@@ -1,0 +1,26 @@
+# Environment & secrets
+.env
+.env.*
+*.env
+
+# Logs
+storage/logs/
+*.log
+
+# Uploads (user-generated content)
+public/uploads/
+
+# PHP / Composer
+vendor/
+composer.lock
+
+# OS & editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Install lock (keep this tracked so deploys know setup is done)
+# install/install.lock
