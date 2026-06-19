@@ -118,3 +118,4 @@ Stack trace:
 #0 /home/dispdrvg/app.displaymanagerpro.com/public/index.php(172): Router->dispatch()
 #1 {main}
   thrown in /home/dispdrvg/app.displaymanagerpro.com/app/helpers/Core.php on line 41
+[19-Jun-2026 03:37:07 UTC] Database connection failed: SQLSTATE[HY000] [2002] No connection could be made because the target machine actively refused it

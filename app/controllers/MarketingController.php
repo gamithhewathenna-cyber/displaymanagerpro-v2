@@ -6,8 +6,13 @@ class MarketingController extends BaseController
 {
     public function home(): void
     {
-        $plans = Plan::active();
-        $this->view('marketing/home', ['title' => 'Digital Signage Made Simple', 'plans' => $plans], 'marketing');
+        $plans        = Plan::active();
+        $latestNews   = BlogArticle::published(3, 0);
+        $this->view('marketing/home', [
+            'title'      => 'Digital Signage Made Simple',
+            'plans'      => $plans,
+            'latestNews' => $latestNews,
+        ], 'marketing');
     }
 
     public function features(): void
@@ -84,5 +89,79 @@ class MarketingController extends BaseController
 
         Session::flash('success', 'Message sent! We\'ll be in touch within 1 business day.');
         $this->redirect('/contact');
+    }
+
+    // ── News & Updates ─────────────────────────────────────────────────────
+
+    public function news(): void
+    {
+        $perPage  = 9;
+        $page     = max(1, (int)($_GET['page'] ?? 1));
+        $offset   = ($page - 1) * $perPage;
+        $total    = BlogArticle::countPublished();
+        $articles = BlogArticle::published($perPage, $offset);
+
+        $this->view('marketing/news', [
+            'title'      => 'News & Updates',
+            'articles'   => $articles,
+            'page'       => $page,
+            'perPage'    => $perPage,
+            'total'      => $total,
+            'totalPages' => (int)ceil($total / $perPage),
+        ], 'marketing');
+    }
+
+    public function newsArticle(string $slug): void
+    {
+        $article = BlogArticle::findBySlug($slug);
+        if (!$article || $article['status'] !== 'published') $this->abort(404);
+
+        Database::execute('UPDATE blog_articles SET view_count = view_count + 1 WHERE id = ?', [$article['id']]);
+
+        $related = BlogArticle::related((int)$article['id'], $article['category'] ?? '', 3);
+
+        $this->view('marketing/news-article', [
+            'title'           => $article['seo_title'] ?: $article['title'],
+            'metaDescription' => $article['seo_description'] ?: $article['excerpt'] ?: '',
+            'ogImage'         => $article['featured_image_url'] ?: '',
+            'article'         => $article,
+            'related'         => $related,
+        ], 'marketing');
+    }
+
+    // ── XML Sitemap ────────────────────────────────────────────────────────
+
+    public function sitemap(): void
+    {
+        $baseUrl  = rtrim(Helpers::baseUrl(), '/');
+        $articles = BlogArticle::published();
+
+        header('Content-Type: application/xml; charset=UTF-8');
+        echo '<?xml version="1.0" encoding="UTF-8"?>';
+        echo "\n<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n";
+
+        $staticPages = ['/', '/features', '/pricing', '/industries', '/faq', '/contact', '/news'];
+        foreach ($staticPages as $path) {
+            echo "  <url>\n";
+            echo "    <loc>" . Helpers::e($baseUrl . $path) . "</loc>\n";
+            echo "    <changefreq>weekly</changefreq>\n";
+            echo "    <priority>" . ($path === '/' ? '1.0' : '0.8') . "</priority>\n";
+            echo "  </url>\n";
+        }
+
+        foreach ($articles as $a) {
+            $lastmod = $a['updated_at'] ?? $a['published_at'];
+            echo "  <url>\n";
+            echo "    <loc>" . Helpers::e($baseUrl . '/news/' . $a['slug']) . "</loc>\n";
+            if ($lastmod) {
+                echo "    <lastmod>" . date('Y-m-d', strtotime($lastmod)) . "</lastmod>\n";
+            }
+            echo "    <changefreq>monthly</changefreq>\n";
+            echo "    <priority>0.7</priority>\n";
+            echo "  </url>\n";
+        }
+
+        echo "</urlset>\n";
+        exit;
     }
 }
