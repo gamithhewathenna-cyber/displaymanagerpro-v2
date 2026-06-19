@@ -1,4 +1,8 @@
-<?php $c = function($k,$d=''){return htmlspecialchars(ContentController::get('industries',$k,$d));}; ?>
+<?php
+$c = function($k,$d=''){return htmlspecialchars(ContentController::get('industries',$k,$d));};
+$_img1 = Settings::get('content_industries_image1','');
+$_img2 = Settings::get('content_industries_image2','');
+?>
 
 <!-- HERO -->
 <section class="hero-gradient text-white py-24 px-4">
@@ -45,12 +49,18 @@
         </ul>
         <p class="text-gray-500 text-sm leading-relaxed"><?= $c('s1_footer','This makes DisplayManagerPro ideal for franchises, hospitality groups, retail chains, healthcare providers, fitness centres, and corporate organisations.') ?></p>
       </div>
-      <div class="bg-gradient-to-br from-primary-50 to-indigo-100 rounded-3xl p-10 flex items-center justify-center" style="min-height:340px;">
-        <div class="text-center">
-          <div class="text-7xl mb-4">🖥️</div>
-          <div class="text-3xl font-extrabold text-gray-800 mb-1">1 Dashboard</div>
-          <div class="text-gray-500 text-sm">Manage every screen, every location</div>
-        </div>
+      <div class="rounded-2xl overflow-hidden" style="aspect-ratio:4/3;">
+        <?php if ($_img1): ?>
+          <img src="<?= Helpers::e($_img1) ?>" alt="Multi-location management" class="w-full h-full object-cover">
+        <?php else: ?>
+          <div class="w-full h-full bg-gradient-to-br from-primary-50 to-indigo-100 flex items-center justify-center">
+            <div class="text-center p-8">
+              <svg class="w-16 h-16 text-primary-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+              <p class="text-primary-400 font-medium text-sm">Image Placeholder</p>
+              <p class="text-primary-300 text-xs mt-1">Upload via Admin → Content → Industries</p>
+            </div>
+          </div>
+        <?php endif; ?>
       </div>
     </div>
   </div>
@@ -60,12 +70,18 @@
 <section class="py-20 px-4 bg-gray-50">
   <div class="max-w-6xl mx-auto">
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-14 items-center">
-      <div class="bg-gradient-to-br from-indigo-50 to-violet-100 rounded-3xl p-10 flex items-center justify-center order-2 lg:order-1" style="min-height:340px;">
-        <div class="text-center">
-          <div class="text-7xl mb-4">📈</div>
-          <div class="text-3xl font-extrabold text-gray-800 mb-1">More Sales</div>
-          <div class="text-gray-500 text-sm">Digital displays drive purchasing decisions</div>
-        </div>
+      <div class="rounded-2xl overflow-hidden order-2 lg:order-1" style="aspect-ratio:4/3;">
+        <?php if ($_img2): ?>
+          <img src="<?= Helpers::e($_img2) ?>" alt="Increase sales with digital displays" class="w-full h-full object-cover">
+        <?php else: ?>
+          <div class="w-full h-full bg-gradient-to-br from-indigo-50 to-violet-100 flex items-center justify-center">
+            <div class="text-center p-8">
+              <svg class="w-16 h-16 text-indigo-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+              <p class="text-indigo-400 font-medium text-sm">Image Placeholder</p>
+              <p class="text-indigo-300 text-xs mt-1">Upload via Admin → Content → Industries</p>
+            </div>
+          </div>
+        <?php endif; ?>
       </div>
       <div class="order-1 lg:order-2">
         <span class="inline-block text-xs font-semibold text-primary-600 bg-primary-50 px-3 py-1 rounded-full mb-4">Increase Revenue</span>

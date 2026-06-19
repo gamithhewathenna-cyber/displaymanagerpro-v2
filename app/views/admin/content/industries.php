@@ -1,3 +1,4 @@
+<?php $ind1 = Settings::get('content_industries_image1',''); $ind2 = Settings::get('content_industries_image2',''); ?>
 <a href="/admin/content" class="text-sm text-gray-400 hover:text-gray-600 inline-flex items-center gap-1 mb-5">← Content Manager</a>
 <form method="POST" action="/admin/content/industries/save" class="space-y-6">
   <input type="hidden" name="_csrf_token" value="<?= Csrf::token() ?>">
@@ -189,3 +190,56 @@
 
   <button type="submit" class="bg-primary-500 hover:bg-primary-600 text-white font-semibold px-8 py-3 rounded-xl transition-colors">Save Industries Content</button>
 </form>
+
+<!-- Images -->
+<div class="bg-white rounded-2xl border border-gray-100 p-6 mt-6">
+  <h2 class="font-semibold text-gray-900 mb-1 flex items-center gap-2">🖼️ Section Images</h2>
+  <p class="text-xs text-gray-400 mb-6">Image 1 appears in the "Multi-Location Businesses" section. Image 2 appears in the "Increase Sales" section. Recommended: <strong>800 × 600 px</strong> (4:3). JPG, PNG, or WebP, max 5 MB.</p>
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+    <?php foreach ([1 => 'Multi-Location Businesses', 2 => 'Increase Sales'] as $slot => $label):
+      $cur = ($slot === 1) ? $ind1 : $ind2;
+    ?>
+    <div class="border border-gray-100 rounded-xl p-4">
+      <div class="flex items-center justify-between mb-3">
+        <div>
+          <div class="text-sm font-semibold text-gray-700">Image <?= $slot ?></div>
+          <div class="text-xs text-gray-400"><?= $label ?> section</div>
+        </div>
+        <?php if ($cur): ?>
+        <span class="text-xs bg-green-100 text-green-700 font-semibold px-2 py-0.5 rounded-full">Uploaded</span>
+        <?php else: ?>
+        <span class="text-xs bg-gray-100 text-gray-400 px-2 py-0.5 rounded-full">Placeholder</span>
+        <?php endif; ?>
+      </div>
+      <div class="rounded-xl overflow-hidden bg-gray-100 border border-gray-200 mb-3" style="aspect-ratio:4/3;">
+        <?php if ($cur): ?>
+          <img src="<?= Helpers::e($cur) ?>?v=<?= time() ?>" alt="Industries image <?= $slot ?>" class="w-full h-full object-cover">
+        <?php else: ?>
+          <div class="w-full h-full flex flex-col items-center justify-center gap-1.5 text-gray-300">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+            <span class="text-xs text-gray-400">No image — showing placeholder</span>
+          </div>
+        <?php endif; ?>
+      </div>
+      <form method="POST" action="/admin/content/industries/image/<?= $slot ?>" enctype="multipart/form-data" class="space-y-2">
+        <input type="hidden" name="_csrf_token" value="<?= Csrf::token() ?>">
+        <div class="flex items-center gap-2">
+          <label class="flex-1 min-w-0 block">
+            <input type="file" name="industries_image" accept="image/jpeg,image/png,image/webp"
+              class="block w-full text-xs text-gray-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100 cursor-pointer">
+          </label>
+          <button type="submit" class="bg-primary-500 hover:bg-primary-600 text-white font-semibold px-3 py-1.5 rounded-lg text-xs transition-colors whitespace-nowrap">
+            <?= $cur ? 'Replace' : 'Upload' ?>
+          </button>
+        </div>
+      </form>
+      <?php if ($cur): ?>
+      <form method="POST" action="/admin/content/industries/image/<?= $slot ?>/remove" class="mt-2">
+        <input type="hidden" name="_csrf_token" value="<?= Csrf::token() ?>">
+        <button type="submit" onclick="return confirm('Remove this image?')" class="text-xs text-red-500 hover:text-red-700 font-medium transition-colors">Remove image</button>
+      </form>
+      <?php endif; ?>
+    </div>
+    <?php endforeach; ?>
+  </div>
+</div>

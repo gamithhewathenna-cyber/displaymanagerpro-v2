@@ -402,6 +402,80 @@ class ContentController extends BaseController
         $this->redirect('/admin/content/about');
     }
 
+    public function uploadIndustriesImage(string $slot): void
+    {
+        $this->requireAdmin();
+        $this->validateCsrf();
+
+        $slot = (int) $slot;
+        if ($slot < 1 || $slot > 2) $this->abort(404);
+
+        $file = $_FILES['industries_image'] ?? null;
+        if (!$file || $file['error'] === UPLOAD_ERR_NO_FILE) {
+            Session::flash('error', 'No file selected.');
+            $this->redirect('/admin/content/industries');
+        }
+        if ($file['error'] !== UPLOAD_ERR_OK) {
+            Session::flash('error', 'Upload failed (error code ' . $file['error'] . ').');
+            $this->redirect('/admin/content/industries');
+        }
+
+        $allowedMimes = ['image/jpeg', 'image/png', 'image/webp'];
+        $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+        $extMap = ['jpg' => true, 'jpeg' => true, 'png' => true, 'webp' => true];
+
+        if (!in_array($file['type'], $allowedMimes) || !isset($extMap[$ext])) {
+            Session::flash('error', 'Only JPG, PNG, and WebP images are allowed.');
+            $this->redirect('/admin/content/industries');
+        }
+        if ($file['size'] > 5 * 1024 * 1024) {
+            Session::flash('error', 'Image must be under 5 MB.');
+            $this->redirect('/admin/content/industries');
+        }
+
+        $key = "content_industries_image{$slot}";
+        $old = Settings::get($key, '');
+        if ($old && str_starts_with($old, '/uploads/industries/')) {
+            $oldPath = PUBLIC_PATH . $old;
+            if (file_exists($oldPath)) @unlink($oldPath);
+        }
+
+        $dir = UPLOAD_PATH . '/industries/';
+        if (!is_dir($dir)) mkdir($dir, 0755, true);
+
+        $name = "industries_image{$slot}_" . time() . '.' . $ext;
+        if (!move_uploaded_file($file['tmp_name'], $dir . $name)) {
+            Session::flash('error', 'Failed to save image. Check directory permissions.');
+            $this->redirect('/admin/content/industries');
+        }
+
+        Settings::set($key, '/uploads/industries/' . $name, 'content');
+        ActivityLog::log('admin_content_saved', "Updated Industries page image $slot");
+        Session::flash('success', "Image $slot updated.");
+        $this->redirect('/admin/content/industries');
+    }
+
+    public function removeIndustriesImage(string $slot): void
+    {
+        $this->requireAdmin();
+        $this->validateCsrf();
+
+        $slot = (int) $slot;
+        if ($slot < 1 || $slot > 2) $this->abort(404);
+
+        $key = "content_industries_image{$slot}";
+        $old = Settings::get($key, '');
+        if ($old && str_starts_with($old, '/uploads/industries/')) {
+            $oldPath = PUBLIC_PATH . $old;
+            if (file_exists($oldPath)) @unlink($oldPath);
+        }
+
+        Settings::set($key, '', 'content');
+        ActivityLog::log('admin_content_saved', "Removed Industries page image $slot");
+        Session::flash('success', "Image $slot removed.");
+        $this->redirect('/admin/content/industries');
+    }
+
     public static function get(string $page, string $key, string $default = ''): string
     {
         $val = Settings::get("content_{$page}_{$key}", null);
