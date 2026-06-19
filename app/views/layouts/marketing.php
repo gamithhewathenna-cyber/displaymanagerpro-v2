@@ -13,24 +13,14 @@
   $_full_title      = $_seo_title !== ''
     ? Helpers::e($_seo_title)
     : Helpers::e($_page_title) . ' – ' . Helpers::e($_company);
-  $_meta_desc       = $metaDescription ?? ($_seo_description !== ''
+  $_meta_desc       = $_seo_description !== ''
     ? $_seo_description
-    : 'Cloud digital signage management for restaurants, cafes, and retail. Manage all your TV screens from one dashboard.');
+    : 'Cloud digital signage management for restaurants, cafes, and retail. Manage all your TV screens from one dashboard.';
   $_ga_id           = Settings::get('ga_measurement_id', '');
   $_gsc_code        = Settings::get('gsc_verification', '');
   $_pixel_code      = Settings::get('meta_pixel_code', '');
-  $_og_image        = $ogImage ?? Settings::get('website_logo', '');
 ?>
 <title><?= $_full_title ?></title>
-<meta property="og:title" content="<?= $_full_title ?>">
-<meta property="og:description" content="<?= Helpers::e($_meta_desc) ?>">
-<meta property="og:type" content="<?= isset($article) ? 'article' : 'website' ?>">
-<?php if ($_og_image): ?>
-<meta property="og:image" content="<?= Helpers::e($_og_image) ?>">
-<?php endif; ?>
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="<?= $_full_title ?>">
-<meta name="twitter:description" content="<?= Helpers::e($_meta_desc) ?>">
 <?php $_fav = Settings::get('site_favicon',''); if ($_fav): ?><link rel="icon" href="<?= Helpers::e($_fav) ?>?v=<?= filemtime(PUBLIC_PATH.$_fav) ?>"><?php endif; ?>
 <meta name="description" content="<?= Helpers::e($_meta_desc) ?>">
 <?php if ($_seo_keyphrase !== ''): ?>
@@ -105,7 +95,6 @@
       <a href="/pricing" class="hover:text-primary-600 transition-colors">Pricing</a>
       <a href="/industries" class="hover:text-primary-600 transition-colors">Industries</a>
       <a href="/faq" class="hover:text-primary-600 transition-colors">FAQ</a>
-      <a href="/news" class="hover:text-primary-600 transition-colors">Blog</a>
     </div>
     <div class="flex items-center gap-3">
       <a href="/login" class="text-base font-medium text-gray-700 hover:text-primary-600 transition-colors">Sign In</a>
@@ -150,7 +139,7 @@
       </div>
       <?php
         $_footerDefaults = [
-          1 => ['title' => 'Product',  'links' => "Features|/features\nPricing|/pricing\nIndustries|/industries\nFAQ|/faq\nBlog|/news"],
+          1 => ['title' => 'Product',  'links' => "Features|/features\nPricing|/pricing\nIndustries|/industries\nFAQ|/faq"],
           2 => ['title' => 'Company',  'links' => "Contact|/contact\nPrivacy Policy|/privacy-policy\nTerms & Conditions|/terms\nRefund Policy|/refund-policy"],
           3 => ['title' => 'Account',  'links' => "Sign In|/login\nStart Free Trial|/register"],
         ];

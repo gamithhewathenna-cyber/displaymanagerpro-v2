@@ -30,7 +30,6 @@ require_once APP_PATH . '/controllers/AdminController.php';
 require_once APP_PATH . '/controllers/MarketingController.php';
 require_once APP_PATH . '/controllers/ContentController.php';
 require_once APP_PATH . '/controllers/InstallerController.php';
-require_once APP_PATH . '/controllers/BlogController.php';
 
 Session::start();
 
@@ -76,9 +75,6 @@ $router->post('/contact',       'MarketingController', 'contactSubmit');
 $router->get('/privacy-policy', 'MarketingController', 'privacy');
 $router->get('/terms',          'MarketingController', 'terms');
 $router->get('/refund-policy',  'MarketingController', 'refund');
-$router->get('/news',           'MarketingController', 'news');
-$router->get('/news/{slug}',    'MarketingController', 'newsArticle');
-$router->get('/sitemap.xml',    'MarketingController', 'sitemap');
 
 $router->get('/login',                  'AuthController', 'showLogin');
 $router->post('/login',                 'AuthController', 'login');
@@ -155,14 +151,6 @@ $router->post('/admin/settings/logo/remove',          'AdminController', 'remove
 $router->post('/admin/settings/favicon',              'AdminController', 'uploadFavicon');
 $router->post('/admin/settings/favicon/remove',       'AdminController', 'removeFavicon');
 $router->post('/admin/settings/test-email',           'AdminController', 'testEmail');
-
-// ─ Blog / News & Updates (Admin)
-$router->get('/admin/blog',                 'BlogController', 'index');
-$router->get('/admin/blog/create',          'BlogController', 'create');
-$router->post('/admin/blog',                'BlogController', 'store');
-$router->get('/admin/blog/{id}/edit',       'BlogController', 'edit');
-$router->post('/admin/blog/{id}',           'BlogController', 'update');
-$router->post('/admin/blog/{id}/delete',    'BlogController', 'deleteArticle');
 
 // ─ Content Manager (Admin CMS)
 $router->get('/admin/content',                          'ContentController', 'index');

@@ -381,53 +381,6 @@ $_staticBanner = Settings::get('content_home_banner', '');
   </div>
 </section>
 
-<!-- NEWS & UPDATES -->
-<?php if (!empty($latestNews)): ?>
-<section class="py-24 px-4 bg-gray-50">
-  <div class="max-w-6xl mx-auto">
-    <div class="text-center mb-12">
-      <span class="inline-block text-xs font-semibold text-primary-600 bg-primary-50 px-3 py-1 rounded-full mb-3">News & Updates</span>
-      <h2 class="text-4xl font-bold text-gray-900 mb-4">Latest from our blog</h2>
-      <p class="text-gray-500">Tips, updates, and insights for digital signage.</p>
-    </div>
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-      <?php foreach ($latestNews as $article): ?>
-      <a href="/news/<?= Helpers::e($article['slug']) ?>" class="group bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-lg hover:border-primary-100 transition-all flex flex-col">
-        <?php if ($article['featured_image_url']): ?>
-        <div class="h-48 overflow-hidden">
-          <img src="<?= Helpers::e($article['featured_image_url']) ?>" alt="<?= Helpers::e($article['title']) ?>" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
-        </div>
-        <?php else: ?>
-        <div class="h-48 bg-gradient-to-br from-primary-50 to-indigo-100 flex items-center justify-center">
-          <svg class="w-12 h-12 text-primary-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 12h6"/></svg>
-        </div>
-        <?php endif; ?>
-        <div class="p-6 flex flex-col flex-1">
-          <?php if ($article['category']): ?>
-          <span class="text-xs font-semibold text-primary-600 mb-2"><?= Helpers::e($article['category']) ?></span>
-          <?php endif; ?>
-          <h3 class="font-semibold text-gray-900 text-lg leading-snug mb-2 group-hover:text-primary-600 transition-colors"><?= Helpers::e($article['title']) ?></h3>
-          <?php if ($article['excerpt']): ?>
-          <p class="text-sm text-gray-500 leading-relaxed mb-4 flex-1"><?= Helpers::e($article['excerpt']) ?></p>
-          <?php endif; ?>
-          <div class="flex items-center justify-between mt-auto pt-4 border-t border-gray-50 text-xs text-gray-400">
-            <span><?= Helpers::e($article['author_name'] ?? '') ?></span>
-            <span><?= $article['published_at'] ? date('M j, Y', strtotime($article['published_at'])) : '' ?></span>
-          </div>
-        </div>
-      </a>
-      <?php endforeach; ?>
-    </div>
-    <div class="text-center mt-10">
-      <a href="/news" class="inline-flex items-center gap-2 text-primary-600 font-semibold hover:text-primary-700 transition-colors">
-        View all articles
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-      </a>
-    </div>
-  </div>
-</section>
-<?php endif; ?>
-
 <!-- CTA -->
 <section class="hero-gradient text-white py-24 px-4">
   <div class="max-w-3xl mx-auto text-center">
