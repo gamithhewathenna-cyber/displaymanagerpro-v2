@@ -152,17 +152,17 @@ $_staticBanner = Settings::get('content_home_banner', '');
 
   <!-- Navigation arrows -->
   <?php if ($_hsCount > 1): ?>
-  <button id="hs-prev" class="absolute left-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white/10 hover:bg-white/25 border border-white/20 flex items-center justify-center transition-colors backdrop-blur-sm">
-    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
+  <button type="button" id="hs-prev" aria-label="Previous slide" class="absolute left-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white/10 hover:bg-white/25 border border-white/20 flex items-center justify-center transition-colors backdrop-blur-sm">
+    <svg class="w-5 h-5 text-white" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
   </button>
-  <button id="hs-next" class="absolute right-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white/10 hover:bg-white/25 border border-white/20 flex items-center justify-center transition-colors backdrop-blur-sm">
-    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+  <button type="button" id="hs-next" aria-label="Next slide" class="absolute right-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white/10 hover:bg-white/25 border border-white/20 flex items-center justify-center transition-colors backdrop-blur-sm">
+    <svg class="w-5 h-5 text-white" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
   </button>
   <!-- Navigation dots -->
-  <div class="absolute bottom-6 inset-x-0 flex items-center justify-center z-20">
+  <div class="absolute bottom-6 inset-x-0 flex items-center justify-center z-20" role="tablist" aria-label="Slide navigation">
     <div id="hs-dots" class="flex items-center gap-2">
       <?php for ($_di = 0; $_di < $_hsCount; $_di++): ?>
-      <button class="h-2 rounded-full transition-all duration-300 <?= $_di === 0 ? 'w-7 bg-white' : 'w-2 bg-white/40' ?>"></button>
+      <button type="button" role="tab" aria-label="Go to slide <?= $_di + 1 ?>"<?= $_di === 0 ? ' aria-selected="true"' : ' aria-selected="false"' ?> class="h-2 rounded-full transition-all duration-300 <?= $_di === 0 ? 'w-7 bg-white' : 'w-2 bg-white/40' ?>"></button>
       <?php endfor; ?>
     </div>
   </div>
@@ -183,11 +183,13 @@ $_staticBanner = Settings::get('content_home_banner', '');
     slides[current].classList.add('opacity-0','z-0','pointer-events-none');
     dots[current].classList.remove('bg-white','w-7');
     dots[current].classList.add('bg-white/40','w-2');
+    dots[current].setAttribute('aria-selected','false');
     current = (n + slides.length) % slides.length;
     slides[current].classList.remove('opacity-0','z-0','pointer-events-none');
     slides[current].classList.add('opacity-100','z-10','pointer-events-auto');
     dots[current].classList.remove('bg-white/40','w-2');
     dots[current].classList.add('bg-white','w-7');
+    dots[current].setAttribute('aria-selected','true');
   }
 
   function startTimer() { timer = setInterval(function(){ goTo(current+1); }, 5000); }

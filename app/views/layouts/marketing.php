@@ -65,21 +65,28 @@
 <?= $_pixel_code ?>
 <?php endif; ?>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" onload="this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"></noscript>
+<style>body{opacity:0;transition:opacity .1s}</style>
+<noscript><style>body{opacity:1!important}</style></noscript>
 <script>
-  tailwind.config = {
-    theme: {
-      extend: {
-        fontFamily: { sans: ['Poppins', 'sans-serif'] },
-        colors: {
-          primary: { 50:'#f0f0ff',100:'#e0e0ff',500:'#6366f1',600:'#4f46e5',700:'#4338ca' },
-          surface: '#fafafa',
+  window.tailwind = {
+    config: {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Poppins', 'sans-serif'] },
+          colors: {
+            primary: { 50:'#f0f0ff',100:'#e0e0ff',500:'#6366f1',600:'#4f46e5',700:'#4338ca' },
+            surface: '#fafafa',
+          }
         }
       }
     }
-  }
+  };
+  setTimeout(function(){ document.body.style.opacity=''; }, 2500);
 </script>
+<script defer src="https://cdn.tailwindcss.com" onload="document.body.style.opacity=''"></script>
 <style>
   body { font-family: 'Poppins', sans-serif; }
   .gradient-text { background: linear-gradient(135deg, #6366f1, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
