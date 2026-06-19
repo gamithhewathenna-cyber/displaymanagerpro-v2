@@ -395,18 +395,28 @@ $_staticBanner = Settings::get('content_home_banner', '');
 
 <!-- TESTIMONIALS -->
 <section class="bg-gray-50 py-24 px-4">
-  <div class="max-w-5xl mx-auto">
-    <div class="text-center mb-16"><h2 class="text-4xl font-bold text-gray-900 mb-4">Loved by hospitality businesses</h2></div>
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <?php for ($i = 1; $i <= 3; $i++): ?>
-      <div class="bg-white border border-gray-100 rounded-2xl p-7">
-        <div class="text-yellow-400 text-lg mb-4">★★★★★</div>
-        <p class="text-gray-700 text-sm leading-relaxed mb-5"><?= $c("testimonial_{$i}_quote") ?></p>
-        <div>
-          <div class="font-semibold text-gray-900 text-sm"><?= $c("testimonial_{$i}_name") ?></div>
-          <div class="text-gray-400 text-xs"><?= $c("testimonial_{$i}_role") ?></div>
+  <div class="max-w-6xl mx-auto">
+    <div class="text-center mb-16">
+      <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">Loved by hospitality businesses</h2>
+      <p class="text-gray-500 max-w-2xl mx-auto">Real results from real businesses using DisplayManagerPro every day.</p>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <?php for ($i = 1; $i <= 6; $i++): ?>
+      <?php if ($c("testimonial_{$i}_quote")): ?>
+      <div class="bg-white border border-gray-100 rounded-2xl p-7 flex flex-col hover:shadow-md hover:border-primary-100 transition-all">
+        <div class="text-yellow-400 text-base mb-4 tracking-wide">★★★★★</div>
+        <p class="text-gray-600 text-sm leading-relaxed mb-6 flex-1"><?= $c("testimonial_{$i}_quote") ?></p>
+        <div class="flex items-center gap-3 pt-4 border-t border-gray-50">
+          <div class="w-9 h-9 rounded-full bg-primary-100 flex items-center justify-center flex-shrink-0">
+            <span class="text-primary-600 font-bold text-sm"><?= mb_substr($c("testimonial_{$i}_name"), 0, 1) ?></span>
+          </div>
+          <div>
+            <div class="font-semibold text-gray-900 text-sm"><?= $c("testimonial_{$i}_name") ?></div>
+            <div class="text-gray-400 text-xs"><?= $c("testimonial_{$i}_role") ?></div>
+          </div>
         </div>
       </div>
+      <?php endif; ?>
       <?php endfor; ?>
     </div>
   </div>
