@@ -26,6 +26,29 @@
 <?php if ($_seo_keyphrase !== ''): ?>
 <meta name="keywords" content="<?= Helpers::e($_seo_keyphrase) ?>">
 <?php endif; ?>
+<?php if (!empty($geo_region)): ?>
+<meta name="geo.region" content="<?= Helpers::e($geo_region) ?>">
+<meta name="geo.placename" content="<?= Helpers::e($city['name'] ?? '') ?>">
+<?php endif; ?>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "<?= Helpers::e(Settings::get('company_name', APP_NAME)) ?>",
+  "url": "<?= Helpers::e(Settings::get('app_url', '')) ?>",
+  "description": "Cloud-based digital signage platform for businesses in Australia, New Zealand, United Kingdom, and United States.",
+  "areaServed": ["AU","NZ","GB","US"],
+  "sameAs": [
+    <?php
+      $_fb2 = Settings::get('facebook_url','');
+      $_ig2 = Settings::get('instagram_url','');
+      $_gb2 = Settings::get('google_business_url','');
+      $social = array_filter([$_fb2, $_ig2, $_gb2]);
+      echo implode(',', array_map(fn($s) => '"' . addslashes($s) . '"', $social));
+    ?>
+  ]
+}
+</script>
 <?php if ($_gsc_code !== ''): ?>
 <meta name="google-site-verification" content="<?= Helpers::e($_gsc_code) ?>">
 <?php endif; ?>
@@ -164,6 +187,25 @@
         </ul>
       </div>
       <?php endfor; ?>
+    </div>
+    <!-- Locations row -->
+    <div class="border-t border-gray-800 pt-8 pb-6">
+      <p class="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-4">Locations We Serve</p>
+      <div class="flex flex-wrap gap-x-5 gap-y-2 text-xs text-gray-500">
+        <a href="/digital-signage/sydney"       class="hover:text-gray-300 transition-colors">Digital Signage Sydney</a>
+        <a href="/digital-signage/melbourne"    class="hover:text-gray-300 transition-colors">Digital Signage Melbourne</a>
+        <a href="/digital-signage/brisbane"     class="hover:text-gray-300 transition-colors">Digital Signage Brisbane</a>
+        <a href="/digital-signage/perth"        class="hover:text-gray-300 transition-colors">Digital Signage Perth</a>
+        <a href="/digital-signage/adelaide"     class="hover:text-gray-300 transition-colors">Digital Signage Adelaide</a>
+        <a href="/digital-signage/gold-coast"   class="hover:text-gray-300 transition-colors">Digital Signage Gold Coast</a>
+        <a href="/digital-signage/auckland"     class="hover:text-gray-300 transition-colors">Digital Signage Auckland</a>
+        <a href="/digital-signage/wellington"   class="hover:text-gray-300 transition-colors">Digital Signage Wellington</a>
+        <a href="/digital-signage/london"       class="hover:text-gray-300 transition-colors">Digital Signage London</a>
+        <a href="/digital-signage/manchester"   class="hover:text-gray-300 transition-colors">Digital Signage Manchester</a>
+        <a href="/digital-signage/new-york"     class="hover:text-gray-300 transition-colors">Digital Signage New York</a>
+        <a href="/digital-signage/los-angeles"  class="hover:text-gray-300 transition-colors">Digital Signage Los Angeles</a>
+        <a href="/digital-signage/chicago"      class="hover:text-gray-300 transition-colors">Digital Signage Chicago</a>
+      </div>
     </div>
     <!-- Policy links + social icons row -->
     <?php

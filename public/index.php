@@ -66,7 +66,8 @@ $router->post('/install',       'InstallerController', 'process');
 $router->get('/install/{step}', 'InstallerController', 'step');
 
 $router->get('/',           'MarketingController', 'home');
-$router->get('/about',      'MarketingController', 'about');
+$router->get('/about',                    'MarketingController', 'about');
+$router->get('/digital-signage/{city}',   'MarketingController', 'cityPage');
 $router->get('/features',   'MarketingController', 'features');
 $router->get('/pricing',    'MarketingController', 'pricing');
 $router->get('/industries', 'MarketingController', 'industries');

@@ -71,6 +71,47 @@ class MarketingController extends BaseController
         $this->view('marketing/contact', ['title' => 'Contact'], 'marketing');
     }
 
+    public function cityPage(string $city): void
+    {
+        $cities = self::getCities();
+        $city   = strtolower(trim($city));
+        if (!array_key_exists($city, $cities)) $this->abort(404);
+
+        $data    = $cities[$city];
+        $name    = $data['name'];
+        $country = $data['country'];
+        $title   = 'Digital Signage Software for ' . $name . ' Businesses | DisplayManagerPro';
+
+        $this->view('marketing/city', [
+            'title'      => $title,
+            'geo_region' => $data['geo'],
+            'city'       => $data,
+            'citySlug'   => $city,
+            'allCities'  => $cities,
+        ], 'marketing');
+    }
+
+    private static function getCities(): array
+    {
+        return [
+            'sydney'       => ['name' => 'Sydney',       'country' => 'Australia',      'state' => 'NSW', 'geo' => 'AU-NSW', 'flag' => '🇦🇺'],
+            'melbourne'    => ['name' => 'Melbourne',    'country' => 'Australia',      'state' => 'VIC', 'geo' => 'AU-VIC', 'flag' => '🇦🇺'],
+            'brisbane'     => ['name' => 'Brisbane',     'country' => 'Australia',      'state' => 'QLD', 'geo' => 'AU-QLD', 'flag' => '🇦🇺'],
+            'perth'        => ['name' => 'Perth',        'country' => 'Australia',      'state' => 'WA',  'geo' => 'AU-WA',  'flag' => '🇦🇺'],
+            'adelaide'     => ['name' => 'Adelaide',     'country' => 'Australia',      'state' => 'SA',  'geo' => 'AU-SA',  'flag' => '🇦🇺'],
+            'gold-coast'   => ['name' => 'Gold Coast',   'country' => 'Australia',      'state' => 'QLD', 'geo' => 'AU-QLD', 'flag' => '🇦🇺'],
+            'auckland'     => ['name' => 'Auckland',     'country' => 'New Zealand',    'state' => '',    'geo' => 'NZ',     'flag' => '🇳🇿'],
+            'wellington'   => ['name' => 'Wellington',   'country' => 'New Zealand',    'state' => '',    'geo' => 'NZ',     'flag' => '🇳🇿'],
+            'christchurch' => ['name' => 'Christchurch', 'country' => 'New Zealand',    'state' => '',    'geo' => 'NZ',     'flag' => '🇳🇿'],
+            'london'       => ['name' => 'London',       'country' => 'United Kingdom', 'state' => '',    'geo' => 'GB-ENG', 'flag' => '🇬🇧'],
+            'manchester'   => ['name' => 'Manchester',   'country' => 'United Kingdom', 'state' => '',    'geo' => 'GB-ENG', 'flag' => '🇬🇧'],
+            'birmingham'   => ['name' => 'Birmingham',   'country' => 'United Kingdom', 'state' => '',    'geo' => 'GB-ENG', 'flag' => '🇬🇧'],
+            'new-york'     => ['name' => 'New York',     'country' => 'United States',  'state' => 'NY',  'geo' => 'US-NY',  'flag' => '🇺🇸'],
+            'los-angeles'  => ['name' => 'Los Angeles',  'country' => 'United States',  'state' => 'CA',  'geo' => 'US-CA',  'flag' => '🇺🇸'],
+            'chicago'      => ['name' => 'Chicago',      'country' => 'United States',  'state' => 'IL',  'geo' => 'US-IL',  'flag' => '🇺🇸'],
+        ];
+    }
+
     public function contactSubmit(): void
     {
         $this->validateCsrf();
