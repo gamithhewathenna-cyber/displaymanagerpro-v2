@@ -91,6 +91,7 @@
       <?php endif; ?>
     </a>
     <div class="hidden md:flex items-center gap-8 text-base font-medium text-gray-600">
+      <a href="/about" class="hover:text-primary-600 transition-colors">About</a>
       <a href="/features" class="hover:text-primary-600 transition-colors">Features</a>
       <a href="/pricing" class="hover:text-primary-600 transition-colors">Pricing</a>
       <a href="/industries" class="hover:text-primary-600 transition-colors">Industries</a>

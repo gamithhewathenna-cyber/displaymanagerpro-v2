@@ -10,6 +10,11 @@ class MarketingController extends BaseController
         $this->view('marketing/home', ['title' => 'Digital Signage Made Simple', 'plans' => $plans], 'marketing');
     }
 
+    public function about(): void
+    {
+        $this->view('marketing/about', ['title' => 'About Us'], 'marketing');
+    }
+
     public function features(): void
     {
         $this->view('marketing/features', ['title' => 'Features'], 'marketing');
