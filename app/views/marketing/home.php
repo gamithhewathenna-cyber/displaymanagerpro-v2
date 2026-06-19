@@ -32,11 +32,11 @@ $_staticBanner = Settings::get('content_home_banner', '');
   <div id="hs-track" class="relative" style="display:grid;">
     <?php foreach ($_hs as $_hi => $_hsl): ?>
     <div class="hs-slide transition-opacity duration-700 <?= $_hi === 0 ? 'opacity-100 z-10 pointer-events-auto' : 'opacity-0 z-0 pointer-events-none' ?>" style="grid-area:1/1;">
-      <div class="max-w-6xl mx-auto w-full px-4 sm:px-6 pt-10 pb-16 lg:py-20 grid grid-cols-1 lg:grid-cols-[5fr_7fr] gap-8 xl:gap-14 items-center">
+      <div class="max-w-6xl mx-auto w-full px-4 sm:px-6 pt-8 pb-24 lg:py-20 grid grid-cols-1 lg:grid-cols-[5fr_7fr] gap-6 xl:gap-14 items-center">
 
         <!-- Text -->
-        <div class="order-2 lg:order-1">
-          <div class="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-3 py-1 text-xs sm:text-sm sm:px-4 sm:py-1.5 mb-4 sm:mb-7">
+        <div class="lg:order-1 text-center lg:text-left">
+          <div class="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-3 py-1 text-xs sm:text-sm sm:px-4 sm:py-1.5 mb-4 sm:mb-7 mx-auto lg:mx-0">
             <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
             <?= $c('badge_text', '14-day free trial · No credit card required') ?>
           </div>
@@ -47,17 +47,17 @@ $_staticBanner = Settings::get('content_home_banner', '');
               <span style="background:linear-gradient(90deg,#a78bfa,#60a5fa);-webkit-background-clip:text;-webkit-text-fill-color:transparent"><?= $c('hero_title_2', 'In Seconds') ?></span>
             </h1>
             <p class="text-sm sm:text-xl text-gray-300 mb-2 font-light"><?= $c('hero_subtitle', 'No USB Drives. No Complicated Software.') ?></p>
-            <p class="text-xs sm:text-base text-gray-400 mb-6 max-w-lg"><?= $c('hero_description', 'Manage menus, specials, promotions and announcements across all your TV screens from one simple cloud dashboard.') ?></p>
+            <p class="text-xs sm:text-base text-gray-400 mb-6 max-w-lg mx-auto lg:mx-0"><?= $c('hero_description', 'Manage menus, specials, promotions and announcements across all your TV screens from one simple cloud dashboard.') ?></p>
           <?php else: ?>
             <h1 class="text-xl sm:text-3xl md:text-5xl xl:text-6xl font-extrabold leading-tight mb-4">
               <?= Helpers::e($_hsl['heading']) ?>
             </h1>
             <?php if ($_hsl['sub']): ?>
-            <p class="text-xs sm:text-xl text-gray-300 mb-6 max-w-lg leading-relaxed"><?= Helpers::e($_hsl['sub']) ?></p>
+            <p class="text-xs sm:text-xl text-gray-300 mb-6 max-w-lg leading-relaxed mx-auto lg:mx-0"><?= Helpers::e($_hsl['sub']) ?></p>
             <?php endif; ?>
           <?php endif; ?>
 
-          <div class="flex flex-col sm:flex-row gap-3 sm:gap-4">
+          <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 items-center lg:items-start">
             <a href="/register" class="bg-primary-500 hover:bg-primary-600 text-white font-bold text-sm sm:text-base px-5 sm:px-7 py-2.5 sm:py-3 rounded-xl transition-all shadow-lg shadow-primary-500/30 hover:-translate-y-0.5 text-center">
               <?= $c('cta_primary', 'Start Free 14-Day Trial →') ?>
             </a>
@@ -68,7 +68,7 @@ $_staticBanner = Settings::get('content_home_banner', '');
         </div>
 
         <!-- Image / mockup -->
-        <div class="relative order-1 lg:order-2">
+        <div class="relative lg:order-2 <?= $_hsl['img'] ? '' : 'hidden sm:block' ?>">
           <?php if ($_hsl['img']): ?>
             <img src="<?= Helpers::e($_hsl['img']) ?>" alt="" class="w-full h-auto block object-contain">
           <?php elseif ($_hi % 3 === 1): ?>
@@ -152,11 +152,11 @@ $_staticBanner = Settings::get('content_home_banner', '');
 
   <!-- Navigation arrows -->
   <?php if ($_hsCount > 1): ?>
-  <button type="button" id="hs-prev" aria-label="Previous slide" class="absolute left-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white/10 hover:bg-white/25 border border-white/20 flex items-center justify-center transition-colors backdrop-blur-sm">
-    <svg class="w-5 h-5 text-white" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
+  <button type="button" id="hs-prev" aria-label="Previous slide" class="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-20 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/10 hover:bg-white/25 border border-white/20 flex items-center justify-center transition-colors backdrop-blur-sm">
+    <svg class="w-4 h-4 sm:w-5 sm:h-5 text-white" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
   </button>
-  <button type="button" id="hs-next" aria-label="Next slide" class="absolute right-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white/10 hover:bg-white/25 border border-white/20 flex items-center justify-center transition-colors backdrop-blur-sm">
-    <svg class="w-5 h-5 text-white" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+  <button type="button" id="hs-next" aria-label="Next slide" class="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-20 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/10 hover:bg-white/25 border border-white/20 flex items-center justify-center transition-colors backdrop-blur-sm">
+    <svg class="w-4 h-4 sm:w-5 sm:h-5 text-white" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
   </button>
   <!-- Navigation dots -->
   <div class="absolute bottom-6 inset-x-0 flex items-center justify-center z-20" role="tablist" aria-label="Slide navigation">
