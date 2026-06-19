@@ -32,7 +32,7 @@ $_staticBanner = Settings::get('content_home_banner', '');
   <div id="hs-track" class="relative" style="display:grid;">
     <?php foreach ($_hs as $_hi => $_hsl): ?>
     <div class="hs-slide transition-opacity duration-700 <?= $_hi === 0 ? 'opacity-100 z-10 pointer-events-auto' : 'opacity-0 z-0 pointer-events-none' ?>" style="grid-area:1/1;">
-      <div class="max-w-6xl mx-auto w-full px-4 sm:px-6 pt-10 pb-16 lg:py-20 grid grid-cols-1 lg:grid-cols-2 gap-8 xl:gap-16 items-center">
+      <div class="max-w-6xl mx-auto w-full px-4 sm:px-6 pt-10 pb-16 lg:py-20 grid grid-cols-1 lg:grid-cols-[5fr_7fr] gap-8 xl:gap-14 items-center">
 
         <!-- Text -->
         <div class="order-2 lg:order-1">
@@ -70,10 +70,10 @@ $_staticBanner = Settings::get('content_home_banner', '');
         <!-- Image / mockup -->
         <div class="relative order-1 lg:order-2">
           <?php if ($_hsl['img']): ?>
-            <img src="<?= Helpers::e($_hsl['img']) ?>" alt="" class="w-full h-auto block max-h-64 sm:max-h-80 lg:max-h-none object-contain">
+            <img src="<?= Helpers::e($_hsl['img']) ?>" alt="" class="w-full h-auto block object-contain">
           <?php elseif ($_hi % 3 === 1): ?>
             <!-- Channel editor mockup -->
-            <div class="relative rounded-2xl overflow-hidden shadow-2xl ring-1 ring-white/10 max-h-64 sm:max-h-80 lg:max-h-none" style="background:#111827;">
+            <div class="relative rounded-2xl overflow-hidden shadow-2xl ring-1 ring-white/10" style="background:#111827;">
               <div class="px-4 py-3 border-b border-white/10 flex items-center gap-2" style="background:rgba(31,41,55,.9)">
                 <div class="flex gap-1.5"><div class="w-3 h-3 rounded-full bg-red-400/80"></div><div class="w-3 h-3 rounded-full bg-yellow-400/80"></div><div class="w-3 h-3 rounded-full bg-green-400/80"></div></div>
                 <div class="flex-1 ml-2 bg-white/10 rounded px-3 py-1 text-xs text-gray-400 truncate">dashboard.signagecloud.com/channels</div>
@@ -97,7 +97,7 @@ $_staticBanner = Settings::get('content_home_banner', '');
             </div>
           <?php elseif ($_hi % 3 === 2): ?>
             <!-- Live display mockup -->
-            <div class="relative rounded-2xl overflow-hidden shadow-2xl ring-1 ring-white/10 max-h-64 sm:max-h-80 lg:max-h-none" style="background:#111827;">
+            <div class="relative rounded-2xl overflow-hidden shadow-2xl ring-1 ring-white/10" style="background:#111827;">
               <div class="px-4 py-3 border-b border-white/10 flex items-center gap-2" style="background:rgba(31,41,55,.9)">
                 <div class="flex gap-1.5"><div class="w-3 h-3 rounded-full bg-red-400/80"></div><div class="w-3 h-3 rounded-full bg-yellow-400/80"></div><div class="w-3 h-3 rounded-full bg-green-400/80"></div></div>
                 <div class="flex-1 ml-2 bg-white/10 rounded px-3 py-1 text-xs text-gray-400 truncate">display.signagecloud.com/main-board</div>
@@ -120,7 +120,7 @@ $_staticBanner = Settings::get('content_home_banner', '');
             </div>
           <?php else: ?>
             <!-- Dashboard mockup -->
-            <div class="relative rounded-2xl overflow-hidden shadow-2xl ring-1 ring-white/10 max-h-64 sm:max-h-80 lg:max-h-none" style="background:#111827;">
+            <div class="relative rounded-2xl overflow-hidden shadow-2xl ring-1 ring-white/10" style="background:#111827;">
               <div class="px-4 py-3 border-b border-white/10 flex items-center gap-2" style="background:rgba(31,41,55,.9)">
                 <div class="flex gap-1.5"><div class="w-3 h-3 rounded-full bg-red-400/80"></div><div class="w-3 h-3 rounded-full bg-yellow-400/80"></div><div class="w-3 h-3 rounded-full bg-green-400/80"></div></div>
                 <div class="flex-1 ml-2 bg-white/10 rounded px-3 py-1 text-xs text-gray-400 truncate">dashboard.signagecloud.com</div>
