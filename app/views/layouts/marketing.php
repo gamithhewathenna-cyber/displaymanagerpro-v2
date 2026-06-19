@@ -62,7 +62,21 @@
 </script>
 <?php endif; ?>
 <?php if ($_pixel_code !== ''): ?>
-<?= $_pixel_code ?>
+<script>
+(function(){
+  function loadPixel(){
+    var tmp = document.createElement('div');
+    tmp.innerHTML = <?= json_encode($_pixel_code) ?>;
+    tmp.querySelectorAll('script').forEach(function(s){
+      var n = document.createElement('script');
+      if (s.src) { n.src = s.src; n.async = true; } else { n.textContent = s.textContent; }
+      document.head.appendChild(n);
+    });
+  }
+  if (document.readyState === 'complete') { loadPixel(); }
+  else { window.addEventListener('load', loadPixel); }
+})();
+</script>
 <?php endif; ?>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
