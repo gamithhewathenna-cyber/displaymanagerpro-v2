@@ -23,7 +23,10 @@ require_once APP_PATH . '/helpers/Services.php';
 require_once APP_PATH . '/helpers/StorageService.php';
 require_once APP_PATH . '/models/UserSettings.php';
 require_once APP_PATH . '/models/Models.php';
+require_once APP_PATH . '/models/BlogPost.php';
 require_once APP_PATH . '/controllers/AuthController.php';
+require_once APP_PATH . '/controllers/BlogController.php';
+require_once APP_PATH . '/controllers/AdminBlogController.php';
 require_once APP_PATH . '/controllers/AppControllers.php';
 require_once APP_PATH . '/controllers/BillingDisplayControllers.php';
 require_once APP_PATH . '/controllers/AdminController.php';
@@ -67,6 +70,8 @@ $router->get('/install/{step}', 'InstallerController', 'step');
 
 $router->get('/',           'MarketingController', 'home');
 $router->get('/about',                    'MarketingController', 'about');
+$router->get('/blog',                     'BlogController',       'index');
+$router->get('/blog/{slug}',              'BlogController',       'show');
 $router->get('/digital-signage/{city}',   'MarketingController', 'cityPage');
 $router->get('/features',   'MarketingController', 'features');
 $router->get('/pricing',    'MarketingController', 'pricing');
@@ -153,6 +158,14 @@ $router->post('/admin/settings/logo/remove',          'AdminController', 'remove
 $router->post('/admin/settings/favicon',              'AdminController', 'uploadFavicon');
 $router->post('/admin/settings/favicon/remove',       'AdminController', 'removeFavicon');
 $router->post('/admin/settings/test-email',           'AdminController', 'testEmail');
+
+// ─ Blog (Admin)
+$router->get('/admin/blog',              'AdminBlogController', 'index');
+$router->get('/admin/blog/create',       'AdminBlogController', 'create');
+$router->post('/admin/blog',             'AdminBlogController', 'store');
+$router->get('/admin/blog/{id}/edit',    'AdminBlogController', 'edit');
+$router->post('/admin/blog/{id}',        'AdminBlogController', 'update');
+$router->post('/admin/blog/{id}/delete', 'AdminBlogController', 'destroy');
 
 // ─ Content Manager (Admin CMS)
 $router->get('/admin/content',                          'ContentController', 'index');
