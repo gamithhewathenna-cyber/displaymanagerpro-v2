@@ -4,9 +4,9 @@ $formAction = $isEdit ? '/admin/blog/' . $post['id'] : '/admin/blog';
 ?>
 
 <div class="flex items-center gap-3 mb-6">
-  <a href="/admin/blog" class="text-gray-400 hover:text-gray-600 transition-colors text-sm">← Blog Posts</a>
+  <a href="/admin/blog" class="text-gray-400 hover:text-gray-600 transition-colors text-sm">← News & Updates</a>
   <span class="text-gray-200">/</span>
-  <h2 class="font-semibold text-gray-900"><?= $isEdit ? 'Edit Post' : 'New Post' ?></h2>
+  <h2 class="font-semibold text-gray-900"><?= $isEdit ? 'Edit Article' : 'New Article' ?></h2>
   <?php if ($isEdit && $post['status'] === 'published'): ?>
   <a href="/blog/<?= Helpers::e($post['slug']) ?>" target="_blank" class="ml-auto text-xs text-primary-600 hover:underline">View live →</a>
   <?php endif; ?>
@@ -101,7 +101,7 @@ $formAction = $isEdit ? '/admin/blog/' . $post['id'] : '/admin/blog';
       <p class="text-xs text-gray-400">Published: <?= date('d M Y, H:i', strtotime($post['published_at'])) ?></p>
       <?php endif; ?>
       <button type="submit" class="w-full bg-primary-500 hover:bg-primary-600 text-white font-semibold py-2.5 rounded-xl text-sm transition-colors">
-        <?= $isEdit ? 'Save Changes' : 'Create Post' ?>
+        <?= $isEdit ? 'Save Changes' : 'Create Article' ?>
       </button>
     </div>
 

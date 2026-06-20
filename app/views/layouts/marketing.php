@@ -133,7 +133,7 @@
       <a href="/pricing" class="hover:text-primary-600 transition-colors">Pricing</a>
       <a href="/industries" class="hover:text-primary-600 transition-colors">Industries</a>
       <a href="/faq" class="hover:text-primary-600 transition-colors">FAQ</a>
-      <a href="/blog" class="hover:text-primary-600 transition-colors">Blog</a>
+      <a href="/blog" class="hover:text-primary-600 transition-colors">News & Updates</a>
     </div>
     <div class="flex items-center gap-3">
       <a href="/login" class="text-base font-medium text-gray-700 hover:text-primary-600 transition-colors">Sign In</a>

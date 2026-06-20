@@ -9,7 +9,7 @@ class BlogController extends BaseController
         $pages = (int)ceil($total / 9);
 
         $this->view('marketing/blog', [
-            'title' => 'Blog – Digital Signage Tips & Guides',
+            'title' => 'News & Updates – Digital Signage Tips & Guides',
             'posts' => $posts,
             'page'  => $page,
             'pages' => $pages,
@@ -23,7 +23,7 @@ class BlogController extends BaseController
         if (!$post) $this->abort(404);
 
         $this->view('marketing/blog-post', [
-            'title' => ($post['meta_title'] ?: $post['title']) . ' | Blog',
+            'title' => ($post['meta_title'] ?: $post['title']) . ' | News & Updates',
             'post'  => $post,
         ], 'marketing');
     }

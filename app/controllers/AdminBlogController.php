@@ -11,7 +11,7 @@ class AdminBlogController extends BaseController
         $total = BlogPost::countAll();
 
         $this->view('admin/blog/index', [
-            'title' => 'Blog Posts',
+            'title' => 'News & Updates',
             'posts' => $posts,
             'page'  => $page,
             'pages' => (int)ceil($total / 20),
@@ -24,7 +24,7 @@ class AdminBlogController extends BaseController
     public function create(): void
     {
         $this->requireAdmin();
-        $this->view('admin/blog/form', ['title' => 'New Post', 'post' => null], 'admin');
+        $this->view('admin/blog/form', ['title' => 'New Article', 'post' => null], 'admin');
     }
 
     public function store(): void
@@ -60,7 +60,7 @@ class AdminBlogController extends BaseController
         $post = BlogPost::findById((int)$id);
         if (!$post) $this->abort(404);
 
-        $this->view('admin/blog/form', ['title' => 'Edit Post', 'post' => $post], 'admin');
+        $this->view('admin/blog/form', ['title' => 'Edit Article', 'post' => $post], 'admin');
     }
 
     public function update(string $id): void

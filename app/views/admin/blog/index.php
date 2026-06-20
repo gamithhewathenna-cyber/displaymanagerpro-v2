@@ -1,16 +1,16 @@
 <div class="flex items-center justify-between mb-6">
   <div>
-    <h2 class="font-semibold text-gray-900 text-lg">Blog Posts</h2>
-    <p class="text-sm text-gray-400 mt-0.5"><?= $total ?> post<?= $total !== 1 ? 's' : '' ?> total</p>
+    <h2 class="font-semibold text-gray-900 text-lg">News & Updates</h2>
+    <p class="text-sm text-gray-400 mt-0.5"><?= $total ?> article<?= $total !== 1 ? 's' : '' ?> total</p>
   </div>
-  <a href="/admin/blog/create" class="bg-primary-500 hover:bg-primary-600 text-white font-semibold px-4 py-2 rounded-xl text-sm transition-colors">+ New Post</a>
+  <a href="/admin/blog/create" class="bg-primary-500 hover:bg-primary-600 text-white font-semibold px-4 py-2 rounded-xl text-sm transition-colors">+ New Article</a>
 </div>
 
 <?php if (empty($posts)): ?>
 <div class="bg-white rounded-2xl border border-gray-100 p-14 text-center">
   <div class="text-5xl mb-4">✍️</div>
-  <p class="text-gray-400 text-sm">No posts yet.</p>
-  <a href="/admin/blog/create" class="inline-block mt-4 text-primary-600 font-medium text-sm hover:underline">Create your first post →</a>
+  <p class="text-gray-400 text-sm">No articles yet.</p>
+  <a href="/admin/blog/create" class="inline-block mt-4 text-primary-600 font-medium text-sm hover:underline">Create your first article →</a>
 </div>
 <?php else: ?>
 <div class="bg-white rounded-2xl border border-gray-100 overflow-hidden">

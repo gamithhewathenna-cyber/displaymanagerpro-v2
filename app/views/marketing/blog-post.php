@@ -34,7 +34,7 @@ $seoTitle    = $post['meta_title']       ?: $post['title'];
     <!-- Back -->
     <a href="/blog" class="inline-flex items-center gap-2 text-sm text-gray-400 hover:text-primary-600 transition-colors mb-8">
       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
-      Back to Blog
+      Back to News & Updates
     </a>
 
     <!-- Meta -->
@@ -67,7 +67,7 @@ $seoTitle    = $post['meta_title']       ?: $post['title'];
 
     <!-- Footer -->
     <div class="mt-14 pt-8 border-t border-gray-100 flex items-center justify-between gap-4 flex-wrap">
-      <a href="/blog" class="text-sm text-primary-600 font-semibold hover:text-primary-700 transition-colors">← All Articles</a>
+      <a href="/blog" class="text-sm text-primary-600 font-semibold hover:text-primary-700 transition-colors">← News & Updates</a>
       <a href="/register" class="inline-block bg-primary-500 hover:bg-primary-600 text-white font-semibold text-sm px-6 py-2.5 rounded-xl transition-colors shadow-sm">
         Start Free Trial →
       </a>
@@ -95,7 +95,7 @@ $seoTitle    = $post['meta_title']       ?: $post['title'];
       </a>
       <a href="/blog" class="bg-white border border-gray-100 hover:border-primary-300 rounded-xl p-4 flex items-center gap-3 transition-all group hover:shadow-sm">
         <span class="text-xl flex-shrink-0">📝</span>
-        <div><div class="text-sm font-semibold text-gray-800 group-hover:text-primary-600 transition-colors">More Articles</div><div class="text-xs text-gray-400">Tips & guides</div></div>
+        <div><div class="text-sm font-semibold text-gray-800 group-hover:text-primary-600 transition-colors">News & Updates</div><div class="text-xs text-gray-400">Tips & guides</div></div>
       </a>
     </div>
   </div>

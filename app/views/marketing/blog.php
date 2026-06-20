@@ -2,7 +2,7 @@
 <section class="hero-gradient text-white py-16 px-4">
   <div class="max-w-4xl mx-auto text-center">
     <span class="inline-block text-xs font-semibold text-indigo-300 bg-white/10 px-3 py-1 rounded-full mb-4">Resources</span>
-    <h1 class="text-4xl sm:text-5xl font-extrabold mb-4">Digital Signage Blog</h1>
+    <h1 class="text-4xl sm:text-5xl font-extrabold mb-4">News & Updates</h1>
     <p class="text-gray-300 text-lg max-w-2xl mx-auto">Tips, guides, and industry insights to help you get the most from your digital signage.</p>
   </div>
 </section>
