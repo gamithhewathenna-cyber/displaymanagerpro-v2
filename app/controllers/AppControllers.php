@@ -165,12 +165,16 @@ class ChannelController extends BaseController
         $maxSlides = (int)($sub['max_slides'] ?? 15);
 
         $this->view('channels/show', [
-            'title'      => Helpers::e($channel['name']),
-            'channel'    => $channel,
-            'slides'     => $slides,
-            'media'      => $media,
-            'displayUrl' => Helpers::displayUrl($channel['slug']),
-            'maxSlides'  => $maxSlides,
+            'title'              => Helpers::e($channel['name']),
+            'channel'            => $channel,
+            'slides'             => $slides,
+            'media'              => $media,
+            'displayUrl'         => Helpers::displayUrl($channel['slug']),
+            'maxSlides'          => $maxSlides,
+            'schedulingEnabled'  => !empty($sub['scheduling_enabled']),
+            'activeSchedule'     => (!empty($sub['scheduling_enabled']))
+                                     ? ContentSchedule::activeForChannel((int)$id)
+                                     : null,
         ]);
     }
 
@@ -216,6 +220,7 @@ class ChannelController extends BaseController
         if (!$channel || !Channel::userOwns((int)$id, $user['id'])) $this->abort(404);
 
         Slide::deleteForChannel((int)$id);
+        ContentSchedule::deleteForChannel((int)$id);
         Channel::delete((int)$id);
 
         ActivityLog::log('channel_deleted', "Channel #$id deleted");

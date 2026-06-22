@@ -153,6 +153,40 @@
       </div>
     </div>
 
+    <!-- Content Scheduling -->
+    <div class="bg-white rounded-2xl border border-gray-100 p-5">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="font-semibold text-gray-900 text-sm">Content Scheduling</h3>
+        <span class="text-xs bg-indigo-100 text-indigo-700 font-semibold px-2 py-0.5 rounded-full">Pro</span>
+      </div>
+
+      <?php if ($schedulingEnabled): ?>
+        <?php if ($activeSchedule): ?>
+        <div class="flex items-center gap-2 bg-green-50 border border-green-200 rounded-xl px-3 py-2.5 mb-3">
+          <span class="w-2 h-2 rounded-full bg-green-500 flex-shrink-0"></span>
+          <div class="text-xs">
+            <span class="font-medium text-green-800">Active now:</span>
+            <span class="text-green-700"> <?= Helpers::e($activeSchedule['name']) ?></span>
+          </div>
+        </div>
+        <?php else: ?>
+        <p class="text-xs text-gray-400 mb-3">No schedule is running right now. Default slides are showing.</p>
+        <?php endif; ?>
+        <a href="/channels/<?= $channel['id'] ?>/schedules"
+          class="w-full flex items-center justify-center gap-2 border border-indigo-200 hover:border-indigo-400 text-indigo-600 text-sm font-medium py-2.5 rounded-xl transition-colors">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+          Manage Schedules
+        </a>
+      <?php else: ?>
+        <p class="text-xs text-gray-400 mb-3">Schedule different content to go live automatically on specific dates and times.</p>
+        <a href="/billing"
+          class="w-full flex items-center justify-center gap-2 bg-indigo-500 hover:bg-indigo-600 text-white text-sm font-medium py-2.5 rounded-xl transition-colors">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          Upgrade to Pro
+        </a>
+      <?php endif; ?>
+    </div>
+
     <!-- Danger zone -->
     <div class="bg-white rounded-2xl border border-red-100 p-5">
       <h3 class="font-semibold text-red-700 mb-3 text-sm">Danger Zone</h3>

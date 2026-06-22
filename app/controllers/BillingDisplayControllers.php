@@ -302,7 +302,6 @@ class DisplayController extends BaseController
             return;
         }
 
-        // Verify subscription is active
         $sub = Subscription::forUser($channel['user_id']);
         if (!Subscription::isActive($sub)) {
             http_response_code(403);
@@ -310,7 +309,8 @@ class DisplayController extends BaseController
             return;
         }
 
-        $slides = Slide::forChannel($channel['id']);
+        $slides = $this->resolveSlides($channel, $sub);
+
         if (empty($slides)) {
             $this->view('display/empty', ['title' => 'No Content', 'channel' => $channel], null);
             return;
@@ -318,7 +318,6 @@ class DisplayController extends BaseController
 
         Channel::touchDisplayed($channel['id']);
 
-        // No layout for display page (full screen)
         $this->view('display/player', [
             'title'   => Helpers::e($channel['name']),
             'channel' => $channel,
@@ -341,7 +340,8 @@ class DisplayController extends BaseController
             $this->json(['error' => 'Subscription expired'], 403);
         }
 
-        $slides = Slide::forChannel($channel['id']);
+        $slides = $this->resolveSlides($channel, $sub);
+
         $this->json([
             'channel' => [
                 'id'                   => $channel['id'],
@@ -361,6 +361,35 @@ class DisplayController extends BaseController
             ], $slides),
             'updated_at' => date('c'),
         ]);
+    }
+
+    /**
+     * Returns the slide list for the player: scheduled media when a Pro schedule
+     * is active right now, otherwise the channel's default slides.
+     */
+    private function resolveSlides(array $channel, ?array $sub): array
+    {
+        if (!empty($sub['scheduling_enabled'])) {
+            $schedule = ContentSchedule::activeForChannel($channel['id']);
+            if ($schedule) {
+                $mediaIds = json_decode($schedule['media_ids'], true) ?: [];
+                if (!empty($mediaIds)) {
+                    $placeholders = implode(',', array_fill(0, count($mediaIds), '?'));
+                    $rows  = Database::fetchAll(
+                        "SELECT * FROM media WHERE id IN ($placeholders)",
+                        $mediaIds
+                    );
+                    $byId  = array_column($rows, null, 'id');
+                    // Preserve schedule-defined order
+                    $slides = array_values(array_filter(
+                        array_map(fn($id) => $byId[$id] ?? null, $mediaIds)
+                    ));
+                    if (!empty($slides)) return $slides;
+                }
+            }
+        }
+
+        return Slide::forChannel($channel['id']);
     }
 }
 
