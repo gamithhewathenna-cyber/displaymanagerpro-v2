@@ -19,13 +19,21 @@ $seoTitle    = $post['meta_title']       ?: $post['title'];
 }
 </script>
 
-<!-- Featured Image -->
-<?php if ($post['featured_image']): ?>
-<div class="w-full bg-gray-100" style="max-height:480px;overflow:hidden;">
-  <img src="<?= Helpers::e($post['featured_image']) ?>" alt="<?= Helpers::e($post['title']) ?>"
-    class="w-full object-cover" style="max-height:480px;">
+<!-- Hero -->
+<div class="hero-gradient py-14 px-4 text-center">
+  <div class="max-w-3xl mx-auto">
+    <div class="flex items-center justify-center gap-3 text-sm text-indigo-200 mb-4">
+      <span class="font-medium text-white"><?= Helpers::e($post['author']) ?></span>
+      <?php if ($pubDate): ?>
+      <span class="opacity-50">·</span>
+      <time datetime="<?= Helpers::e($post['published_at']) ?>" class="opacity-75"><?= $pubDate ?></time>
+      <?php endif; ?>
+    </div>
+    <h1 class="text-3xl sm:text-4xl font-extrabold text-white leading-tight">
+      <?= Helpers::e($post['title']) ?>
+    </h1>
+  </div>
 </div>
-<?php endif; ?>
 
 <!-- Article -->
 <section class="py-14 px-4 bg-white">
@@ -36,20 +44,6 @@ $seoTitle    = $post['meta_title']       ?: $post['title'];
       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
       Back to News & Updates
     </a>
-
-    <!-- Meta -->
-    <div class="flex items-center gap-3 text-xs text-gray-400 mb-5">
-      <span class="font-medium text-gray-600"><?= Helpers::e($post['author']) ?></span>
-      <?php if ($pubDate): ?>
-      <span>·</span>
-      <time datetime="<?= Helpers::e($post['published_at']) ?>"><?= $pubDate ?></time>
-      <?php endif; ?>
-    </div>
-
-    <!-- Title -->
-    <h1 class="text-3xl sm:text-4xl font-extrabold text-gray-900 leading-tight mb-6">
-      <?= Helpers::e($post['title']) ?>
-    </h1>
 
     <!-- Excerpt lead -->
     <?php if ($post['excerpt']): ?>
