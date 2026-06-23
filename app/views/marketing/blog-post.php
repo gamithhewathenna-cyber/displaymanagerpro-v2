@@ -21,7 +21,7 @@ $seoTitle    = $post['meta_title']       ?: $post['title'];
 
 <!-- Hero -->
 <div class="hero-gradient py-14 px-4 text-center">
-  <div class="max-w-3xl mx-auto">
+  <div class="max-w-[1200px] mx-auto">
     <div class="flex items-center justify-center gap-3 text-sm text-indigo-200 mb-4">
       <span class="font-medium text-white"><?= Helpers::e($post['author']) ?></span>
       <?php if ($pubDate): ?>
@@ -37,7 +37,7 @@ $seoTitle    = $post['meta_title']       ?: $post['title'];
 
 <!-- Article -->
 <section class="py-14 px-4 bg-white">
-  <div class="max-w-3xl mx-auto">
+  <div class="max-w-[1200px] mx-auto">
 
     <!-- Back -->
     <a href="/blog" class="inline-flex items-center gap-2 text-sm text-gray-400 hover:text-primary-600 transition-colors mb-8">
