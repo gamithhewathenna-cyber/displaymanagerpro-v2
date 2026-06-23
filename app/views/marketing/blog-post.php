@@ -45,6 +45,19 @@ $seoTitle    = $post['meta_title']       ?: $post['title'];
       Back to News & Updates
     </a>
 
+    <!-- Featured image / placeholder -->
+    <div class="mb-8 rounded-2xl overflow-hidden bg-gray-100" style="width:100%;max-width:800px;aspect-ratio:800/600;margin-left:auto;margin-right:auto;">
+      <?php if ($post['featured_image']): ?>
+      <img src="<?= Helpers::e($post['featured_image']) ?>" alt="<?= Helpers::e($post['title']) ?>"
+        class="w-full h-full object-cover">
+      <?php else: ?>
+      <div class="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200 text-gray-300">
+        <svg class="w-16 h-16 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+        <span class="text-sm font-medium">800 × 600</span>
+      </div>
+      <?php endif; ?>
+    </div>
+
     <!-- Excerpt lead -->
     <?php if ($post['excerpt']): ?>
     <p class="text-lg text-gray-500 leading-relaxed mb-8 border-l-4 border-primary-200 pl-4">
