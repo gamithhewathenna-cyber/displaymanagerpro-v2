@@ -112,6 +112,57 @@ class MarketingController extends BaseController
         ];
     }
 
+    public function sitemap(): void
+    {
+        $appUrl = rtrim(Settings::get('app_url', Helpers::baseUrl()), '/');
+
+        $staticUrls = [
+            ['loc' => $appUrl . '/',               'priority' => '1.0', 'changefreq' => 'weekly'],
+            ['loc' => $appUrl . '/features',        'priority' => '0.9', 'changefreq' => 'monthly'],
+            ['loc' => $appUrl . '/pricing',         'priority' => '0.9', 'changefreq' => 'weekly'],
+            ['loc' => $appUrl . '/industries',      'priority' => '0.8', 'changefreq' => 'monthly'],
+            ['loc' => $appUrl . '/about',           'priority' => '0.7', 'changefreq' => 'monthly'],
+            ['loc' => $appUrl . '/faq',             'priority' => '0.7', 'changefreq' => 'monthly'],
+            ['loc' => $appUrl . '/blog',            'priority' => '0.8', 'changefreq' => 'weekly'],
+            ['loc' => $appUrl . '/contact',         'priority' => '0.6', 'changefreq' => 'yearly'],
+            ['loc' => $appUrl . '/privacy-policy',  'priority' => '0.3', 'changefreq' => 'yearly'],
+            ['loc' => $appUrl . '/terms',           'priority' => '0.3', 'changefreq' => 'yearly'],
+            ['loc' => $appUrl . '/refund-policy',   'priority' => '0.3', 'changefreq' => 'yearly'],
+        ];
+
+        foreach (array_keys(self::getCities()) as $citySlug) {
+            $staticUrls[] = ['loc' => $appUrl . '/digital-signage/' . $citySlug, 'priority' => '0.8', 'changefreq' => 'monthly'];
+        }
+
+        $posts = BlogPost::allPublished();
+        $blogUrls = [];
+        foreach ($posts as $post) {
+            $blogUrls[] = [
+                'loc'        => $appUrl . '/blog/' . $post['slug'],
+                'lastmod'    => date('Y-m-d', strtotime($post['updated_at'] ?: $post['published_at'])),
+                'priority'   => '0.7',
+                'changefreq' => 'monthly',
+            ];
+        }
+
+        header('Content-Type: application/xml; charset=utf-8');
+        header('X-Robots-Tag: noindex');
+        echo '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
+        echo '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n";
+
+        foreach (array_merge($staticUrls, $blogUrls) as $url) {
+            echo "  <url>\n";
+            echo '    <loc>' . htmlspecialchars($url['loc']) . "</loc>\n";
+            if (!empty($url['lastmod']))    echo '    <lastmod>'   . $url['lastmod']    . "</lastmod>\n";
+            if (!empty($url['changefreq'])) echo '    <changefreq>' . $url['changefreq'] . "</changefreq>\n";
+            if (!empty($url['priority']))   echo '    <priority>'  . $url['priority']   . "</priority>\n";
+            echo "  </url>\n";
+        }
+
+        echo '</urlset>';
+        exit;
+    }
+
     public function contactSubmit(): void
     {
         $this->validateCsrf();

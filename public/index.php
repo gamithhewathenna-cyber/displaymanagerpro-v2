@@ -2,9 +2,6 @@
 /**
  * SignageCloud – Front Controller
  */
-ini_set('display_errors', '1');
-error_reporting(E_ALL);
-
 require_once __DIR__ . '/../config/app.php';
 
 $lockFile = ROOT_PATH . '/install/install.lock';
@@ -70,6 +67,7 @@ $router->get('/install',        'InstallerController', 'index');
 $router->post('/install',       'InstallerController', 'process');
 $router->get('/install/{step}', 'InstallerController', 'step');
 
+$router->get('/sitemap.xml', 'MarketingController', 'sitemap');
 $router->get('/',           'MarketingController', 'home');
 $router->get('/about',                    'MarketingController', 'about');
 $router->get('/blog',                     'BlogController',       'index');

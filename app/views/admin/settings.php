@@ -142,6 +142,10 @@
         <div><label class="block text-sm font-medium text-gray-700 mb-1">Company URL</label>
           <input type="text" name="company_url" value="<?= Helpers::e($g['general']['company_url'] ?? '') ?>" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"></div>
       </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Site URL <span class="text-xs text-gray-400">(used for canonical tags &amp; sitemap — must be exact production URL with https://)</span></label>
+        <input type="url" name="app_url" value="<?= Helpers::e($g['general']['app_url'] ?? '') ?>" placeholder="https://app.displaymanagerpro.com" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500">
+      </div>
       <button type="submit" class="bg-primary-500 hover:bg-primary-600 text-white font-semibold px-5 py-2.5 rounded-xl text-sm transition-colors">Save General</button>
     </form>
   </div>

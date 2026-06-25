@@ -23,8 +23,9 @@ class BlogController extends BaseController
         if (!$post) $this->abort(404);
 
         $this->view('marketing/blog-post', [
-            'title' => ($post['meta_title'] ?: $post['title']) . ' | News & Updates',
-            'post'  => $post,
+            'title'            => ($post['meta_title'] ?: $post['title']) . ' | News & Updates',
+            'meta_description' => $post['meta_description'] ?: $post['excerpt'] ?: '',
+            'post'             => $post,
         ], 'marketing');
     }
 }

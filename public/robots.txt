@@ -1,0 +1,25 @@
+User-agent: *
+Disallow: /admin/
+Disallow: /admin
+Disallow: /dashboard
+Disallow: /channels/
+Disallow: /channels
+Disallow: /media/
+Disallow: /media
+Disallow: /billing/
+Disallow: /billing
+Disallow: /support/
+Disallow: /support
+Disallow: /display/
+Disallow: /display
+Disallow: /profile
+Disallow: /install/
+Disallow: /install
+Disallow: /login
+Disallow: /logout
+Disallow: /register
+Disallow: /forgot-password
+Disallow: /reset-password/
+Disallow: /verify-email/
+
+Sitemap: https://app.displaymanagerpro.com/sitemap.xml

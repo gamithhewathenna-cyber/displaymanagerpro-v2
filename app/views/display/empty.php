@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<head><meta charset="UTF-8"><title>No Content</title>
+<head><meta charset="UTF-8"><meta name="robots" content="noindex, nofollow"><title>No Content</title>
 <style>*{margin:0;padding:0;box-sizing:border-box}body{background:#0f0f1a;color:#fff;display:flex;align-items:center;justify-content:center;min-height:100vh;font-family:system-ui,sans-serif;text-align:center;}</style>
 <meta http-equiv="refresh" content="60">
 </head>

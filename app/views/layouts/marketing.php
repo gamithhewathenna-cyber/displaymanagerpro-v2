@@ -19,9 +19,21 @@
   $_ga_id           = Settings::get('ga_measurement_id', '');
   $_gsc_code        = Settings::get('gsc_verification', '');
   $_pixel_code      = Settings::get('meta_pixel_code', '');
+
+  // Canonical: strip query string, use configured app_url as base to avoid http/www drift
+  $_app_url_base  = rtrim(Settings::get('app_url', Helpers::baseUrl()), '/');
+  $_canon_path    = strtok($_SERVER['REQUEST_URI'] ?? '/', '?');
+  $_canonical_url = $_app_url_base . $_canon_path;
+
+  // Per-page meta description override (used by blog posts and other views)
+  if (!empty($meta_description)) {
+      $_meta_desc = $meta_description;
+  }
 ?>
 <title><?= $_full_title ?></title>
 <?php $_fav = Settings::get('site_favicon',''); if ($_fav): ?><link rel="icon" href="<?= Helpers::e($_fav) ?>?v=<?= filemtime(PUBLIC_PATH.$_fav) ?>"><?php endif; ?>
+<link rel="canonical" href="<?= Helpers::e($_canonical_url) ?>">
+<meta name="robots" content="index, follow">
 <meta name="description" content="<?= Helpers::e($_meta_desc) ?>">
 <?php if ($_seo_keyphrase !== ''): ?>
 <meta name="keywords" content="<?= Helpers::e($_seo_keyphrase) ?>">

@@ -302,7 +302,7 @@ class AdminController extends BaseController
         $group = Helpers::sanitize($_POST['group'] ?? 'general');
 
         $allowed = [
-            'general'     => ['company_name','company_url','app_env'],
+            'general'     => ['company_name','company_url','app_url','app_env'],
             'mail'        => ['smtp_host','smtp_port','smtp_user','smtp_pass','smtp_from_email','smtp_from_name','smtp_encryption'],
             'paypal'      => ['paypal_mode','paypal_client_id','paypal_secret','paypal_webhook_id'],
             'storage'     => ['storage_driver','s3_bucket','s3_region','s3_access_key','s3_secret_key','s3_url',

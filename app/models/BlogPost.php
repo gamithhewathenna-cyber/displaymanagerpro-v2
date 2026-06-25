@@ -10,6 +10,14 @@ class BlogPost
         );
     }
 
+    public static function allPublished(): array
+    {
+        return Database::fetchAll(
+            'SELECT slug, updated_at, published_at FROM blog_posts WHERE status = ? ORDER BY published_at DESC',
+            ['published']
+        );
+    }
+
     public static function countPublished(): int
     {
         $row = Database::fetchOne('SELECT COUNT(*) AS c FROM blog_posts WHERE status = ?', ['published']);
