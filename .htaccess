@@ -10,10 +10,8 @@ Options -Indexes
     # Block direct access to dot-files (.env, .htaccess, .git, etc.)
     RewriteRule (^|/)\. - [F,L]
 
-    # Serve static files that exist inside public/ (CSS, images, uploads, robots.txt, etc.)
-    RewriteCond %{DOCUMENT_ROOT}/public%{REQUEST_URI} -f
-    RewriteRule ^(.*)$ public/$1 [L]
-
-    # Everything else goes to the front controller
-    RewriteRule ^ public/index.php [L]
+    # Forward all requests into public/ — the !^/public condition prevents
+    # Apache re-processing this rule on the already-rewritten URI (loop prevention)
+    RewriteCond %{REQUEST_URI} !^/public
+    RewriteRule ^(.*)$ public/$1 [L,QSA]
 </IfModule>
