@@ -22,4 +22,4 @@ Disallow: /forgot-password
 Disallow: /reset-password/
 Disallow: /verify-email/
 
-Sitemap: https://app.displaymanagerpro.com/sitemap.xml
+Sitemap: https://displaymanagerpro.com/sitemap.xml
