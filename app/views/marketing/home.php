@@ -422,6 +422,49 @@ $_staticBanner = Settings::get('content_home_banner', '');
   </div>
 </section>
 
+<?php if (!empty($latestPosts)): ?>
+<!-- LATEST BLOG POSTS -->
+<section class="py-24 px-4 bg-white">
+  <div class="max-w-6xl mx-auto">
+    <div class="text-center mb-14">
+      <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">News &amp; Updates</h2>
+      <p class="text-gray-500 max-w-xl mx-auto">Tips, guides and product updates for digital signage.</p>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <?php foreach ($latestPosts as $bp): ?>
+      <a href="/blog/<?= Helpers::e($bp['slug']) ?>" class="group bg-white border border-gray-100 rounded-2xl overflow-hidden hover:border-primary-200 hover:shadow-md transition-all flex flex-col">
+        <?php if ($bp['featured_image']): ?>
+        <div class="overflow-hidden bg-gray-100" style="aspect-ratio:16/9;">
+          <img src="<?= Helpers::e($bp['featured_image']) ?>" alt="<?= Helpers::e($bp['title']) ?>" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+        </div>
+        <?php else: ?>
+        <div class="bg-gradient-to-br from-primary-50 to-indigo-100 flex items-center justify-center" style="aspect-ratio:16/9;">
+          <svg class="w-10 h-10 text-primary-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/></svg>
+        </div>
+        <?php endif; ?>
+        <div class="p-6 flex flex-col flex-1">
+          <?php if ($bp['published_at']): ?>
+          <p class="text-xs text-gray-400 mb-2"><?= date('d M Y', strtotime($bp['published_at'])) ?></p>
+          <?php endif; ?>
+          <h3 class="text-base font-semibold text-gray-900 group-hover:text-primary-600 transition-colors mb-3 leading-snug"><?= Helpers::e($bp['title']) ?></h3>
+          <?php if ($bp['excerpt']): ?>
+          <p class="text-sm text-gray-500 leading-relaxed flex-1"><?= Helpers::e(mb_strimwidth($bp['excerpt'], 0, 110, '…')) ?></p>
+          <?php endif; ?>
+          <span class="mt-4 inline-flex items-center gap-1 text-xs font-semibold text-primary-600 group-hover:gap-2 transition-all">Read more <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg></span>
+        </div>
+      </a>
+      <?php endforeach; ?>
+    </div>
+    <div class="text-center mt-10">
+      <a href="/blog" class="inline-flex items-center gap-2 border border-gray-200 hover:border-primary-300 text-gray-700 hover:text-primary-600 font-semibold text-sm px-6 py-2.5 rounded-xl transition-all">
+        View all posts
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+<?php endif; ?>
+
 <!-- CTA -->
 <section class="hero-gradient text-white py-24 px-4">
   <div class="max-w-3xl mx-auto text-center">

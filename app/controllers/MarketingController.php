@@ -6,8 +6,9 @@ class MarketingController extends BaseController
 {
     public function home(): void
     {
-        $plans = Plan::active();
-        $this->view('marketing/home', ['title' => 'Digital Signage Made Simple', 'plans' => $plans], 'marketing');
+        $plans        = Plan::active();
+        $latestPosts  = BlogPost::published(1, 3);
+        $this->view('marketing/home', ['title' => 'Digital Signage Made Simple', 'plans' => $plans, 'latestPosts' => $latestPosts], 'marketing');
     }
 
     public function about(): void
