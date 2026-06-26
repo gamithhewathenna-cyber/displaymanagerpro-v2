@@ -46,7 +46,7 @@ $seoTitle    = $post['meta_title']       ?: $post['title'];
     </a>
 
     <!-- Featured image / placeholder -->
-    <div class="mb-8 rounded-2xl overflow-hidden bg-gray-100" style="width:100%;max-width:1000px;aspect-ratio:1000/600;margin-left:auto;margin-right:auto;">
+    <div class="mb-8 rounded-2xl overflow-hidden bg-gray-100" style="width:100%;max-width:1000px;aspect-ratio:1000/600;">
       <?php if ($post['featured_image']): ?>
       <img src="<?= Helpers::e($post['featured_image']) ?>" alt="<?= Helpers::e($post['title']) ?>"
         class="w-full h-full object-cover">
