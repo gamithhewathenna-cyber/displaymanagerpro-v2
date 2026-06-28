@@ -64,7 +64,7 @@ $_initialHasTrial = (bool)($_activePlan['has_trial'] ?? 1);
     <div class="space-y-2">
       <?php foreach ($plans as $plan):
         $isChecked      = ($selectedPlan === $plan['slug']) || ($plan['slug'] === 'starter' && !array_filter($plans, fn($p) => $p['slug'] === $selectedPlan));
-        $annualPerMonth = $plan['price_annual'] > 0 ? round($plan['price_annual'] / 12, 0) : $plan['price_monthly'];
+        $annualPerMonth = $plan['price_annual'] > 0 ? $plan['price_annual'] / 12 : $plan['price_monthly'];
       ?>
       <label class="flex items-center gap-3 border border-gray-200 rounded-xl p-3.5 cursor-pointer hover:border-primary-300 transition-colors has-[:checked]:border-primary-500 has-[:checked]:bg-primary-50">
         <input type="radio" name="plan" value="<?= Helpers::e($plan['slug']) ?>"
@@ -79,11 +79,11 @@ $_initialHasTrial = (bool)($_activePlan['has_trial'] ?? 1);
           </div>
           <div class="text-right flex-shrink-0">
             <div class="reg-price-monthly font-bold text-gray-900 text-sm <?= $selectedCycle === 'annual' ? 'hidden' : '' ?>">
-              $<?= number_format($plan['price_monthly'], 0) ?>/mo
+              $<?= number_format($plan['price_monthly'], 2) ?>/mo
             </div>
             <div class="reg-price-annual <?= $selectedCycle === 'annual' ? '' : 'hidden' ?>">
-              <div class="font-bold text-gray-900 text-sm">$<?= number_format($annualPerMonth, 0) ?>/mo</div>
-              <div class="text-xs text-green-600 font-medium">$<?= number_format($plan['price_annual'], 0) ?>/yr</div>
+              <div class="font-bold text-gray-900 text-sm">$<?= number_format($annualPerMonth, 2) ?>/mo</div>
+              <div class="text-xs text-green-600 font-medium">$<?= number_format($plan['price_annual'], 2) ?>/yr</div>
             </div>
           </div>
         </div>
