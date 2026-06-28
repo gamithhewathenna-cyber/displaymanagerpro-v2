@@ -59,15 +59,15 @@ $_staticBanner = Settings::get('content_home_banner', '');
       // Content alignment classes
       if ($_layout === 'center') {
           $_wrap  = 'w-full flex flex-col items-center text-center';
-          $_prose = 'max-w-[637px]';
+          $_prose = 'max-w-[617px]';
           $_ctaRow = 'flex flex-col sm:flex-row gap-3 justify-center';
       } elseif ($_layout === 'right') {
           $_wrap  = 'ml-auto text-right flex flex-col items-end';
-          $_prose = 'max-w-[541px] lg:max-w-[637px]';
+          $_prose = 'max-w-[521px] lg:max-w-[617px]';
           $_ctaRow = 'flex flex-col sm:flex-row gap-3 justify-end';
       } else {
           $_wrap  = 'text-left flex flex-col items-start';
-          $_prose = 'max-w-[541px] lg:max-w-[637px]';
+          $_prose = 'max-w-[521px] lg:max-w-[617px]';
           $_ctaRow = 'flex flex-col sm:flex-row gap-3';
       }
 
