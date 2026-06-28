@@ -554,4 +554,135 @@ class AdminController extends BaseController
             'total'    => $total,
         ], 'admin');
     }
+
+    // ── Coupons ────────────────────────────────────────────────────────────
+
+    public function coupons(): void
+    {
+        $this->requireAdmin();
+        $coupons = Coupon::all('created_at DESC');
+        $this->view('admin/coupons', [
+            'title'   => 'Coupon Codes',
+            'coupons' => $coupons,
+        ], 'admin');
+    }
+
+    public function createCoupon(): void
+    {
+        $this->requireAdmin();
+        $plans = Plan::active();
+        $this->view('admin/coupon-form', [
+            'title'  => 'Create Coupon',
+            'coupon' => null,
+            'plans'  => $plans,
+        ], 'admin');
+    }
+
+    public function storeCoupon(): void
+    {
+        $this->requireAdmin();
+        $this->validateCsrf();
+
+        $code      = strtoupper(preg_replace('/[^A-Za-z0-9\-_]/', '', $_POST['code'] ?? ''));
+        $type      = in_array($_POST['discount_type'] ?? '', ['percentage', 'fixed']) ? $_POST['discount_type'] : 'percentage';
+        $value     = max(0.01, (float)($_POST['discount_value'] ?? 0));
+        $maxUses   = ($_POST['max_uses'] ?? '') !== '' ? max(1, (int)$_POST['max_uses']) : null;
+        $expiresAt = ($_POST['expires_at'] ?? '') !== '' ? date('Y-m-d H:i:s', strtotime($_POST['expires_at'])) : null;
+        $appliesTo = implode(',', array_map('trim', (array)($_POST['applies_to'] ?? ['all'])));
+        $onePerCust = isset($_POST['one_per_customer']) ? 1 : 0;
+        $isActive   = isset($_POST['is_active']) ? 1 : 0;
+        $desc       = Helpers::sanitize($_POST['description'] ?? '');
+
+        if (!$code) {
+            Session::flash('error', 'Coupon code is required.');
+            $this->redirect('/admin/coupons/create');
+        }
+        if (Coupon::findByCode($code)) {
+            Session::flash('error', "Coupon code \"$code\" already exists.");
+            $this->redirect('/admin/coupons/create');
+        }
+        if ($type === 'percentage' && $value > 100) {
+            Session::flash('error', 'Percentage discount cannot exceed 100%.');
+            $this->redirect('/admin/coupons/create');
+        }
+
+        Database::insert(
+            'INSERT INTO coupons (code, description, discount_type, discount_value, applies_to, max_uses, one_per_customer, expires_at, is_active)
+             VALUES (?,?,?,?,?,?,?,?,?)',
+            [$code, $desc, $type, $value, $appliesTo, $maxUses, $onePerCust, $expiresAt, $isActive]
+        );
+
+        ActivityLog::log('admin_create_coupon', "Created coupon: $code");
+        Session::flash('success', "Coupon \"$code\" created.");
+        $this->redirect('/admin/coupons');
+    }
+
+    public function editCoupon(string $id): void
+    {
+        $this->requireAdmin();
+        $coupon = Coupon::find((int)$id);
+        if (!$coupon) $this->abort(404);
+        $plans = Plan::active();
+        $this->view('admin/coupon-form', [
+            'title'  => 'Edit Coupon',
+            'coupon' => $coupon,
+            'plans'  => $plans,
+        ], 'admin');
+    }
+
+    public function updateCoupon(string $id): void
+    {
+        $this->requireAdmin();
+        $this->validateCsrf();
+        $coupon = Coupon::find((int)$id);
+        if (!$coupon) $this->abort(404);
+
+        $type      = in_array($_POST['discount_type'] ?? '', ['percentage', 'fixed']) ? $_POST['discount_type'] : 'percentage';
+        $value     = max(0.01, (float)($_POST['discount_value'] ?? 0));
+        $maxUses   = ($_POST['max_uses'] ?? '') !== '' ? max(1, (int)$_POST['max_uses']) : null;
+        $expiresAt = ($_POST['expires_at'] ?? '') !== '' ? date('Y-m-d H:i:s', strtotime($_POST['expires_at'])) : null;
+        $appliesTo = implode(',', array_map('trim', (array)($_POST['applies_to'] ?? ['all'])));
+        $onePerCust = isset($_POST['one_per_customer']) ? 1 : 0;
+        $isActive   = isset($_POST['is_active']) ? 1 : 0;
+        $desc       = Helpers::sanitize($_POST['description'] ?? '');
+
+        if ($type === 'percentage' && $value > 100) {
+            Session::flash('error', 'Percentage discount cannot exceed 100%.');
+            $this->redirect("/admin/coupons/{$id}/edit");
+        }
+
+        Database::execute(
+            'UPDATE coupons SET description=?, discount_type=?, discount_value=?, applies_to=?, max_uses=?,
+             one_per_customer=?, expires_at=?, is_active=? WHERE id=?',
+            [$desc, $type, $value, $appliesTo, $maxUses, $onePerCust, $expiresAt, $isActive, (int)$id]
+        );
+
+        ActivityLog::log('admin_update_coupon', "Updated coupon #{$id}");
+        Session::flash('success', 'Coupon updated.');
+        $this->redirect('/admin/coupons');
+    }
+
+    public function deleteCoupon(string $id): void
+    {
+        $this->requireAdmin();
+        $this->validateCsrf();
+        $coupon = Coupon::find((int)$id);
+        if (!$coupon) $this->abort(404);
+        Database::execute('DELETE FROM coupons WHERE id = ?', [(int)$id]);
+        ActivityLog::log('admin_delete_coupon', "Deleted coupon: {$coupon['code']}");
+        Session::flash('success', 'Coupon deleted.');
+        $this->redirect('/admin/coupons');
+    }
+
+    public function toggleCoupon(string $id): void
+    {
+        $this->requireAdmin();
+        $this->validateCsrf();
+        $coupon = Coupon::find((int)$id);
+        if (!$coupon) $this->abort(404);
+        $newState = $coupon['is_active'] ? 0 : 1;
+        Database::execute('UPDATE coupons SET is_active = ? WHERE id = ?', [$newState, (int)$id]);
+        Session::flash('success', $newState ? 'Coupon activated.' : 'Coupon deactivated.');
+        $this->redirect('/admin/coupons');
+    }
 }

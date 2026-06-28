@@ -476,3 +476,81 @@ class SupportTicket extends BaseModel
         );
     }
 }
+
+/**
+ * Coupon Model
+ */
+class Coupon extends BaseModel
+{
+    protected static string $table = 'coupons';
+
+    public static function all(string $orderBy = 'id DESC'): array
+    {
+        return Database::fetchAll("SELECT * FROM coupons ORDER BY $orderBy");
+    }
+
+    public static function findByCode(string $code): ?array
+    {
+        return Database::fetchOne('SELECT * FROM coupons WHERE code = ? LIMIT 1', [strtoupper(trim($code))]);
+    }
+
+    /** Validate a code and return the coupon row, or null with a reason string. */
+    public static function check(string $code, string $email = '', string $planSlug = ''): array
+    {
+        $coupon = self::findByCode($code);
+
+        if (!$coupon)             return [null, 'Invalid coupon code.'];
+        if (!$coupon['is_active']) return [null, 'This coupon is no longer active.'];
+
+        if ($coupon['expires_at'] && strtotime($coupon['expires_at']) < time())
+            return [null, 'This coupon has expired.'];
+
+        if ($coupon['max_uses'] !== null && $coupon['used_count'] >= $coupon['max_uses'])
+            return [null, 'This coupon has reached its usage limit.'];
+
+        // Plan restriction
+        if ($coupon['applies_to'] !== 'all' && $planSlug) {
+            $allowed = array_map('trim', explode(',', $coupon['applies_to']));
+            if (!in_array($planSlug, $allowed))
+                return [null, 'This coupon is not valid for the selected plan.'];
+        }
+
+        // One-per-customer check
+        if ($coupon['one_per_customer'] && $email) {
+            $used = Database::fetchOne(
+                'SELECT id FROM coupon_uses WHERE coupon_id = ? AND email = ? LIMIT 1',
+                [$coupon['id'], strtolower($email)]
+            );
+            if ($used) return [null, 'You have already used this coupon.'];
+        }
+
+        return [$coupon, ''];
+    }
+
+    /** Calculate the discount amount for a given price. */
+    public static function discountAmount(array $coupon, float $price): float
+    {
+        if ($coupon['discount_type'] === 'percentage') {
+            return round($price * ($coupon['discount_value'] / 100), 2);
+        }
+        return min((float)$coupon['discount_value'], $price);
+    }
+
+    /** Record a redemption. */
+    public static function recordUse(int $couponId, string $email, ?int $userId, float $discountAmount): void
+    {
+        Database::insert(
+            'INSERT INTO coupon_uses (coupon_id, user_id, email, discount_amount) VALUES (?,?,?,?)',
+            [$couponId, $userId, strtolower($email), $discountAmount]
+        );
+        Database::execute(
+            'UPDATE coupons SET used_count = used_count + 1 WHERE id = ?',
+            [$couponId]
+        );
+    }
+
+    public static function useCount(int $couponId): int
+    {
+        return (int)(Database::fetchOne('SELECT used_count FROM coupons WHERE id = ?', [$couponId])['used_count'] ?? 0);
+    }
+}

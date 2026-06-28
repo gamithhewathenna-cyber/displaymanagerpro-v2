@@ -93,6 +93,19 @@ class AuthController extends BaseController
 
         $plan = Plan::findBySlug($planSlug) ?? Plan::findBySlug('starter');
 
+        // Validate coupon if provided
+        $couponCode = strtoupper(trim($_POST['coupon_code'] ?? ''));
+        $couponRow  = null;
+        if ($couponCode) {
+            [$couponRow, $couponError] = Coupon::check($couponCode, $email, $plan['slug']);
+            if (!$couponRow) {
+                Session::flash('error', "Coupon error: $couponError");
+                Session::flash('old', ['name' => $name, 'email' => $email]);
+                $qs = http_build_query(array_filter(['plan' => $planSlug, 'cycle' => $billingCycle]));
+                $this->redirect('/register' . ($qs ? '?' . $qs : ''));
+            }
+        }
+
         Database::beginTransaction();
         try {
             $userId = User::create([
@@ -120,11 +133,19 @@ class AuthController extends BaseController
                 [$userId, $token, date('Y-m-d H:i:s', strtotime('+24 hours'))]
             );
 
+            // Record coupon use if applied
+            if ($couponRow) {
+                $price    = $billingCycle === 'annual' ? (float)$plan['price_annual'] : (float)$plan['price_monthly'];
+                $discount = Coupon::discountAmount($couponRow, $price);
+                Coupon::recordUse($couponRow['id'], $email, $userId, $discount);
+            }
+
             Database::commit();
 
             $user = User::find($userId);
             Mailer::sendVerification($user, $token);
-            ActivityLog::log('register', "New customer registered: $email", $userId);
+            $couponNote = $couponRow ? " (coupon: {$couponRow['code']})" : '';
+            ActivityLog::log('register', "New customer registered: $email$couponNote", $userId);
 
             Session::flash('success', 'Account created! Please check your email to verify your address.');
             $this->redirect('/login');

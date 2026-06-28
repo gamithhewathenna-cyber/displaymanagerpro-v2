@@ -186,6 +186,23 @@ $trialDaysLeft= Subscription::trialDaysLeft($sub);
           <?php endforeach; ?>
         </div>
 
+        <!-- Coupon code -->
+        <div class="mb-4">
+          <label class="block text-xs font-medium text-gray-500 mb-1">Have a coupon code?</label>
+          <div class="flex gap-2">
+            <input id="billing-coupon-input" name="coupon_code" type="text"
+              placeholder="Enter coupon code"
+              class="flex-1 border border-gray-200 rounded-xl px-3 py-2.5 text-sm font-mono tracking-wider focus:outline-none focus:ring-2 focus:ring-indigo-400 uppercase"
+              oninput="this.value = this.value.toUpperCase(); billingCouponReset()">
+            <button type="button" onclick="billingValidateCoupon()"
+              class="bg-gray-100 hover:bg-indigo-600 hover:text-white text-gray-700 text-sm font-semibold px-4 py-2.5 rounded-xl transition-colors whitespace-nowrap">
+              Apply
+            </button>
+          </div>
+          <p id="billing-coupon-msg" class="text-xs mt-1 hidden"></p>
+          <input type="hidden" id="billing-coupon-valid" name="coupon_valid" value="0">
+        </div>
+
         <!-- Annual note -->
         <div id="annual-note" class="hidden bg-green-50 border border-green-200 rounded-xl px-4 py-3 text-xs text-green-700 mb-4 flex items-start gap-2">
           <svg class="w-4 h-4 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
@@ -343,6 +360,57 @@ $trialDaysLeft= Subscription::trialDaysLeft($sub);
       });
     });
   })();
+
+  // ── Coupon AJAX validation (billing page) ──────────────────────────────
+  function billingCouponReset() {
+    var msg = document.getElementById('billing-coupon-msg');
+    msg.classList.add('hidden');
+    document.getElementById('billing-coupon-valid').value = '0';
+  }
+
+  function billingGetPlanSlug() {
+    var card = document.querySelector('.plan-card.border-primary-400');
+    return card ? (card.dataset.planSlug || '') : '';
+  }
+
+  function billingValidateCoupon() {
+    var code = document.getElementById('billing-coupon-input').value.trim();
+    var msg  = document.getElementById('billing-coupon-msg');
+    if (!code) {
+      msg.textContent = 'Please enter a coupon code.';
+      msg.className = 'text-xs mt-1 text-red-500';
+      return;
+    }
+    msg.textContent = 'Checking…';
+    msg.className = 'text-xs mt-1 text-gray-400';
+    msg.classList.remove('hidden');
+
+    var data = new URLSearchParams({ code: code, plan_slug: billingGetPlanSlug() });
+    fetch('/coupon/validate', { method: 'POST', body: data, headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+      .then(function(r) { return r.json(); })
+      .then(function(res) {
+        if (res.valid) {
+          msg.textContent = '✓ ' + res.message;
+          msg.className = 'text-xs mt-1 text-green-600 font-medium';
+          document.getElementById('billing-coupon-valid').value = '1';
+        } else {
+          msg.textContent = res.message;
+          msg.className = 'text-xs mt-1 text-red-500';
+          document.getElementById('billing-coupon-valid').value = '0';
+        }
+      })
+      .catch(function() {
+        msg.textContent = 'Could not check coupon. Please try again.';
+        msg.className = 'text-xs mt-1 text-red-500';
+      });
+  }
+
+  var billingCouponEl = document.getElementById('billing-coupon-input');
+  if (billingCouponEl) {
+    billingCouponEl.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') { e.preventDefault(); billingValidateCoupon(); }
+    });
+  }
   </script>
 
   <!-- Right: Summary -->

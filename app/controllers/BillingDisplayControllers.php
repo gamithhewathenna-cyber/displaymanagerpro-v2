@@ -44,11 +44,25 @@ class BillingController extends BaseController
             $this->redirect('/billing');
         }
 
+        // Validate coupon if provided
+        $couponCode = strtoupper(trim($_POST['coupon_code'] ?? ''));
+        $couponRow  = null;
+        if ($couponCode) {
+            $fullUser = User::find($user['id']);
+            [$couponRow, $couponError] = Coupon::check($couponCode, $fullUser['email'] ?? '', $plan['slug']);
+            if (!$couponRow) {
+                Session::flash('error', "Coupon error: $couponError");
+                $this->redirect('/billing');
+            }
+        }
+
         // Store pending info in session so return URL can link it to the user
         Session::set('paypal_pending', [
-            'plan_id'  => $planId,
-            'cycle'    => $cycle,
-            'user_id'  => $user['id'],
+            'plan_id'    => $planId,
+            'cycle'      => $cycle,
+            'user_id'    => $user['id'],
+            'coupon_id'  => $couponRow['id'] ?? null,
+            'coupon_code'=> $couponRow['code'] ?? null,
         ]);
 
         try {
@@ -115,6 +129,19 @@ class BillingController extends BaseController
                 Subscription::update($existingSub['id'], $data);
             } else {
                 Subscription::create(array_merge($data, ['user_id' => $userId]));
+            }
+
+            // Record coupon redemption after successful payment
+            $couponId = $pending['coupon_id'] ?? null;
+            if ($couponId) {
+                $fullUser2 = User::find($userId);
+                $plan2     = Plan::find($planId);
+                $price     = $cycle === 'annual' ? (float)($plan2['price_annual'] ?? 0) : (float)($plan2['price_monthly'] ?? 0);
+                $couponRow2 = Coupon::find((int)$couponId);
+                if ($couponRow2) {
+                    $discount = Coupon::discountAmount($couponRow2, $price);
+                    Coupon::recordUse($couponId, $fullUser2['email'] ?? '', $userId, $discount);
+                }
             }
 
             ActivityLog::log('subscription_activated', "PayPal subscription $subId activated");

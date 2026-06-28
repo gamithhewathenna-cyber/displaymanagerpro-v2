@@ -32,6 +32,7 @@ require_once APP_PATH . '/controllers/AdminController.php';
 require_once APP_PATH . '/controllers/MarketingController.php';
 require_once APP_PATH . '/controllers/ContentController.php';
 require_once APP_PATH . '/controllers/InstallerController.php';
+require_once APP_PATH . '/controllers/CouponController.php';
 
 Session::start();
 
@@ -163,6 +164,18 @@ $router->post('/admin/settings/logo/remove',          'AdminController', 'remove
 $router->post('/admin/settings/favicon',              'AdminController', 'uploadFavicon');
 $router->post('/admin/settings/favicon/remove',       'AdminController', 'removeFavicon');
 $router->post('/admin/settings/test-email',           'AdminController', 'testEmail');
+
+// ─ Coupons (Admin)
+$router->get('/admin/coupons',               'AdminController', 'coupons');
+$router->get('/admin/coupons/create',        'AdminController', 'createCoupon');
+$router->post('/admin/coupons',              'AdminController', 'storeCoupon');
+$router->get('/admin/coupons/{id}/edit',     'AdminController', 'editCoupon');
+$router->post('/admin/coupons/{id}',         'AdminController', 'updateCoupon');
+$router->post('/admin/coupons/{id}/delete',  'AdminController', 'deleteCoupon');
+$router->post('/admin/coupons/{id}/toggle',  'AdminController', 'toggleCoupon');
+
+// ─ Coupon validation (public AJAX)
+$router->post('/coupon/validate',            'CouponController', 'validate');
 
 // ─ Blog (Admin)
 $router->get('/admin/blog',              'AdminBlogController', 'index');
