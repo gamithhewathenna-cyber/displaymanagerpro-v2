@@ -234,9 +234,9 @@ $_staticBanner = Settings::get('content_home_banner', '');
 
 <!-- FEATURES / SERVICES -->
 <?php $_featImg = Settings::get('content_home_features_image', ''); ?>
-<section class="px-4 bg-white" style="min-height:800px;">
-  <div class="max-w-7xl mx-auto h-full" style="min-height:800px;">
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 xl:gap-16 items-stretch" style="min-height:800px;">
+<section class="px-4 py-16 bg-white" style="min-height:800px;">
+  <div class="max-w-7xl mx-auto">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 xl:gap-16 items-stretch" style="min-height:calc(800px - 8rem);">
 
       <!-- Left: image fills full section height -->
       <div class="w-full min-h-[420px] lg:min-h-0 rounded-3xl overflow-hidden bg-gradient-to-br from-primary-50 to-indigo-100 flex-shrink-0 shadow-xl">
@@ -265,7 +265,7 @@ $_staticBanner = Settings::get('content_home_banner', '');
       </div>
 
       <!-- Right: heading + feature cards -->
-      <div>
+      <div class="flex flex-col justify-center">
         <p class="text-xs font-bold tracking-widest uppercase text-primary-600 mb-3">Our Features</p>
         <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-3"><?= $c('features_title', 'Everything you need to manage your screens') ?></h2>
         <p class="text-base text-gray-500 mb-8"><?= $c('features_subtitle') ?></p>
