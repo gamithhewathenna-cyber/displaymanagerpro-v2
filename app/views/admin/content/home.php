@@ -37,6 +37,7 @@
         $curLayout     = $content["slide_{$i}_layout"]     ?? 'left';
         $curBgColor    = $content["slide_{$i}_bg_color"]   ?? '#1e1b4b';
         $curTextColor  = $content["slide_{$i}_text_color"] ?? 'light';
+        $curOverlay    = (int)($content["slide_{$i}_overlay"] ?? 0);
         $hasImg        = (bool) Settings::get("content_home_slide_{$i}", '');
       ?>
       <div class="bg-gray-50 rounded-xl p-4 border border-gray-100">
@@ -130,6 +131,26 @@
           </div>
 
         </div>
+
+        <!-- Image Overlay Opacity -->
+        <div class="mt-4 pt-4 border-t border-gray-100">
+          <label class="block text-xs font-medium text-gray-500 mb-2">
+            Image Overlay Opacity
+            <span id="overlay_val_<?= $i ?>" class="font-normal text-gray-400 ml-1"><?= $curOverlay ?>%</span>
+            <span class="font-normal text-gray-400 ml-2">— darkens the image to make text easier to read (0 = no overlay)</span>
+          </label>
+          <input type="range"
+            name="slide_<?= $i ?>_overlay"
+            min="0" max="80" step="5"
+            value="<?= $curOverlay ?>"
+            class="w-full accent-primary-500 cursor-pointer"
+            oninput="document.getElementById('overlay_val_<?= $i ?>').textContent = this.value + '%'">
+          <div class="flex justify-between text-[10px] text-gray-400 mt-1">
+            <span>No overlay</span>
+            <span>Dark (80%)</span>
+          </div>
+        </div>
+
       </div>
       <?php endfor; ?>
     </div>

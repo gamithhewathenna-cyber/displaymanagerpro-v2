@@ -15,15 +15,16 @@ for ($_si = 1; $_si <= 6; $_si++) {
             'layout'     => ContentController::get('home', "slide_{$_si}_layout",     'left'),
             'bg_color'   => ContentController::get('home', "slide_{$_si}_bg_color",   '#1e1b4b'),
             'text_color' => ContentController::get('home', "slide_{$_si}_text_color", 'light'),
+            'overlay'    => ContentController::get('home', "slide_{$_si}_overlay",    '0'),
         ];
     }
 }
 // Fallback: 3 built-in slides (used when nothing is configured yet)
 if (empty($_hs)) {
     $_hs = [
-        ['heading' => null,  'sub' => null, 'img' => '', 'layout' => 'left', 'bg_color' => '#1e1b4b', 'text_color' => 'light'],
-        ['heading' => 'Manage All Your Channels',   'sub' => 'Create channels, upload images, and every screen updates automatically — no tech skills needed.', 'img' => '', 'layout' => 'left', 'bg_color' => '#0a2540', 'text_color' => 'light'],
-        ['heading' => 'Works on Any TV or Device',  'sub' => 'Smart TVs, Fire Stick, Android TV boxes, Chrome browsers — one URL powers them all.',             'img' => '', 'layout' => 'left', 'bg_color' => '#052e16', 'text_color' => 'light'],
+        ['heading' => null,  'sub' => null, 'img' => '', 'layout' => 'left', 'bg_color' => '#1e1b4b', 'text_color' => 'light', 'overlay' => '0'],
+        ['heading' => 'Manage All Your Channels',   'sub' => 'Create channels, upload images, and every screen updates automatically — no tech skills needed.', 'img' => '', 'layout' => 'left', 'bg_color' => '#0a2540', 'text_color' => 'light', 'overlay' => '0'],
+        ['heading' => 'Works on Any TV or Device',  'sub' => 'Smart TVs, Fire Stick, Android TV boxes, Chrome browsers — one URL powers them all.',             'img' => '', 'layout' => 'left', 'bg_color' => '#052e16', 'text_color' => 'light', 'overlay' => '0'],
     ];
 }
 $_hsCount = count($_hs);
@@ -58,40 +59,33 @@ $_staticBanner = Settings::get('content_home_banner', '');
       // Content alignment classes
       if ($_layout === 'center') {
           $_wrap  = 'w-full flex flex-col items-center text-center';
-          $_prose = 'max-w-2xl';
+          $_prose = 'max-w-[637px]';
           $_ctaRow = 'flex flex-col sm:flex-row gap-3 justify-center';
       } elseif ($_layout === 'right') {
           $_wrap  = 'ml-auto text-right flex flex-col items-end';
-          $_prose = 'max-w-xl lg:max-w-2xl';
+          $_prose = 'max-w-[541px] lg:max-w-[637px]';
           $_ctaRow = 'flex flex-col sm:flex-row gap-3 justify-end';
       } else {
           $_wrap  = 'text-left flex flex-col items-start';
-          $_prose = 'max-w-xl lg:max-w-2xl';
+          $_prose = 'max-w-[541px] lg:max-w-[637px]';
           $_ctaRow = 'flex flex-col sm:flex-row gap-3';
       }
 
-      // Directional overlay gradient (darkens the text side for readability)
-      if ($_img) {
-          if ($_layout === 'right') {
-              $_overlay = 'background:linear-gradient(to left,rgba(0,0,0,.72) 0%,rgba(0,0,0,.45) 55%,rgba(0,0,0,.12) 100%)';
-          } elseif ($_layout === 'center') {
-              $_overlay = 'background:rgba(0,0,0,.52)';
-          } else {
-              $_overlay = 'background:linear-gradient(to right,rgba(0,0,0,.72) 0%,rgba(0,0,0,.45) 55%,rgba(0,0,0,.12) 100%)';
-          }
-      } else {
-          $_overlay = '';
-      }
+      // Overlay: uniform dark tint, opacity controlled per slide (0 = none)
+      $_overlayPct = min(80, max(0, (int)($_hsl['overlay'] ?? 0)));
+      $_overlayStyle = $_overlayPct > 0
+          ? 'background:rgba(0,0,0,' . number_format($_overlayPct / 100, 2) . ')'
+          : '';
     ?>
     <div class="hs-slide transition-opacity duration-700 <?= $_hi === 0 ? 'opacity-100 z-10 pointer-events-auto' : 'opacity-0 z-0 pointer-events-none' ?>" style="grid-area:1/1;">
 
       <!-- Full-width background panel -->
       <div class="relative w-full" style="min-height:520px;background-color:<?= $_bgSafe ?>;<?= $_img ? 'background-image:url(\'' . Helpers::e($_img) . '\');background-size:cover;background-position:center;' : '' ?>">
 
-        <!-- Overlay: directional gradient over image, or subtle pattern over solid colour -->
-        <?php if ($_img): ?>
-        <div class="absolute inset-0" style="<?= $_overlay ?>"></div>
-        <?php else: ?>
+        <!-- Overlay: uniform opacity tint (admin-controlled, 0–80%) -->
+        <?php if ($_overlayStyle): ?>
+        <div class="absolute inset-0 pointer-events-none" style="<?= $_overlayStyle ?>"></div>
+        <?php elseif (!$_img): ?>
         <div class="absolute inset-0 pointer-events-none opacity-[0.07]" style="background-image:radial-gradient(circle at 20% 50%,#ffffff 0%,transparent 55%),radial-gradient(circle at 80% 20%,#a78bfa 0%,transparent 45%)"></div>
         <?php endif; ?>
 
