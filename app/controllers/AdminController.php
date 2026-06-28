@@ -560,7 +560,13 @@ class AdminController extends BaseController
     public function coupons(): void
     {
         $this->requireAdmin();
-        $coupons = Coupon::all('created_at DESC');
+        try {
+            $coupons = Coupon::all('created_at DESC');
+        } catch (Exception $e) {
+            // Table likely not created yet
+            Session::flash('error', 'Coupon tables not found. Please run install/coupon_migration.sql on your database first. Error: ' . $e->getMessage());
+            $coupons = [];
+        }
         $this->view('admin/coupons', [
             'title'   => 'Coupon Codes',
             'coupons' => $coupons,
