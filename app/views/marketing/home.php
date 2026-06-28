@@ -430,7 +430,8 @@ $_staticBanner = Settings::get('content_home_banner', '');
 </script>
 
 <!-- HOW IT WORKS -->
-<section class="bg-gray-50 py-24 px-4">
+<?php $_hiwBgUrl = Settings::get('content_home_hiw_bg', ''); ?>
+<section class="py-24 px-4 bg-gray-50 bg-cover bg-center"<?= $_hiwBgUrl ? ' style="background-image:url(' . Helpers::e($_hiwBgUrl) . ')"' : '' ?>>
   <div class="max-w-6xl mx-auto">
     <div class="text-center mb-16">
       <p class="text-xs font-bold tracking-widest uppercase text-primary-600 mb-3">Simple Setup</p>

@@ -907,4 +907,72 @@ class ContentController extends BaseController
             default => [],
         };
     }
+
+    public function uploadHiwBg(): void
+    {
+        $this->requireAdmin();
+        $this->validateCsrf();
+
+        if (empty($_FILES['hiw_bg']) || $_FILES['hiw_bg']['error'] === UPLOAD_ERR_NO_FILE) {
+            Session::flash('error', 'No file selected.');
+            $this->redirect('/admin/content/home');
+        }
+
+        $file = $_FILES['hiw_bg'];
+        if ($file['error'] !== UPLOAD_ERR_OK) {
+            Session::flash('error', 'Upload failed (error code ' . $file['error'] . ').');
+            $this->redirect('/admin/content/home');
+        }
+
+        $allowedMimes = ['image/jpeg', 'image/png', 'image/webp'];
+        $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+        $extMap = ['jpg' => 'image/jpeg', 'jpeg' => 'image/jpeg', 'png' => 'image/png', 'webp' => 'image/webp'];
+
+        if (!in_array($file['type'], $allowedMimes) || !isset($extMap[$ext])) {
+            Session::flash('error', 'Only JPG, PNG, or WebP images are allowed.');
+            $this->redirect('/admin/content/home');
+        }
+
+        if ($file['size'] > 10 * 1024 * 1024) {
+            Session::flash('error', 'Image must be under 10 MB.');
+            $this->redirect('/admin/content/home');
+        }
+
+        $old = Settings::get('content_home_hiw_bg', '');
+        if ($old && str_starts_with($old, '/uploads/content/')) {
+            $oldPath = PUBLIC_PATH . $old;
+            if (file_exists($oldPath)) @unlink($oldPath);
+        }
+
+        $dir = UPLOAD_PATH . '/content/';
+        if (!is_dir($dir)) mkdir($dir, 0755, true);
+
+        $name = 'home_hiw_bg_' . time() . '.' . $ext;
+        if (!Helpers::moveOptimizedImage($file['tmp_name'], $file['type'], $dir . $name)) {
+            Session::flash('error', 'Failed to save image. Check directory permissions.');
+            $this->redirect('/admin/content/home');
+        }
+
+        Settings::set('content_home_hiw_bg', '/uploads/content/' . $name, 'content');
+        ActivityLog::log('admin_content_saved', 'Updated How It Works section background');
+        Session::flash('success', 'Background image updated.');
+        $this->redirect('/admin/content/home');
+    }
+
+    public function removeHiwBg(): void
+    {
+        $this->requireAdmin();
+        $this->validateCsrf();
+
+        $old = Settings::get('content_home_hiw_bg', '');
+        if ($old && str_starts_with($old, '/uploads/content/')) {
+            $oldPath = PUBLIC_PATH . $old;
+            if (file_exists($oldPath)) @unlink($oldPath);
+        }
+
+        Settings::set('content_home_hiw_bg', '', 'content');
+        ActivityLog::log('admin_content_saved', 'Removed How It Works section background');
+        Session::flash('success', 'Background image removed.');
+        $this->redirect('/admin/content/home');
+    }
 }
