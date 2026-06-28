@@ -12,6 +12,7 @@ for ($_si = 1; $_si <= 6; $_si++) {
             'heading'    => $_sh,
             'sub'        => $_ss,
             'img'        => $_si_img,
+            'img_mobile' => Settings::get("content_home_slide_{$_si}_mobile", ''),
             'layout'     => ContentController::get('home', "slide_{$_si}_layout",     'left'),
             'bg_color'   => ContentController::get('home', "slide_{$_si}_bg_color",   '#1e1b4b'),
             'text_color' => ContentController::get('home', "slide_{$_si}_text_color", 'light'),
@@ -22,9 +23,9 @@ for ($_si = 1; $_si <= 6; $_si++) {
 // Fallback: 3 built-in slides (used when nothing is configured yet)
 if (empty($_hs)) {
     $_hs = [
-        ['heading' => null,  'sub' => null, 'img' => '', 'layout' => 'left', 'bg_color' => '#1e1b4b', 'text_color' => 'light', 'overlay' => '0'],
-        ['heading' => 'Manage All Your Channels',   'sub' => 'Create channels, upload images, and every screen updates automatically — no tech skills needed.', 'img' => '', 'layout' => 'left', 'bg_color' => '#0a2540', 'text_color' => 'light', 'overlay' => '0'],
-        ['heading' => 'Works on Any TV or Device',  'sub' => 'Smart TVs, Fire Stick, Android TV boxes, Chrome browsers — one URL powers them all.',             'img' => '', 'layout' => 'left', 'bg_color' => '#052e16', 'text_color' => 'light', 'overlay' => '0'],
+        ['heading' => null,  'sub' => null, 'img' => '', 'img_mobile' => '', 'layout' => 'left', 'bg_color' => '#1e1b4b', 'text_color' => 'light', 'overlay' => '0'],
+        ['heading' => 'Manage All Your Channels',   'sub' => 'Create channels, upload images, and every screen updates automatically — no tech skills needed.', 'img' => '', 'img_mobile' => '', 'layout' => 'left', 'bg_color' => '#0a2540', 'text_color' => 'light', 'overlay' => '0'],
+        ['heading' => 'Works on Any TV or Device',  'sub' => 'Smart TVs, Fire Stick, Android TV boxes, Chrome browsers — one URL powers them all.',             'img' => '', 'img_mobile' => '', 'layout' => 'left', 'bg_color' => '#052e16', 'text_color' => 'light', 'overlay' => '0'],
     ];
 }
 $_hsCount = count($_hs);
@@ -39,10 +40,11 @@ $_staticBanner = Settings::get('content_home_banner', '');
   <div id="hs-track" class="relative" style="display:grid;">
     <?php foreach ($_hs as $_hi => $_hsl):
       // Sanitise bg color
-      $_bgRaw  = $_hsl['bg_color'] ?? '#1e1b4b';
-      $_bgSafe = preg_match('/^#[0-9a-fA-F]{6}$/', $_bgRaw) ? $_bgRaw : '#1e1b4b';
-      $_img    = $_hsl['img'] ?? '';
-      $_layout = $_hsl['layout'] ?? 'left';
+      $_bgRaw    = $_hsl['bg_color'] ?? '#1e1b4b';
+      $_bgSafe   = preg_match('/^#[0-9a-fA-F]{6}$/', $_bgRaw) ? $_bgRaw : '#1e1b4b';
+      $_img      = $_hsl['img'] ?? '';
+      $_imgMob   = $_hsl['img_mobile'] ?? '';
+      $_layout   = $_hsl['layout'] ?? 'left';
       $_isLight = ($_hsl['text_color'] ?? 'light') === 'light';
 
       // Text colour classes
@@ -77,21 +79,30 @@ $_staticBanner = Settings::get('content_home_banner', '');
           ? 'background:rgba(0,0,0,' . number_format($_overlayPct / 100, 2) . ')'
           : '';
     ?>
+    <?php
+      // Per-slide style: swap background image at the sm breakpoint (640px)
+      $_desktopBg = $_img    ? 'url(\'' . Helpers::e($_img)    . '\')' : 'none';
+      $_mobileBg  = $_imgMob ? 'url(\'' . Helpers::e($_imgMob) . '\')' : $_desktopBg;
+    ?>
+    <style>
+      #hs-bg-<?= $_hi ?> { background-color:<?= $_bgSafe ?>;<?= ($_img || $_imgMob) ? 'background-size:cover;background-position:center;' : '' ?>background-image:<?= $_desktopBg ?>; }
+      @media (max-width:639px) { #hs-bg-<?= $_hi ?> { background-image:<?= $_mobileBg ?>; } }
+    </style>
     <div class="hs-slide transition-opacity duration-700 <?= $_hi === 0 ? 'opacity-100 z-10 pointer-events-auto' : 'opacity-0 z-0 pointer-events-none' ?>" style="grid-area:1/1;">
 
       <!-- Full-width background panel -->
-      <div class="relative w-full" style="min-height:520px;background-color:<?= $_bgSafe ?>;<?= $_img ? 'background-image:url(\'' . Helpers::e($_img) . '\');background-size:cover;background-position:center;' : '' ?>">
+      <div id="hs-bg-<?= $_hi ?>" class="relative w-full min-h-[320px] sm:min-h-[430px] lg:min-h-[520px]">
 
         <!-- Overlay: uniform opacity tint (admin-controlled, 0–80%) -->
         <?php if ($_overlayStyle): ?>
         <div class="absolute inset-0 pointer-events-none" style="<?= $_overlayStyle ?>"></div>
-        <?php elseif (!$_img): ?>
+        <?php elseif (!$_img && !$_imgMob): ?>
         <div class="absolute inset-0 pointer-events-none opacity-[0.07]" style="background-image:radial-gradient(circle at 20% 50%,#ffffff 0%,transparent 55%),radial-gradient(circle at 80% 20%,#a78bfa 0%,transparent 45%)"></div>
         <?php endif; ?>
 
         <!-- Slide content -->
-        <div class="relative z-10 w-full h-full" style="min-height:520px;">
-          <div class="max-w-7xl mx-auto px-4 sm:px-6 flex items-center" style="min-height:520px;">
+        <div class="relative z-10 w-full h-full min-h-[320px] sm:min-h-[430px] lg:min-h-[520px]">
+          <div class="max-w-7xl mx-auto px-4 sm:px-6 flex items-center min-h-[320px] sm:min-h-[430px] lg:min-h-[520px]">
             <div class="<?= $_wrap ?> py-16 sm:py-20 lg:py-24 w-full">
               <div class="<?= $_prose ?>">
 

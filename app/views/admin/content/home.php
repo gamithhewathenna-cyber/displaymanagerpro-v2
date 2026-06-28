@@ -239,60 +239,111 @@
 <!-- Hero Slider Images (separate upload forms, one per slide) -->
 <?php
   $_hSlots = [];
-  for ($i = 1; $i <= 6; $i++) $_hSlots[$i] = Settings::get("content_home_slide_{$i}", '');
+  for ($i = 1; $i <= 6; $i++) {
+    $_hSlots[$i]        = Settings::get("content_home_slide_{$i}", '');
+    $_hSlotsMobile[$i]  = Settings::get("content_home_slide_{$i}_mobile", '');
+  }
 ?>
 <div class="bg-white rounded-2xl border border-gray-100 p-6 mt-6">
   <h2 class="font-semibold text-gray-900 mb-1 flex items-center gap-2">🖼️ Hero Slider — Background Images</h2>
-  <p class="text-xs text-gray-400 mb-5">Upload a full-width background image per slide. The image fills the entire slide and text is overlaid on top. Recommended: <strong>1920 × 700 px</strong> · PNG · max 5 MB. If no image is uploaded, the background colour configured above is used instead.</p>
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-    <?php for ($i = 1; $i <= 6; $i++): ?>
-    <?php $cur = $_hSlots[$i]; ?>
+  <p class="text-xs text-gray-400 mb-5">
+    Upload background images per slide. Each slide can have a separate image for desktop and mobile.<br>
+    <strong>Desktop:</strong> 1920 × 700 px · <strong>Mobile:</strong> 768 × 560 px · PNG · max 5 MB each.
+    If no image is uploaded, the background colour configured above is used.
+  </p>
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+    <?php for ($i = 1; $i <= 6; $i++):
+      $cur   = $_hSlots[$i];
+      $curMb = $_hSlotsMobile[$i];
+    ?>
     <div class="border border-gray-100 rounded-xl p-4">
-      <!-- Header -->
-      <div class="flex items-center justify-between mb-3">
-        <div class="flex items-center gap-2">
-          <span class="w-6 h-6 rounded-lg bg-primary-50 text-primary-600 font-bold text-xs flex items-center justify-center"><?= $i ?></span>
-          <span class="text-sm font-medium text-gray-700">Slide <?= $i ?></span>
-        </div>
+      <!-- Card header -->
+      <div class="flex items-center gap-2 mb-4">
+        <span class="w-6 h-6 rounded-lg bg-primary-50 text-primary-600 font-bold text-xs flex items-center justify-center"><?= $i ?></span>
+        <span class="text-sm font-semibold text-gray-700">Slide <?= $i ?></span>
         <?php if ($cur): ?>
-        <span class="text-xs bg-green-100 text-green-700 font-semibold px-2 py-0.5 rounded-full">Uploaded</span>
-        <?php else: ?>
-        <span class="text-xs bg-gray-100 text-gray-400 px-2 py-0.5 rounded-full">Using colour</span>
+        <span class="ml-auto text-xs bg-green-100 text-green-700 font-semibold px-2 py-0.5 rounded-full">Desktop uploaded</span>
+        <?php endif; ?>
+        <?php if ($curMb): ?>
+        <span class="<?= $cur ? '' : 'ml-auto' ?> text-xs bg-blue-100 text-blue-700 font-semibold px-2 py-0.5 rounded-full">Mobile uploaded</span>
+        <?php endif; ?>
+        <?php if (!$cur && !$curMb): ?>
+        <span class="ml-auto text-xs bg-gray-100 text-gray-400 px-2 py-0.5 rounded-full">Using colour</span>
         <?php endif; ?>
       </div>
-      <!-- Preview -->
-      <div class="rounded-lg overflow-hidden bg-gray-100 border border-gray-200 mb-3" style="aspect-ratio:1920/700;">
-        <?php if ($cur): ?>
-          <img src="<?= Helpers::e($cur) ?>?v=<?= time() ?>" alt="Slide <?= $i ?>" class="w-full h-full object-cover">
-        <?php else: ?>
-          <div class="w-full h-full flex flex-col items-center justify-center gap-1.5 text-gray-300">
-            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-            <span class="text-xs text-gray-400">No image</span>
+
+      <!-- Desktop + Mobile side by side -->
+      <div class="grid grid-cols-2 gap-3">
+
+        <!-- Desktop image -->
+        <div>
+          <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">🖥 Desktop · 1920×700</p>
+          <div class="rounded-lg overflow-hidden bg-gray-100 border border-gray-200 mb-2" style="aspect-ratio:1920/700;">
+            <?php if ($cur): ?>
+              <img src="<?= Helpers::e($cur) ?>?v=<?= time() ?>" alt="Slide <?= $i ?> desktop" class="w-full h-full object-cover">
+            <?php else: ?>
+              <div class="w-full h-full flex flex-col items-center justify-center gap-1 text-gray-300">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                <span class="text-[10px] text-gray-400">No image</span>
+              </div>
+            <?php endif; ?>
           </div>
-        <?php endif; ?>
-      </div>
-      <!-- Upload -->
-      <form method="POST" action="/admin/content/home/slide/<?= $i ?>" enctype="multipart/form-data" class="space-y-2">
-        <input type="hidden" name="_csrf_token" value="<?= Csrf::token() ?>">
-        <div class="flex items-center gap-2">
-          <label class="flex-1 min-w-0 block">
-            <span class="sr-only">Choose PNG</span>
-            <input type="file" name="slide_image" accept="image/png"
-              class="block w-full text-xs text-gray-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100 cursor-pointer">
-          </label>
-          <button type="submit" class="bg-primary-500 hover:bg-primary-600 text-white font-semibold px-3 py-1.5 rounded-lg text-xs transition-colors whitespace-nowrap">
-            <?= $cur ? 'Replace' : 'Upload' ?>
-          </button>
+          <form method="POST" action="/admin/content/home/slide/<?= $i ?>" enctype="multipart/form-data" class="space-y-1.5">
+            <input type="hidden" name="_csrf_token" value="<?= Csrf::token() ?>">
+            <div class="flex items-center gap-1.5">
+              <label class="flex-1 min-w-0 block">
+                <input type="file" name="slide_image" accept="image/png"
+                  class="block w-full text-[10px] text-gray-500 file:mr-1.5 file:py-1 file:px-2 file:rounded-lg file:border-0 file:text-[10px] file:font-semibold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100 cursor-pointer">
+              </label>
+              <button type="submit" class="bg-primary-500 hover:bg-primary-600 text-white font-semibold px-2.5 py-1 rounded-lg text-[10px] transition-colors whitespace-nowrap">
+                <?= $cur ? 'Replace' : 'Upload' ?>
+              </button>
+            </div>
+          </form>
+          <?php if ($cur): ?>
+          <form method="POST" action="/admin/content/home/slide/<?= $i ?>/remove" class="mt-1">
+            <input type="hidden" name="_csrf_token" value="<?= Csrf::token() ?>">
+            <button type="submit" onclick="return confirm('Remove desktop image for slide <?= $i ?>?')"
+              class="text-[10px] text-red-500 hover:text-red-700 font-medium transition-colors">Remove</button>
+          </form>
+          <?php endif; ?>
         </div>
-      </form>
-      <!-- Remove -->
-      <?php if ($cur): ?>
-      <form method="POST" action="/admin/content/home/slide/<?= $i ?>/remove" class="mt-2">
-        <input type="hidden" name="_csrf_token" value="<?= Csrf::token() ?>">
-        <button type="submit" onclick="return confirm('Remove slide <?= $i ?>?')"
-          class="text-xs text-red-500 hover:text-red-700 font-medium transition-colors">Remove image</button>
-      </form>
-      <?php endif; ?>
+
+        <!-- Mobile image -->
+        <div>
+          <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">📱 Mobile · 768×560</p>
+          <div class="rounded-lg overflow-hidden bg-gray-100 border border-gray-200 mb-2" style="aspect-ratio:768/560;">
+            <?php if ($curMb): ?>
+              <img src="<?= Helpers::e($curMb) ?>?v=<?= time() ?>" alt="Slide <?= $i ?> mobile" class="w-full h-full object-cover">
+            <?php else: ?>
+              <div class="w-full h-full flex flex-col items-center justify-center gap-1 text-gray-300">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                <span class="text-[10px] text-gray-400">Falls back to desktop</span>
+              </div>
+            <?php endif; ?>
+          </div>
+          <form method="POST" action="/admin/content/home/slide/<?= $i ?>/mobile" enctype="multipart/form-data" class="space-y-1.5">
+            <input type="hidden" name="_csrf_token" value="<?= Csrf::token() ?>">
+            <div class="flex items-center gap-1.5">
+              <label class="flex-1 min-w-0 block">
+                <input type="file" name="slide_image_mobile" accept="image/png"
+                  class="block w-full text-[10px] text-gray-500 file:mr-1.5 file:py-1 file:px-2 file:rounded-lg file:border-0 file:text-[10px] file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer">
+              </label>
+              <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-2.5 py-1 rounded-lg text-[10px] transition-colors whitespace-nowrap">
+                <?= $curMb ? 'Replace' : 'Upload' ?>
+              </button>
+            </div>
+          </form>
+          <?php if ($curMb): ?>
+          <form method="POST" action="/admin/content/home/slide/<?= $i ?>/mobile/remove" class="mt-1">
+            <input type="hidden" name="_csrf_token" value="<?= Csrf::token() ?>">
+            <button type="submit" onclick="return confirm('Remove mobile image for slide <?= $i ?>?')"
+              class="text-[10px] text-red-500 hover:text-red-700 font-medium transition-colors">Remove</button>
+          </form>
+          <?php endif; ?>
+        </div>
+
+      </div>
     </div>
     <?php endfor; ?>
   </div>

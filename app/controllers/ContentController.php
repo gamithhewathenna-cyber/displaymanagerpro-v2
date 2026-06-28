@@ -265,6 +265,77 @@ class ContentController extends BaseController
         $this->redirect('/admin/content/home');
     }
 
+    public function uploadHomeSlideMobile(string $slot): void
+    {
+        $this->requireAdmin();
+        $this->validateCsrf();
+
+        $slot = (int) $slot;
+        if ($slot < 1 || $slot > 6) $this->abort(404);
+
+        if (empty($_FILES['slide_image_mobile']) || $_FILES['slide_image_mobile']['error'] === UPLOAD_ERR_NO_FILE) {
+            Session::flash('error', 'No file selected.');
+            $this->redirect('/admin/content/home');
+        }
+
+        $file = $_FILES['slide_image_mobile'];
+        if ($file['error'] !== UPLOAD_ERR_OK) {
+            Session::flash('error', 'Upload failed (error code ' . $file['error'] . ').');
+            $this->redirect('/admin/content/home');
+        }
+
+        $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+        if ($file['type'] !== 'image/png' || $ext !== 'png') {
+            Session::flash('error', 'Only PNG images are allowed for the slider.');
+            $this->redirect('/admin/content/home');
+        }
+
+        if ($file['size'] > 5 * 1024 * 1024) {
+            Session::flash('error', 'Image must be under 5 MB.');
+            $this->redirect('/admin/content/home');
+        }
+
+        $old = Settings::get("content_home_slide_{$slot}_mobile", '');
+        if ($old && str_starts_with($old, '/uploads/slider/')) {
+            $oldPath = PUBLIC_PATH . $old;
+            if (file_exists($oldPath)) @unlink($oldPath);
+        }
+
+        $dir = UPLOAD_PATH . '/slider/';
+        if (!is_dir($dir)) mkdir($dir, 0755, true);
+
+        $name = "home_slide_{$slot}_mobile_" . time() . '.png';
+        if (!Helpers::moveOptimizedImage($file['tmp_name'], 'image/png', $dir . $name)) {
+            Session::flash('error', 'Failed to save image. Check directory permissions.');
+            $this->redirect('/admin/content/home');
+        }
+
+        Settings::set("content_home_slide_{$slot}_mobile", '/uploads/slider/' . $name, 'content');
+        ActivityLog::log('admin_content_saved', "Updated homepage slider mobile image slot $slot");
+        Session::flash('success', "Slide $slot mobile image updated.");
+        $this->redirect('/admin/content/home');
+    }
+
+    public function removeHomeSlideMobile(string $slot): void
+    {
+        $this->requireAdmin();
+        $this->validateCsrf();
+
+        $slot = (int) $slot;
+        if ($slot < 1 || $slot > 6) $this->abort(404);
+
+        $old = Settings::get("content_home_slide_{$slot}_mobile", '');
+        if ($old && str_starts_with($old, '/uploads/slider/')) {
+            $oldPath = PUBLIC_PATH . $old;
+            if (file_exists($oldPath)) @unlink($oldPath);
+        }
+
+        Settings::set("content_home_slide_{$slot}_mobile", '', 'content');
+        ActivityLog::log('admin_content_saved', "Removed homepage slider mobile image slot $slot");
+        Session::flash('success', "Slide $slot mobile image removed.");
+        $this->redirect('/admin/content/home');
+    }
+
     public function uploadHomeBanner(): void
     {
         $this->requireAdmin();
