@@ -1,22 +1,29 @@
 <?php
 $c = function($key, $default='') { return htmlspecialchars(ContentController::get('home', $key, $default)); };
 
-// Build hero slides — each slide has its own text + image
+// Build hero slides — each slide carries its own display settings
 $_hs = [];
 for ($_si = 1; $_si <= 6; $_si++) {
-    $_sh = ContentController::get('home', "slide_{$_si}_heading", '');
-    $_ss = ContentController::get('home', "slide_{$_si}_sub", '');
+    $_sh     = ContentController::get('home', "slide_{$_si}_heading", '');
+    $_ss     = ContentController::get('home', "slide_{$_si}_sub", '');
     $_si_img = Settings::get("content_home_slide_{$_si}", '');
     if ($_sh || $_si_img) {
-        $_hs[] = ['heading' => $_sh, 'sub' => $_ss, 'img' => $_si_img];
+        $_hs[] = [
+            'heading'    => $_sh,
+            'sub'        => $_ss,
+            'img'        => $_si_img,
+            'layout'     => ContentController::get('home', "slide_{$_si}_layout",     'left'),
+            'bg_color'   => ContentController::get('home', "slide_{$_si}_bg_color",   '#1e1b4b'),
+            'text_color' => ContentController::get('home', "slide_{$_si}_text_color", 'light'),
+        ];
     }
 }
-// Fallback: 3 built-in slides
+// Fallback: 3 built-in slides (used when nothing is configured yet)
 if (empty($_hs)) {
     $_hs = [
-        ['heading' => null, 'sub' => null, 'img' => ''],
-        ['heading' => 'Manage All Your Channels',   'sub' => 'Create channels, upload images, and every screen updates automatically — no tech skills needed.', 'img' => ''],
-        ['heading' => 'Works on Any TV or Device',  'sub' => 'Smart TVs, Fire Stick, Android TV boxes, Chrome browsers — one URL powers them all.', 'img' => ''],
+        ['heading' => null,  'sub' => null, 'img' => '', 'layout' => 'left', 'bg_color' => '#1e1b4b', 'text_color' => 'light'],
+        ['heading' => 'Manage All Your Channels',   'sub' => 'Create channels, upload images, and every screen updates automatically — no tech skills needed.', 'img' => '', 'layout' => 'left', 'bg_color' => '#0a2540', 'text_color' => 'light'],
+        ['heading' => 'Works on Any TV or Device',  'sub' => 'Smart TVs, Fire Stick, Android TV boxes, Chrome browsers — one URL powers them all.',             'img' => '', 'layout' => 'left', 'bg_color' => '#052e16', 'text_color' => 'light'],
     ];
 }
 $_hsCount = count($_hs);
@@ -25,150 +32,141 @@ $_hsCount = count($_hs);
 $_staticBanner = Settings::get('content_home_banner', '');
 ?>
 
-<!-- HERO SLIDER — Light theme, split layout -->
-<section class="bg-white overflow-hidden relative">
-  <!-- Decorative right-side tint (desktop only) -->
-  <div class="absolute right-0 top-0 bottom-0 w-5/12 bg-gradient-to-bl from-primary-50 via-white to-indigo-50 hidden lg:block pointer-events-none"></div>
+<!-- HERO SLIDER — Full-width background image with text overlay -->
+<section class="overflow-hidden relative">
 
-  <!-- Slide track -->
   <div id="hs-track" class="relative" style="display:grid;">
-    <?php foreach ($_hs as $_hi => $_hsl): ?>
+    <?php foreach ($_hs as $_hi => $_hsl):
+      // Sanitise bg color
+      $_bgRaw  = $_hsl['bg_color'] ?? '#1e1b4b';
+      $_bgSafe = preg_match('/^#[0-9a-fA-F]{6}$/', $_bgRaw) ? $_bgRaw : '#1e1b4b';
+      $_img    = $_hsl['img'] ?? '';
+      $_layout = $_hsl['layout'] ?? 'left';
+      $_isLight = ($_hsl['text_color'] ?? 'light') === 'light';
+
+      // Text colour classes
+      $_tcHead = $_isLight ? 'text-white'     : 'text-gray-900';
+      $_tcSub  = $_isLight ? 'text-white/80'  : 'text-gray-600';
+      $_tcDesc = $_isLight ? 'text-white/70'  : 'text-gray-500';
+      $_badgeBg = $_isLight
+        ? 'bg-white/15 border-white/30 text-white'
+        : 'bg-primary-50 border-primary-100 text-primary-700';
+      $_ctaSec = $_isLight
+        ? 'bg-white/15 hover:bg-white/25 border-white/40 text-white'
+        : 'bg-transparent border-gray-300 hover:border-primary-400 text-gray-700 hover:text-primary-600';
+
+      // Content alignment classes
+      if ($_layout === 'center') {
+          $_wrap  = 'w-full flex flex-col items-center text-center';
+          $_prose = 'max-w-2xl';
+          $_ctaRow = 'flex flex-col sm:flex-row gap-3 justify-center';
+      } elseif ($_layout === 'right') {
+          $_wrap  = 'ml-auto text-right flex flex-col items-end';
+          $_prose = 'max-w-xl lg:max-w-2xl';
+          $_ctaRow = 'flex flex-col sm:flex-row gap-3 justify-end';
+      } else {
+          $_wrap  = 'text-left flex flex-col items-start';
+          $_prose = 'max-w-xl lg:max-w-2xl';
+          $_ctaRow = 'flex flex-col sm:flex-row gap-3';
+      }
+
+      // Directional overlay gradient (darkens the text side for readability)
+      if ($_img) {
+          if ($_layout === 'right') {
+              $_overlay = 'background:linear-gradient(to left,rgba(0,0,0,.72) 0%,rgba(0,0,0,.45) 55%,rgba(0,0,0,.12) 100%)';
+          } elseif ($_layout === 'center') {
+              $_overlay = 'background:rgba(0,0,0,.52)';
+          } else {
+              $_overlay = 'background:linear-gradient(to right,rgba(0,0,0,.72) 0%,rgba(0,0,0,.45) 55%,rgba(0,0,0,.12) 100%)';
+          }
+      } else {
+          $_overlay = '';
+      }
+    ?>
     <div class="hs-slide transition-opacity duration-700 <?= $_hi === 0 ? 'opacity-100 z-10 pointer-events-auto' : 'opacity-0 z-0 pointer-events-none' ?>" style="grid-area:1/1;">
-      <div class="max-w-7xl mx-auto w-full px-4 sm:px-6 pt-12 pb-20 lg:py-24 grid grid-cols-1 lg:grid-cols-2 gap-10 xl:gap-16 items-center relative">
 
-        <!-- Text (left) -->
-        <div class="lg:order-1 text-center lg:text-left">
-          <div class="inline-flex items-center gap-2 bg-primary-50 border border-primary-100 text-primary-700 rounded-full px-4 py-1.5 text-xs sm:text-sm font-medium mb-6 mx-auto lg:mx-0">
-            <span class="w-2 h-2 bg-primary-500 rounded-full animate-pulse flex-shrink-0"></span>
-            <?= $c('badge_text', '14-day free trial · No credit card required') ?>
-          </div>
+      <!-- Full-width background panel -->
+      <div class="relative w-full" style="min-height:520px;background-color:<?= $_bgSafe ?>;<?= $_img ? 'background-image:url(\'' . Helpers::e($_img) . '\');background-size:cover;background-position:center;' : '' ?>">
 
-          <?php if ($_hsl['heading'] === null): ?>
-            <h1 class="text-3xl sm:text-4xl md:text-5xl xl:text-[3.4rem] font-extrabold leading-tight text-gray-900 mb-5">
-              <?= $c('hero_title_1', 'Update Every Restaurant Screen') ?><br>
-              <span class="gradient-text"><?= $c('hero_title_2', 'In Seconds') ?></span>
-            </h1>
-            <p class="text-base sm:text-lg text-gray-500 mb-2 font-medium"><?= $c('hero_subtitle', 'No USB Drives. No Complicated Software.') ?></p>
-            <p class="text-sm sm:text-base text-gray-400 mb-8 max-w-lg mx-auto lg:mx-0 leading-relaxed"><?= $c('hero_description', 'Manage menus, specials, promotions and announcements across all your TV screens from one simple cloud dashboard.') ?></p>
-          <?php else: ?>
-            <h1 class="text-3xl sm:text-4xl md:text-5xl xl:text-[3.4rem] font-extrabold leading-tight text-gray-900 mb-5">
-              <?= Helpers::e($_hsl['heading']) ?>
-            </h1>
-            <?php if ($_hsl['sub']): ?>
-            <p class="text-sm sm:text-lg text-gray-500 mb-8 max-w-lg leading-relaxed mx-auto lg:mx-0"><?= Helpers::e($_hsl['sub']) ?></p>
-            <?php endif; ?>
-          <?php endif; ?>
+        <!-- Overlay: directional gradient over image, or subtle pattern over solid colour -->
+        <?php if ($_img): ?>
+        <div class="absolute inset-0" style="<?= $_overlay ?>"></div>
+        <?php else: ?>
+        <div class="absolute inset-0 pointer-events-none opacity-[0.07]" style="background-image:radial-gradient(circle at 20% 50%,#ffffff 0%,transparent 55%),radial-gradient(circle at 80% 20%,#a78bfa 0%,transparent 45%)"></div>
+        <?php endif; ?>
 
-          <div class="flex flex-col sm:flex-row gap-3 items-center justify-center lg:justify-start">
-            <a href="/register" class="bg-primary-500 hover:bg-primary-600 text-white font-bold text-sm sm:text-base px-7 py-3.5 rounded-xl transition-all shadow-lg shadow-primary-500/25 hover:-translate-y-0.5 text-center w-full sm:w-auto">
-              <?= $c('cta_primary', 'Start Free 14-Day Trial →') ?>
-            </a>
-            <a href="/pricing" class="border-2 border-gray-200 hover:border-primary-300 text-gray-700 hover:text-primary-600 font-semibold text-sm sm:text-base px-7 py-3.5 rounded-xl transition-all text-center w-full sm:w-auto">
-              <?= $c('cta_secondary', 'View Pricing') ?>
-            </a>
+        <!-- Slide content -->
+        <div class="relative z-10 w-full h-full" style="min-height:520px;">
+          <div class="max-w-7xl mx-auto px-4 sm:px-6 flex items-center" style="min-height:520px;">
+            <div class="<?= $_wrap ?> py-16 sm:py-20 lg:py-24 w-full">
+              <div class="<?= $_prose ?>">
+
+                <!-- Badge (first slide only, or all slides with heading) -->
+                <?php if ($_hsl['heading'] === null || $_hi === 0): ?>
+                <div class="inline-flex items-center gap-2 <?= $_badgeBg ?> border rounded-full px-4 py-1.5 text-xs sm:text-sm font-medium mb-6">
+                  <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse flex-shrink-0"></span>
+                  <?= $c('badge_text', '14-day free trial · No credit card required') ?>
+                </div>
+                <?php endif; ?>
+
+                <!-- Heading -->
+                <?php if ($_hsl['heading'] === null): ?>
+                  <h1 class="text-3xl sm:text-4xl md:text-5xl xl:text-[3.25rem] font-extrabold leading-tight mb-5 <?= $_tcHead ?>">
+                    <?= $c('hero_title_1', 'Update Every Restaurant Screen') ?><br>
+                    <span style="background:linear-gradient(90deg,#a78bfa,#60a5fa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text"><?= $c('hero_title_2', 'In Seconds') ?></span>
+                  </h1>
+                  <p class="text-base sm:text-lg font-medium mb-2 <?= $_tcSub ?>"><?= $c('hero_subtitle', 'No USB Drives. No Complicated Software.') ?></p>
+                  <p class="text-sm sm:text-base mb-8 leading-relaxed <?= $_tcDesc ?>"><?= $c('hero_description', 'Manage menus, specials, promotions and announcements across all your TV screens from one simple cloud dashboard.') ?></p>
+                <?php elseif ($_hsl['heading'] !== ''): ?>
+                  <h1 class="text-3xl sm:text-4xl md:text-5xl xl:text-[3.25rem] font-extrabold leading-tight mb-5 <?= $_tcHead ?>">
+                    <?= Helpers::e($_hsl['heading']) ?>
+                  </h1>
+                  <?php if ($_hsl['sub']): ?>
+                  <p class="text-base sm:text-lg mb-8 leading-relaxed <?= $_tcSub ?>"><?= Helpers::e($_hsl['sub']) ?></p>
+                  <?php endif; ?>
+                <?php endif; ?>
+
+                <!-- CTAs -->
+                <div class="<?= $_ctaRow ?>">
+                  <a href="/register" class="bg-primary-500 hover:bg-primary-600 text-white font-bold text-sm sm:text-base px-7 py-3.5 rounded-xl transition-all shadow-lg shadow-primary-500/30 hover:-translate-y-0.5 text-center">
+                    <?= $c('cta_primary', 'Start Free 14-Day Trial →') ?>
+                  </a>
+                  <a href="/pricing" class="<?= $_ctaSec ?> border-2 font-semibold text-sm sm:text-base px-7 py-3.5 rounded-xl transition-all text-center">
+                    <?= $c('cta_secondary', 'View Pricing') ?>
+                  </a>
+                </div>
+
+              </div>
+            </div>
           </div>
         </div>
-
-        <!-- Image / mockup (right) -->
-        <div class="relative lg:order-2 <?= $_hsl['img'] ? '' : 'hidden sm:block' ?>">
-          <?php if ($_hsl['img']): ?>
-            <img src="<?= Helpers::e($_hsl['img']) ?>" alt="" class="w-full h-auto block object-contain float">
-          <?php elseif ($_hi % 3 === 1): ?>
-            <!-- Channel editor mockup -->
-            <div class="relative rounded-2xl overflow-hidden shadow-2xl ring-1 ring-gray-200 float" style="background:#111827;">
-              <div class="px-4 py-3 border-b border-white/10 flex items-center gap-2" style="background:rgba(31,41,55,.9)">
-                <div class="flex gap-1.5"><div class="w-3 h-3 rounded-full bg-red-400/80"></div><div class="w-3 h-3 rounded-full bg-yellow-400/80"></div><div class="w-3 h-3 rounded-full bg-green-400/80"></div></div>
-                <div class="flex-1 ml-2 bg-white/10 rounded px-3 py-1 text-xs text-gray-400 truncate">dashboard.signagecloud.com/channels</div>
-              </div>
-              <div class="p-5" style="background:linear-gradient(135deg,#0c1a2e,#0a2540)">
-                <div class="text-[10px] text-blue-400/70 mb-3 font-bold tracking-widest uppercase">Channel Editor</div>
-                <div class="bg-white/5 rounded-xl p-4 mb-3">
-                  <div class="flex items-center justify-between mb-3"><span class="text-sm font-semibold text-white">Main Menu Board</span><span class="text-[10px] bg-green-500/20 text-green-400 px-2 py-0.5 rounded-full">Live</span></div>
-                  <div class="flex gap-2">
-                    <div class="flex-1 bg-gradient-to-br from-indigo-600/50 to-purple-600/50 rounded-lg flex items-center justify-center text-[10px] text-gray-300" style="aspect-ratio:16/9;">Slide 1</div>
-                    <div class="flex-1 bg-gradient-to-br from-blue-600/50 to-cyan-600/50 rounded-lg flex items-center justify-center text-[10px] text-gray-300" style="aspect-ratio:16/9;">Slide 2</div>
-                    <div class="flex-1 bg-gradient-to-br from-emerald-600/50 to-teal-600/50 rounded-lg flex items-center justify-center text-[10px] text-gray-300" style="aspect-ratio:16/9;">Slide 3</div>
-                    <div class="flex-1 border-2 border-dashed border-white/20 rounded-lg flex items-center justify-center text-gray-500 text-xl" style="aspect-ratio:16/9;">+</div>
-                  </div>
-                </div>
-                <div class="grid grid-cols-2 gap-2">
-                  <div class="bg-white/5 rounded-xl p-3"><div class="text-[10px] text-gray-400 mb-1">Slide Duration</div><div class="text-sm font-bold text-white">8 seconds</div></div>
-                  <div class="bg-white/5 rounded-xl p-3"><div class="text-[10px] text-gray-400 mb-1">Transition</div><div class="text-sm font-bold text-white">Fade</div></div>
-                </div>
-              </div>
-            </div>
-          <?php elseif ($_hi % 3 === 2): ?>
-            <!-- Live display mockup -->
-            <div class="relative rounded-2xl overflow-hidden shadow-2xl ring-1 ring-gray-200 float" style="background:#111827;">
-              <div class="px-4 py-3 border-b border-white/10 flex items-center gap-2" style="background:rgba(31,41,55,.9)">
-                <div class="flex gap-1.5"><div class="w-3 h-3 rounded-full bg-red-400/80"></div><div class="w-3 h-3 rounded-full bg-yellow-400/80"></div><div class="w-3 h-3 rounded-full bg-green-400/80"></div></div>
-                <div class="flex-1 ml-2 bg-white/10 rounded px-3 py-1 text-xs text-gray-400 truncate">display.signagecloud.com/main-board</div>
-              </div>
-              <div class="p-5" style="background:linear-gradient(135deg,#052e16,#064e3b)">
-                <div class="text-[10px] text-emerald-400/70 mb-3 font-bold tracking-widest uppercase">Live TV Display</div>
-                <div class="bg-black/40 rounded-xl overflow-hidden mb-3" style="aspect-ratio:16/9;">
-                  <div class="w-full h-full flex flex-col items-center justify-center gap-2" style="background:linear-gradient(135deg,rgba(79,70,229,.6),rgba(109,40,217,.6))">
-                    <div class="text-white/20 text-4xl">📺</div>
-                    <div class="text-white text-sm font-semibold">Today's Specials</div>
-                    <div class="text-white/40 text-xs">Auto-refreshes every 15 min</div>
-                  </div>
-                </div>
-                <div class="flex items-center gap-2 bg-white/5 rounded-xl px-4 py-2.5">
-                  <div class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
-                  <span class="text-xs text-gray-300 flex-1">Display is live on 3 screens</span>
-                  <span class="text-[10px] text-gray-500">QR code active</span>
-                </div>
-              </div>
-            </div>
-          <?php else: ?>
-            <!-- Dashboard mockup -->
-            <div class="relative rounded-2xl overflow-hidden shadow-2xl ring-1 ring-gray-200 float" style="background:#111827;">
-              <div class="px-4 py-3 border-b border-white/10 flex items-center gap-2" style="background:rgba(31,41,55,.9)">
-                <div class="flex gap-1.5"><div class="w-3 h-3 rounded-full bg-red-400/80"></div><div class="w-3 h-3 rounded-full bg-yellow-400/80"></div><div class="w-3 h-3 rounded-full bg-green-400/80"></div></div>
-                <div class="flex-1 ml-2 bg-white/10 rounded px-3 py-1 text-xs text-gray-400 truncate">dashboard.signagecloud.com</div>
-              </div>
-              <div class="p-5" style="background:linear-gradient(135deg,#1e1b4b,#2e1065)">
-                <div class="text-[10px] text-indigo-400/70 mb-3 font-bold tracking-widest uppercase">Dashboard Overview</div>
-                <div class="grid grid-cols-3 gap-2 mb-3">
-                  <div class="bg-white/10 rounded-xl p-3"><div class="text-[10px] text-gray-400 mb-1">Active Screens</div><div class="text-xl font-bold text-white">3</div><div class="text-[10px] text-green-400">● All live</div></div>
-                  <div class="bg-white/10 rounded-xl p-3"><div class="text-[10px] text-gray-400 mb-1">Total Slides</div><div class="text-xl font-bold text-white">24</div><div class="text-[10px] text-gray-400">Across channels</div></div>
-                  <div class="bg-white/10 rounded-xl p-3"><div class="text-[10px] text-gray-400 mb-1">Auto Refresh</div><div class="text-xl font-bold text-white">15m</div><div class="text-[10px] text-blue-400">Enabled</div></div>
-                </div>
-                <div class="bg-white/5 rounded-xl p-3">
-                  <div class="flex items-center justify-between mb-2"><span class="text-xs text-gray-300 font-medium">My Channels</span><span class="text-[10px] text-indigo-400">View all →</span></div>
-                  <div class="space-y-1.5">
-                    <div class="flex items-center gap-2 bg-white/5 rounded-lg px-3 py-1.5"><div class="w-1.5 h-1.5 rounded-full bg-green-400"></div><span class="text-xs text-gray-300 flex-1">Main Menu Board</span><span class="text-[10px] text-gray-500">8 slides</span></div>
-                    <div class="flex items-center gap-2 bg-white/5 rounded-lg px-3 py-1.5"><div class="w-1.5 h-1.5 rounded-full bg-green-400"></div><span class="text-xs text-gray-300 flex-1">Daily Specials</span><span class="text-[10px] text-gray-500">3 slides</span></div>
-                    <div class="flex items-center gap-2 bg-white/5 rounded-lg px-3 py-1.5"><div class="w-1.5 h-1.5 rounded-full bg-yellow-400"></div><span class="text-xs text-gray-300 flex-1">Promotions</span><span class="text-[10px] text-gray-500">5 slides</span></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          <?php endif; ?>
-        </div>
-
       </div>
+
     </div>
     <?php endforeach; ?>
   </div>
 
   <!-- Navigation arrows -->
   <?php if ($_hsCount > 1): ?>
-  <button type="button" id="hs-prev" aria-label="Previous slide" class="absolute left-3 sm:left-5 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-white hover:bg-primary-50 border border-gray-200 hover:border-primary-300 flex items-center justify-center transition-colors shadow-sm">
-    <svg class="w-4 h-4 sm:w-5 sm:h-5 text-gray-600" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
+  <button type="button" id="hs-prev" aria-label="Previous slide"
+    class="absolute left-3 sm:left-5 top-1/2 -translate-y-1/2 z-20 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/20 hover:bg-white/35 border border-white/40 flex items-center justify-center transition-colors backdrop-blur-sm">
+    <svg class="w-5 h-5 text-white" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
   </button>
-  <button type="button" id="hs-next" aria-label="Next slide" class="absolute right-3 sm:right-5 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-white hover:bg-primary-50 border border-gray-200 hover:border-primary-300 flex items-center justify-center transition-colors shadow-sm">
-    <svg class="w-4 h-4 sm:w-5 sm:h-5 text-gray-600" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+  <button type="button" id="hs-next" aria-label="Next slide"
+    class="absolute right-3 sm:right-5 top-1/2 -translate-y-1/2 z-20 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/20 hover:bg-white/35 border border-white/40 flex items-center justify-center transition-colors backdrop-blur-sm">
+    <svg class="w-5 h-5 text-white" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
   </button>
-  <!-- Navigation dots -->
+  <!-- Dots -->
   <div class="absolute bottom-6 inset-x-0 flex items-center justify-center z-20" role="tablist" aria-label="Slide navigation">
     <div id="hs-dots" class="flex items-center gap-2">
       <?php for ($_di = 0; $_di < $_hsCount; $_di++): ?>
-      <button type="button" role="tab" aria-label="Go to slide <?= $_di + 1 ?>"<?= $_di === 0 ? ' aria-selected="true"' : ' aria-selected="false"' ?> class="h-2 rounded-full transition-all duration-300 <?= $_di === 0 ? 'w-7 bg-primary-500' : 'w-2 bg-gray-300' ?>"></button>
+      <button type="button" role="tab" aria-label="Go to slide <?= $_di + 1 ?>"<?= $_di === 0 ? ' aria-selected="true"' : ' aria-selected="false"' ?>
+        class="h-2 rounded-full transition-all duration-300 <?= $_di === 0 ? 'w-8 bg-white' : 'w-2 bg-white/40' ?>"></button>
       <?php endfor; ?>
     </div>
   </div>
   <?php endif; ?>
+
 </section>
 <script>
 (function() {
@@ -183,14 +181,14 @@ $_staticBanner = Settings::get('content_home_banner', '');
   function goTo(n) {
     slides[current].classList.remove('opacity-100','z-10','pointer-events-auto');
     slides[current].classList.add('opacity-0','z-0','pointer-events-none');
-    dots[current].classList.remove('bg-primary-500','w-7');
-    dots[current].classList.add('bg-gray-300','w-2');
+    dots[current].classList.remove('bg-white','w-8');
+    dots[current].classList.add('bg-white/40','w-2');
     dots[current].setAttribute('aria-selected','false');
     current = (n + slides.length) % slides.length;
     slides[current].classList.remove('opacity-0','z-0','pointer-events-none');
     slides[current].classList.add('opacity-100','z-10','pointer-events-auto');
-    dots[current].classList.remove('bg-gray-300','w-2');
-    dots[current].classList.add('bg-primary-500','w-7');
+    dots[current].classList.remove('bg-white/40','w-2');
+    dots[current].classList.add('bg-white','w-8');
     dots[current].setAttribute('aria-selected','true');
   }
 

@@ -28,19 +28,34 @@
     </div>
   </div>
 
-  <!-- Hero Slides Text -->
+  <!-- Hero Slides Text + Layout -->
   <div class="bg-white rounded-2xl border border-gray-100 p-6">
-    <h2 class="font-semibold text-gray-900 mb-1 flex items-center gap-2">🎞️ Hero Slider — Slide Text</h2>
-    <p class="text-xs text-gray-400 mb-5">Each slide can have its own heading and description. Slides without text use the hero section defaults above. Upload images for each slide in the section below after saving.</p>
-    <div class="space-y-4">
-      <?php for ($i = 1; $i <= 6; $i++): ?>
+    <h2 class="font-semibold text-gray-900 mb-1 flex items-center gap-2">🎞️ Hero Slider — Slides</h2>
+    <p class="text-xs text-gray-400 mb-5">Each slide uses a full-width background image (1920 × 700 px). Text is overlaid on the image. Choose the text position, text colour, and a fallback background colour for when no image is uploaded.</p>
+    <div class="space-y-5">
+      <?php for ($i = 1; $i <= 6; $i++):
+        $curLayout     = $content["slide_{$i}_layout"]     ?? 'left';
+        $curBgColor    = $content["slide_{$i}_bg_color"]   ?? '#1e1b4b';
+        $curTextColor  = $content["slide_{$i}_text_color"] ?? 'light';
+        $hasImg        = (bool) Settings::get("content_home_slide_{$i}", '');
+      ?>
       <div class="bg-gray-50 rounded-xl p-4 border border-gray-100">
-        <div class="flex items-center gap-2 mb-3">
-          <span class="w-6 h-6 rounded-lg bg-primary-50 text-primary-600 font-bold text-xs flex items-center justify-center"><?= $i ?></span>
-          <span class="text-sm font-semibold text-gray-700">Slide <?= $i ?></span>
-          <?php if ($i === 1): ?><span class="text-xs text-gray-400 ml-1">(leave blank to use Hero heading above)</span><?php endif; ?>
+        <!-- Header row -->
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center gap-2">
+            <span class="w-6 h-6 rounded-lg bg-primary-50 text-primary-600 font-bold text-xs flex items-center justify-center"><?= $i ?></span>
+            <span class="text-sm font-semibold text-gray-700">Slide <?= $i ?></span>
+            <?php if ($i === 1): ?><span class="text-xs text-gray-400 ml-1">(leave blank to use Hero heading above)</span><?php endif; ?>
+          </div>
+          <?php if ($hasImg): ?>
+          <span class="text-xs bg-green-100 text-green-700 font-semibold px-2 py-0.5 rounded-full">Image uploaded</span>
+          <?php else: ?>
+          <span class="text-xs bg-amber-50 text-amber-600 px-2 py-0.5 rounded-full border border-amber-200">No image — colour fallback</span>
+          <?php endif; ?>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+
+        <!-- Text fields -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
           <div>
             <label class="block text-xs font-medium text-gray-500 mb-1">Heading</label>
             <input type="text" name="slide_<?= $i ?>_heading" value="<?= htmlspecialchars($content["slide_{$i}_heading"] ?? '') ?>"
@@ -53,6 +68,67 @@
               class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
               placeholder="1–2 sentence description for this slide">
           </div>
+        </div>
+
+        <!-- Layout + colour controls -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+
+          <!-- Text Position -->
+          <div>
+            <label class="block text-xs font-medium text-gray-500 mb-2">Text Position</label>
+            <div class="flex gap-1.5">
+              <?php foreach (['left' => '◀ Left', 'center' => '■ Centre', 'right' => 'Right ▶'] as $val => $lbl): ?>
+              <label class="flex-1 cursor-pointer">
+                <input type="radio" name="slide_<?= $i ?>_layout" value="<?= $val ?>"
+                  <?= $curLayout === $val ? 'checked' : '' ?>
+                  class="sr-only peer">
+                <div class="border border-gray-200 rounded-lg py-2 text-center text-xs font-medium text-gray-500 transition-all cursor-pointer peer-checked:bg-primary-50 peer-checked:border-primary-400 peer-checked:text-primary-700 hover:border-gray-300">
+                  <?= $lbl ?>
+                </div>
+              </label>
+              <?php endforeach; ?>
+            </div>
+          </div>
+
+          <!-- Text Colour -->
+          <div>
+            <label class="block text-xs font-medium text-gray-500 mb-2">Text Colour</label>
+            <div class="flex gap-1.5">
+              <?php foreach (['light' => '☀ Light', 'dark' => '◑ Dark'] as $val => $lbl): ?>
+              <label class="flex-1 cursor-pointer">
+                <input type="radio" name="slide_<?= $i ?>_text_color" value="<?= $val ?>"
+                  <?= $curTextColor === $val ? 'checked' : '' ?>
+                  class="sr-only peer">
+                <div class="border border-gray-200 rounded-lg py-2 text-center text-xs font-medium text-gray-500 transition-all cursor-pointer peer-checked:bg-primary-50 peer-checked:border-primary-400 peer-checked:text-primary-700 hover:border-gray-300">
+                  <?= $lbl ?>
+                </div>
+              </label>
+              <?php endforeach; ?>
+            </div>
+          </div>
+
+          <!-- Background Colour -->
+          <div>
+            <label class="block text-xs font-medium text-gray-500 mb-2">
+              Background Colour
+              <span class="font-normal text-gray-400 ml-1">(no image fallback)</span>
+            </label>
+            <div class="flex items-center gap-2">
+              <input type="color"
+                id="bg_color_picker_<?= $i ?>"
+                value="<?= htmlspecialchars($curBgColor) ?>"
+                class="w-10 h-10 rounded-lg border border-gray-200 p-0.5 cursor-pointer flex-shrink-0"
+                oninput="document.getElementById('bg_hex_<?= $i ?>').value=this.value">
+              <input type="text"
+                id="bg_hex_<?= $i ?>"
+                name="slide_<?= $i ?>_bg_color"
+                value="<?= htmlspecialchars($curBgColor) ?>"
+                maxlength="7"
+                class="w-full border border-gray-200 rounded-lg px-3 py-2 text-xs font-mono text-gray-700 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                oninput="if(/^#[0-9a-fA-F]{6}$/.test(this.value))document.getElementById('bg_color_picker_<?= $i ?>').value=this.value">
+            </div>
+          </div>
+
         </div>
       </div>
       <?php endfor; ?>
@@ -145,8 +221,8 @@
   for ($i = 1; $i <= 6; $i++) $_hSlots[$i] = Settings::get("content_home_slide_{$i}", '');
 ?>
 <div class="bg-white rounded-2xl border border-gray-100 p-6 mt-6">
-  <h2 class="font-semibold text-gray-900 mb-1 flex items-center gap-2">🖼️ Hero Slider — Slide Images</h2>
-  <p class="text-xs text-gray-400 mb-5">Upload one PNG image per slide. The image appears on the right side of that slide. Empty slots show a built-in mockup. Recommended: <strong>1280 × 800 px</strong> (16:10 landscape).</p>
+  <h2 class="font-semibold text-gray-900 mb-1 flex items-center gap-2">🖼️ Hero Slider — Background Images</h2>
+  <p class="text-xs text-gray-400 mb-5">Upload a full-width background image per slide. The image fills the entire slide and text is overlaid on top. Recommended: <strong>1920 × 700 px</strong> · PNG · max 5 MB. If no image is uploaded, the background colour configured above is used instead.</p>
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
     <?php for ($i = 1; $i <= 6; $i++): ?>
     <?php $cur = $_hSlots[$i]; ?>
@@ -160,11 +236,11 @@
         <?php if ($cur): ?>
         <span class="text-xs bg-green-100 text-green-700 font-semibold px-2 py-0.5 rounded-full">Uploaded</span>
         <?php else: ?>
-        <span class="text-xs bg-gray-100 text-gray-400 px-2 py-0.5 rounded-full">Empty</span>
+        <span class="text-xs bg-gray-100 text-gray-400 px-2 py-0.5 rounded-full">Using colour</span>
         <?php endif; ?>
       </div>
       <!-- Preview -->
-      <div class="rounded-lg overflow-hidden bg-gray-100 border border-gray-200 mb-3" style="aspect-ratio:16/10;">
+      <div class="rounded-lg overflow-hidden bg-gray-100 border border-gray-200 mb-3" style="aspect-ratio:1920/700;">
         <?php if ($cur): ?>
           <img src="<?= Helpers::e($cur) ?>?v=<?= time() ?>" alt="Slide <?= $i ?>" class="w-full h-full object-cover">
         <?php else: ?>
