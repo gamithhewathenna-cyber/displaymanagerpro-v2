@@ -110,58 +110,136 @@
   body { font-family: 'Poppins', sans-serif; }
   .gradient-text { background: linear-gradient(135deg, #6366f1, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
   .hero-gradient { background: linear-gradient(135deg, #0f0f1a 0%, #1a1a3e 50%, #0f0f1a 100%); }
+  .hero-light { background: linear-gradient(135deg, #f5f3ff 0%, #ffffff 60%, #eef2ff 100%); }
   @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
   .float { animation: float 4s ease-in-out infinite; }
+  #mobile-menu { transition: max-height 0.3s ease, opacity 0.3s ease; max-height: 0; opacity: 0; overflow: hidden; }
+  #mobile-menu.open { max-height: 400px; opacity: 1; }
 </style>
 </head>
 <body class="bg-white text-gray-900">
 
-<!-- Nav -->
-<nav class="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-100">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between h-20">
-    <?php
-      $__logo       = Settings::get('website_logo', '') ?: Settings::get('company_logo', '');
-      $__mobileLogo = Settings::get('website_logo_mobile', '') ?: $__logo;
-      $__altText    = Helpers::e(Settings::get('company_name', APP_NAME));
-    ?>
-    <a href="/" class="flex items-center gap-2.5 font-bold text-2xl min-w-0">
-      <?php if ($__logo || $__mobileLogo): ?>
-        <?php if ($__mobileLogo && $__mobileLogo !== $__logo): ?>
-          <img src="<?= Helpers::e($__mobileLogo) ?>" alt="<?= $__altText ?>" class="block md:hidden max-h-12 max-w-[160px] object-contain">
-          <img src="<?= Helpers::e($__logo) ?>"       alt="<?= $__altText ?>" class="hidden md:block max-h-12 max-w-[210px] object-contain">
-        <?php else: ?>
-          <img src="<?= Helpers::e($__logo) ?>" alt="<?= $__altText ?>" class="max-h-12 max-w-[210px] object-contain">
-        <?php endif; ?>
-      <?php else: ?>
-        <div class="w-10 h-10 bg-primary-500 rounded-lg flex items-center justify-center flex-shrink-0">
-          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-        </div>
-        <?= Helpers::e(Settings::get('company_name', APP_NAME)) ?>
+<?php
+  // Social and contact vars defined once — reused in top bar and footer
+  $_fb            = Settings::get('facebook_url', '');
+  $_ig            = Settings::get('instagram_url', '');
+  $_gb            = Settings::get('google_business_url', '');
+  $_contact_email = Settings::get('smtp_from_email', '');
+?>
+
+<!-- TOP INFO BAR -->
+<?php if ($_contact_email || $_fb || $_ig || $_gb): ?>
+<div class="bg-primary-600 text-white text-xs">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 py-2.5 flex items-center justify-between gap-4">
+    <!-- Left: contact email -->
+    <div class="flex items-center gap-5">
+      <?php if ($_contact_email): ?>
+      <a href="mailto:<?= Helpers::e($_contact_email) ?>" class="flex items-center gap-1.5 hover:text-primary-100 transition-colors">
+        <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+        <span class="hidden sm:inline"><?= Helpers::e($_contact_email) ?></span>
+      </a>
       <?php endif; ?>
-    </a>
-    <div class="hidden md:flex items-center gap-8 text-base font-medium text-gray-600">
-      <a href="/about" class="hover:text-primary-600 transition-colors">About</a>
-      <a href="/features" class="hover:text-primary-600 transition-colors">Features</a>
-      <a href="/pricing" class="hover:text-primary-600 transition-colors">Pricing</a>
-      <a href="/industries" class="hover:text-primary-600 transition-colors">Industries</a>
-      <a href="/faq" class="hover:text-primary-600 transition-colors">FAQ</a>
-      <a href="/blog" class="hover:text-primary-600 transition-colors">News & Updates</a>
     </div>
+    <!-- Right: social icons -->
+    <?php if ($_fb || $_ig || $_gb): ?>
     <div class="flex items-center gap-3">
-      <a href="/login" class="text-base font-medium text-gray-700 hover:text-primary-600 transition-colors">Sign In</a>
-      <a href="/register" class="bg-primary-500 hover:bg-primary-600 text-white text-base font-semibold px-6 py-2.5 rounded-lg transition-colors shadow-sm">Start Free Trial</a>
+      <span class="text-white/60 hidden sm:inline text-[11px] font-medium tracking-wide">Follow Us:</span>
+      <?php if ($_fb): ?>
+      <a href="<?= Helpers::e($_fb) ?>" target="_blank" rel="noopener" aria-label="Facebook" class="hover:text-primary-200 transition-colors">
+        <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047v-2.66c0-3.025 1.791-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.97h-1.513c-1.491 0-1.956.93-1.956 1.886v2.265h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/></svg>
+      </a>
+      <?php endif; ?>
+      <?php if ($_ig): ?>
+      <a href="<?= Helpers::e($_ig) ?>" target="_blank" rel="noopener" aria-label="Instagram" class="hover:text-primary-200 transition-colors">
+        <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+      </a>
+      <?php endif; ?>
+      <?php if ($_gb): ?>
+      <a href="<?= Helpers::e($_gb) ?>" target="_blank" rel="noopener" aria-label="Google Business" class="hover:text-primary-200 transition-colors">
+        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+      </a>
+      <?php endif; ?>
+    </div>
+    <?php endif; ?>
+  </div>
+</div>
+<?php endif; ?>
+
+<!-- Nav -->
+<nav class="sticky top-0 left-0 right-0 z-50 bg-white border-b border-gray-100 shadow-sm">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6">
+    <div class="flex items-center justify-between h-20">
+      <?php
+        $__logo       = Settings::get('website_logo', '') ?: Settings::get('company_logo', '');
+        $__mobileLogo = Settings::get('website_logo_mobile', '') ?: $__logo;
+        $__altText    = Helpers::e(Settings::get('company_name', APP_NAME));
+      ?>
+      <!-- Logo -->
+      <a href="/" class="flex items-center gap-2.5 font-bold text-xl min-w-0 flex-shrink-0">
+        <?php if ($__logo || $__mobileLogo): ?>
+          <?php if ($__mobileLogo && $__mobileLogo !== $__logo): ?>
+            <img src="<?= Helpers::e($__mobileLogo) ?>" alt="<?= $__altText ?>" class="block md:hidden max-h-11 max-w-[150px] object-contain">
+            <img src="<?= Helpers::e($__logo) ?>"       alt="<?= $__altText ?>" class="hidden md:block max-h-11 max-w-[200px] object-contain">
+          <?php else: ?>
+            <img src="<?= Helpers::e($__logo) ?>" alt="<?= $__altText ?>" class="max-h-11 max-w-[200px] object-contain">
+          <?php endif; ?>
+        <?php else: ?>
+          <div class="w-9 h-9 bg-primary-500 rounded-lg flex items-center justify-center flex-shrink-0">
+            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+          </div>
+          <span class="text-gray-900"><?= Helpers::e(Settings::get('company_name', APP_NAME)) ?></span>
+        <?php endif; ?>
+      </a>
+
+      <!-- Desktop nav links -->
+      <div class="hidden lg:flex items-center gap-7 text-sm font-medium text-gray-600">
+        <a href="/about"      class="hover:text-primary-600 transition-colors py-1 border-b-2 border-transparent hover:border-primary-500">About</a>
+        <a href="/features"   class="hover:text-primary-600 transition-colors py-1 border-b-2 border-transparent hover:border-primary-500">Features</a>
+        <a href="/pricing"    class="hover:text-primary-600 transition-colors py-1 border-b-2 border-transparent hover:border-primary-500">Pricing</a>
+        <a href="/industries" class="hover:text-primary-600 transition-colors py-1 border-b-2 border-transparent hover:border-primary-500">Industries</a>
+        <a href="/faq"        class="hover:text-primary-600 transition-colors py-1 border-b-2 border-transparent hover:border-primary-500">FAQ</a>
+        <a href="/blog"       class="hover:text-primary-600 transition-colors py-1 border-b-2 border-transparent hover:border-primary-500">News &amp; Updates</a>
+      </div>
+
+      <!-- Desktop CTA buttons + mobile hamburger -->
+      <div class="flex items-center gap-3">
+        <a href="/login" class="hidden sm:block text-sm font-medium text-gray-600 hover:text-primary-600 transition-colors">Sign In</a>
+        <a href="/register" class="bg-primary-500 hover:bg-primary-600 text-white text-sm font-semibold px-5 py-2.5 rounded-lg transition-colors shadow-sm hidden sm:block">Start Free Trial</a>
+        <!-- Mobile hamburger -->
+        <button id="mobile-nav-toggle" aria-label="Toggle menu" class="lg:hidden w-10 h-10 flex flex-col items-center justify-center gap-1.5 rounded-lg hover:bg-gray-50 transition-colors">
+          <span class="w-5 h-0.5 bg-gray-700 rounded transition-all" id="ham-line-1"></span>
+          <span class="w-5 h-0.5 bg-gray-700 rounded transition-all" id="ham-line-2"></span>
+          <span class="w-5 h-0.5 bg-gray-700 rounded transition-all" id="ham-line-3"></span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile menu -->
+    <div id="mobile-menu">
+      <div class="pb-5 pt-1 border-t border-gray-100 space-y-1">
+        <a href="/about"      class="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-gray-700 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors">About</a>
+        <a href="/features"   class="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-gray-700 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors">Features</a>
+        <a href="/pricing"    class="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-gray-700 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors">Pricing</a>
+        <a href="/industries" class="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-gray-700 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors">Industries</a>
+        <a href="/faq"        class="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-gray-700 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors">FAQ</a>
+        <a href="/blog"       class="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-gray-700 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors">News &amp; Updates</a>
+        <div class="pt-3 grid grid-cols-2 gap-2">
+          <a href="/login"    class="text-center border border-gray-200 text-gray-700 font-semibold text-sm py-2.5 rounded-lg hover:border-primary-300 hover:text-primary-600 transition-colors">Sign In</a>
+          <a href="/register" class="text-center bg-primary-500 hover:bg-primary-600 text-white font-semibold text-sm py-2.5 rounded-lg transition-colors">Start Free Trial</a>
+        </div>
+      </div>
     </div>
   </div>
 </nav>
 
-<main class="pt-20">
+<main>
   <?php if ($msg = Session::getFlash('success')): ?>
-    <div class="fixed top-20 right-4 z-50 bg-green-500 text-white px-5 py-3 rounded-lg shadow-lg text-sm font-medium max-w-sm" id="flash-msg">
+    <div class="fixed top-24 right-4 z-50 bg-green-500 text-white px-5 py-3 rounded-lg shadow-lg text-sm font-medium max-w-sm" id="flash-msg">
       <?= Helpers::e($msg) ?>
     </div>
   <?php endif; ?>
   <?php if ($msg = Session::getFlash('error')): ?>
-    <div class="fixed top-20 right-4 z-50 bg-red-500 text-white px-5 py-3 rounded-lg shadow-lg text-sm font-medium max-w-sm" id="flash-msg">
+    <div class="fixed top-24 right-4 z-50 bg-red-500 text-white px-5 py-3 rounded-lg shadow-lg text-sm font-medium max-w-sm" id="flash-msg">
       <?= Helpers::e($msg) ?>
     </div>
   <?php endif; ?>
@@ -170,7 +248,7 @@
 </main>
 
 <!-- Footer (CMS-driven) -->
-<footer class="bg-gray-900 text-gray-400 py-16 mt-20">
+<footer class="bg-gray-900 text-gray-400 pt-16 pb-8 mt-20">
   <div class="max-w-7xl mx-auto px-4 sm:px-6">
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 mb-12">
       <div class="col-span-2 md:col-span-1">
@@ -215,6 +293,7 @@
       </div>
       <?php endfor; ?>
     </div>
+
     <!-- Locations row -->
     <div class="border-t border-gray-800 pt-8 pb-6">
       <p class="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-4">Locations We Serve</p>
@@ -234,20 +313,14 @@
         <a href="/digital-signage/chicago"      class="hover:text-gray-300 transition-colors">Digital Signage Chicago</a>
       </div>
     </div>
+
     <!-- Policy links + social icons row -->
-    <?php
-      $_fb = Settings::get('facebook_url', '');
-      $_ig = Settings::get('instagram_url', '');
-      $_gb = Settings::get('google_business_url', '');
-    ?>
     <div class="border-t border-gray-800 pt-6 pb-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-      <!-- Policy links -->
       <div class="flex flex-wrap justify-center sm:justify-start gap-x-5 gap-y-1">
         <a href="/privacy-policy" class="text-xs text-gray-500 hover:text-gray-300 transition-colors">Privacy Policy</a>
         <a href="/terms"          class="text-xs text-gray-500 hover:text-gray-300 transition-colors">Terms &amp; Conditions</a>
         <a href="/refund-policy"  class="text-xs text-gray-500 hover:text-gray-300 transition-colors">Refund Policy</a>
       </div>
-      <!-- Social icons -->
       <?php if ($_fb || $_ig || $_gb): ?>
       <div class="flex items-center gap-3">
         <?php if ($_fb): ?>
@@ -279,7 +352,6 @@
 
       <!-- Payment badges -->
       <div class="flex items-center gap-2">
-
         <!-- PayPal -->
         <div class="bg-white rounded-md px-2.5 flex items-center justify-center" style="height:28px;">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 20" height="14" width="56" aria-label="PayPal">
@@ -294,14 +366,12 @@
             <path fill="#009cde" d="M72 9h2.1l-.2 1c.4-.7 1.1-1.1 1.9-1.1.2 0 .4 0 .5.1l-.4 2c-.2-.1-.4-.1-.6-.1-1 0-1.7.7-1.9 1.8l-.5 3H70.7L72 9z"/>
           </svg>
         </div>
-
         <!-- Visa -->
         <div class="rounded-md flex items-center justify-center px-2.5" style="height:28px;background:#1A1F71;">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 16" height="11" width="34" aria-label="Visa">
             <text x="25" y="12.5" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="900" font-size="13" fill="white" letter-spacing="1.5">VISA</text>
           </svg>
         </div>
-
         <!-- Mastercard -->
         <div class="bg-white rounded-md px-1.5 flex items-center justify-center" style="height:28px;">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 38 24" height="18" width="28" aria-label="Mastercard">
@@ -310,14 +380,29 @@
             <path d="M19 4.27a10 10 0 010 15.46A10 10 0 0119 4.27z" fill="#FF5F00"/>
           </svg>
         </div>
-
       </div>
     </div>
   </div>
 </footer>
 
 <script>
+  // Flash message auto-dismiss
   setTimeout(() => document.getElementById('flash-msg')?.remove(), 4000);
+
+  // Mobile menu toggle
+  (function() {
+    var btn   = document.getElementById('mobile-nav-toggle');
+    var menu  = document.getElementById('mobile-menu');
+    var line1 = document.getElementById('ham-line-1');
+    var line3 = document.getElementById('ham-line-3');
+    if (!btn || !menu) return;
+    btn.addEventListener('click', function() {
+      var open = menu.classList.toggle('open');
+      line1.style.transform = open ? 'translateY(8px) rotate(45deg)' : '';
+      line3.style.transform = open ? 'translateY(-8px) rotate(-45deg)' : '';
+      document.getElementById('ham-line-2').style.opacity = open ? '0' : '1';
+    });
+  })();
 </script>
 </body>
 </html>
