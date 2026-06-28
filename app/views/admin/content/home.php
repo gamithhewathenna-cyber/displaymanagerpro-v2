@@ -202,9 +202,15 @@
         <p class="text-xs font-medium text-gray-500">Section Background Image (full-width)</p>
         <?php if ($_hiwBg): ?>
         <p class="text-xs text-gray-400 font-mono break-all">
-          Stored path: <a href="<?= Helpers::e($_hiwBg) ?>" target="_blank" class="text-indigo-600 underline"><?= Helpers::e($_hiwBg) ?></a>
-          <?php $physPath = PUBLIC_PATH . $_hiwBg; ?>
-          · <?= file_exists($physPath) ? '<span class="text-green-600">✓ file exists</span>' : '<span class="text-red-500">✗ file missing on disk</span>' ?>
+          URL: <a href="<?= Helpers::e($_hiwBg) ?>" target="_blank" class="text-indigo-600 underline"><?= Helpers::e($_hiwBg) ?></a><br>
+          PUBLIC_PATH = <?= PUBLIC_PATH ?><br>
+          DOCUMENT_ROOT = <?= $_SERVER['DOCUMENT_ROOT'] ?><br>
+          <?php
+            $checkA = PUBLIC_PATH . $_hiwBg;
+            $checkB = rtrim($_SERVER['DOCUMENT_ROOT'], '/') . $_hiwBg;
+          ?>
+          PUBLIC_PATH check: <?= file_exists($checkA) ? '<span class="text-green-600">✓ exists</span>' : '<span class="text-red-500">✗ missing</span>' ?><br>
+          DOCUMENT_ROOT check: <?= file_exists($checkB) ? '<span class="text-green-600">✓ exists</span>' : '<span class="text-red-500">✗ missing</span>' ?>
         </p>
         <?php endif; ?>
         <form method="POST" action="/admin/content/home/hiw-bg" enctype="multipart/form-data" class="flex items-center gap-2">
