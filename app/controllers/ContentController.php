@@ -924,11 +924,10 @@ class ContentController extends BaseController
             $this->redirect('/admin/content/home');
         }
 
-        $allowedMimes = ['image/jpeg', 'image/png', 'image/webp'];
         $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
-        $extMap = ['jpg' => 'image/jpeg', 'jpeg' => 'image/jpeg', 'png' => 'image/png', 'webp' => 'image/webp'];
+        $allowed = ['jpg' => true, 'jpeg' => true, 'png' => true, 'webp' => true];
 
-        if (!in_array($file['type'], $allowedMimes) || !isset($extMap[$ext])) {
+        if (!isset($allowed[$ext])) {
             Session::flash('error', 'Only JPG, PNG, or WebP images are allowed.');
             $this->redirect('/admin/content/home');
         }
@@ -947,8 +946,10 @@ class ContentController extends BaseController
         $dir = UPLOAD_PATH . '/content/';
         if (!is_dir($dir)) mkdir($dir, 0755, true);
 
-        $name = 'home_hiw_bg_' . time() . '.' . $ext;
-        if (!Helpers::moveOptimizedImage($file['tmp_name'], $file['type'], $dir . $name)) {
+        // Use move_uploaded_file directly — no GD re-encoding for large bg images
+        $saveExt = ($ext === 'jpg') ? 'jpg' : $ext;
+        $name    = 'home_hiw_bg_' . time() . '.' . $saveExt;
+        if (!move_uploaded_file($file['tmp_name'], $dir . $name)) {
             Session::flash('error', 'Failed to save image. Check directory permissions.');
             $this->redirect('/admin/content/home');
         }
