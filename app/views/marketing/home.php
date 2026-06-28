@@ -104,7 +104,7 @@ $_staticBanner = Settings::get('content_home_banner', '');
         <div class="relative z-10 w-full h-full min-h-[320px] sm:min-h-[430px] lg:min-h-[520px]">
           <div class="max-w-7xl mx-auto px-4 sm:px-6 flex items-start sm:items-center min-h-[320px] sm:min-h-[430px] lg:min-h-[520px]">
             <div class="<?= $_wrap ?> py-16 sm:py-20 lg:py-24 w-full">
-              <div class="<?= $_prose ?>">
+              <div class="<?= $_prose ?> max-h-[236px] overflow-hidden">
 
                 <!-- Badge (first slide only, or all slides with heading) -->
                 <?php if ($_hsl['heading'] === null || $_hi === 0): ?>
