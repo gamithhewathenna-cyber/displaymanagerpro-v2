@@ -58,19 +58,19 @@ $_staticBanner = Settings::get('content_home_banner', '');
         ? 'bg-white/15 hover:bg-white/25 border-white/40 text-white'
         : 'bg-transparent border-gray-300 hover:border-primary-400 text-gray-700 hover:text-primary-600';
 
-      // Content alignment classes
+      // Content alignment classes — mobile always centres at top; desktop follows layout setting
       if ($_layout === 'center') {
-          $_wrap  = 'w-full flex flex-col items-center text-center';
-          $_prose = 'max-w-[617px]';
+          $_wrap   = 'w-full flex flex-col items-center text-center';
+          $_prose  = 'max-w-[617px]';
           $_ctaRow = 'flex flex-col sm:flex-row gap-3 justify-center';
       } elseif ($_layout === 'right') {
-          $_wrap  = 'ml-auto text-right flex flex-col items-end';
-          $_prose = 'max-w-[521px] lg:max-w-[617px]';
-          $_ctaRow = 'flex flex-col sm:flex-row gap-3 justify-end';
+          $_wrap   = 'w-full flex flex-col items-center text-center sm:ml-auto sm:text-right sm:items-end';
+          $_prose  = 'max-w-[521px] lg:max-w-[617px]';
+          $_ctaRow = 'flex flex-col sm:flex-row gap-3 justify-center sm:justify-end';
       } else {
-          $_wrap  = 'text-left flex flex-col items-start';
-          $_prose = 'max-w-[521px] lg:max-w-[617px]';
-          $_ctaRow = 'flex flex-col sm:flex-row gap-3';
+          $_wrap   = 'w-full flex flex-col items-center text-center sm:text-left sm:items-start';
+          $_prose  = 'max-w-[521px] lg:max-w-[617px]';
+          $_ctaRow = 'flex flex-col sm:flex-row gap-3 justify-center sm:justify-start';
       }
 
       // Overlay: uniform dark tint, opacity controlled per slide (0 = none)
@@ -102,7 +102,7 @@ $_staticBanner = Settings::get('content_home_banner', '');
 
         <!-- Slide content -->
         <div class="relative z-10 w-full h-full min-h-[320px] sm:min-h-[430px] lg:min-h-[520px]">
-          <div class="max-w-7xl mx-auto px-4 sm:px-6 flex items-center min-h-[320px] sm:min-h-[430px] lg:min-h-[520px]">
+          <div class="max-w-7xl mx-auto px-4 sm:px-6 flex items-start sm:items-center min-h-[320px] sm:min-h-[430px] lg:min-h-[520px]">
             <div class="<?= $_wrap ?> py-16 sm:py-20 lg:py-24 w-full">
               <div class="<?= $_prose ?>">
 
