@@ -91,7 +91,7 @@ $_staticBanner = Settings::get('content_home_banner', '');
     <div class="hs-slide transition-opacity duration-700 <?= $_hi === 0 ? 'opacity-100 z-10 pointer-events-auto' : 'opacity-0 z-0 pointer-events-none' ?>" style="grid-area:1/1;">
 
       <!-- Full-width background panel -->
-      <div id="hs-bg-<?= $_hi ?>" class="relative w-full min-h-[320px] sm:min-h-[430px] lg:min-h-[520px]">
+      <div id="hs-bg-<?= $_hi ?>" class="relative w-full min-h-[395px] sm:min-h-[430px] lg:min-h-[520px]">
 
         <!-- Overlay: uniform opacity tint (admin-controlled, 0–80%) -->
         <?php if ($_overlayStyle): ?>
@@ -101,8 +101,8 @@ $_staticBanner = Settings::get('content_home_banner', '');
         <?php endif; ?>
 
         <!-- Slide content -->
-        <div class="relative z-10 w-full h-full min-h-[320px] sm:min-h-[430px] lg:min-h-[520px]">
-          <div class="max-w-7xl mx-auto px-4 sm:px-6 flex items-start sm:items-center min-h-[320px] sm:min-h-[430px] lg:min-h-[520px]">
+        <div class="relative z-10 w-full h-full min-h-[395px] sm:min-h-[430px] lg:min-h-[520px]">
+          <div class="max-w-7xl mx-auto px-4 sm:px-6 flex items-start sm:items-center min-h-[395px] sm:min-h-[430px] lg:min-h-[520px]">
             <div class="<?= $_wrap ?> py-6 sm:py-16 lg:py-20 w-full">
               <div class="<?= $_prose ?> max-h-[236px] overflow-hidden">
 
