@@ -434,17 +434,17 @@ $_staticBanner = Settings::get('content_home_banner', '');
 <section class="py-24 px-4 bg-gray-50 bg-cover bg-center"<?= $_hiwBgUrl ? ' style="background-image:url(' . Helpers::e($_hiwBgUrl) . ')"' : '' ?>>
   <div class="max-w-6xl mx-auto">
     <div class="text-center mb-16">
-      <p class="text-xs font-bold tracking-widest uppercase text-primary-600 mb-3">Simple Setup</p>
-      <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-4"><?= $c('hiw_title', 'Up and running in 10 minutes') ?></h2>
+      <p class="text-xs font-bold tracking-widest uppercase text-white/70 mb-3">Simple Setup</p>
+      <h2 class="text-3xl sm:text-4xl font-bold text-white mb-4"><?= $c('hiw_title', 'Up and running in 10 minutes') ?></h2>
     </div>
     <div class="relative">
-      <div class="hidden md:block absolute top-8 left-0 right-0 h-px bg-primary-100 mx-32"></div>
+      <div class="hidden md:block absolute top-8 left-0 right-0 h-px bg-white/20 mx-32"></div>
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
         <?php for ($i = 1; $i <= 4; $i++): ?>
         <div class="text-center relative">
-          <div class="w-16 h-16 bg-primary-500 rounded-2xl flex items-center justify-center text-white text-xl font-bold mx-auto mb-5 relative z-10 shadow-lg shadow-primary-500/30"><?= $i ?></div>
-          <h3 class="font-semibold text-gray-900 mb-2 text-sm"><?= $c("step_{$i}_title") ?></h3>
-          <p class="text-sm text-gray-500 leading-relaxed"><?= $c("step_{$i}_desc") ?></p>
+          <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center text-white text-xl font-bold mx-auto mb-5 relative z-10 shadow-lg"><?= $i ?></div>
+          <h3 class="font-semibold text-white mb-2 text-sm"><?= $c("step_{$i}_title") ?></h3>
+          <p class="text-sm text-white/75 leading-relaxed"><?= $c("step_{$i}_desc") ?></p>
         </div>
         <?php endfor; ?>
       </div>
