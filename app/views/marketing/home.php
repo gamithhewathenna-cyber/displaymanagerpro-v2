@@ -62,15 +62,15 @@ $_staticBanner = Settings::get('content_home_banner', '');
       if ($_layout === 'center') {
           $_wrap   = 'w-full flex flex-col items-center text-center';
           $_prose  = 'max-w-[617px]';
-          $_ctaRow = 'flex flex-col sm:flex-row gap-3 justify-center';
+          $_ctaRow = 'flex flex-col items-center sm:flex-row gap-2 sm:gap-3 justify-center';
       } elseif ($_layout === 'right') {
           $_wrap   = 'w-full flex flex-col items-center text-center sm:ml-auto sm:text-right sm:items-end';
           $_prose  = 'max-w-[521px] lg:max-w-[617px]';
-          $_ctaRow = 'flex flex-col sm:flex-row gap-3 justify-center sm:justify-end';
+          $_ctaRow = 'flex flex-col items-center sm:flex-row gap-2 sm:gap-3 justify-center sm:justify-end sm:items-start';
       } else {
           $_wrap   = 'w-full flex flex-col items-center text-center sm:text-left sm:items-start';
           $_prose  = 'max-w-[521px] lg:max-w-[617px]';
-          $_ctaRow = 'flex flex-col sm:flex-row gap-3 justify-center sm:justify-start';
+          $_ctaRow = 'flex flex-col items-center sm:flex-row gap-2 sm:gap-3 justify-center sm:justify-start sm:items-start';
       }
 
       // Overlay: uniform dark tint, opacity controlled per slide (0 = none)
@@ -103,7 +103,7 @@ $_staticBanner = Settings::get('content_home_banner', '');
         <!-- Slide content -->
         <div class="relative z-10 w-full h-full min-h-[320px] sm:min-h-[430px] lg:min-h-[520px]">
           <div class="max-w-7xl mx-auto px-4 sm:px-6 flex items-start sm:items-center min-h-[320px] sm:min-h-[430px] lg:min-h-[520px]">
-            <div class="<?= $_wrap ?> py-16 sm:py-20 lg:py-24 w-full">
+            <div class="<?= $_wrap ?> py-6 sm:py-16 lg:py-20 w-full">
               <div class="<?= $_prose ?> max-h-[236px] overflow-hidden">
 
                 <!-- Badge (first slide only, or all slides with heading) -->
@@ -116,27 +116,27 @@ $_staticBanner = Settings::get('content_home_banner', '');
 
                 <!-- Heading -->
                 <?php if ($_hsl['heading'] === null): ?>
-                  <h1 class="text-3xl sm:text-4xl md:text-5xl xl:text-[3.25rem] font-extrabold leading-tight mb-5 <?= $_tcHead ?>">
+                  <h1 class="text-xl sm:text-3xl md:text-4xl xl:text-[3.25rem] font-extrabold leading-tight mb-3 sm:mb-5 <?= $_tcHead ?>">
                     <?= $c('hero_title_1', 'Update Every Restaurant Screen') ?><br>
                     <span style="background:linear-gradient(90deg,#a78bfa,#60a5fa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text"><?= $c('hero_title_2', 'In Seconds') ?></span>
                   </h1>
-                  <p class="text-base sm:text-lg font-medium mb-2 <?= $_tcSub ?>"><?= $c('hero_subtitle', 'No USB Drives. No Complicated Software.') ?></p>
-                  <p class="text-sm sm:text-base mb-8 leading-relaxed <?= $_tcDesc ?>"><?= $c('hero_description', 'Manage menus, specials, promotions and announcements across all your TV screens from one simple cloud dashboard.') ?></p>
+                  <p class="text-sm sm:text-lg font-medium mb-1 sm:mb-2 <?= $_tcSub ?>"><?= $c('hero_subtitle', 'No USB Drives. No Complicated Software.') ?></p>
+                  <p class="hidden sm:block text-sm sm:text-base mb-5 sm:mb-8 leading-relaxed <?= $_tcDesc ?>"><?= $c('hero_description', 'Manage menus, specials, promotions and announcements across all your TV screens from one simple cloud dashboard.') ?></p>
                 <?php elseif ($_hsl['heading'] !== ''): ?>
-                  <h1 class="text-3xl sm:text-4xl md:text-5xl xl:text-[3.25rem] font-extrabold leading-tight mb-5 <?= $_tcHead ?>">
+                  <h1 class="text-xl sm:text-3xl md:text-4xl xl:text-[3.25rem] font-extrabold leading-tight mb-3 sm:mb-5 <?= $_tcHead ?>">
                     <?= Helpers::e($_hsl['heading']) ?>
                   </h1>
                   <?php if ($_hsl['sub']): ?>
-                  <p class="text-base sm:text-lg mb-8 leading-relaxed <?= $_tcSub ?>"><?= Helpers::e($_hsl['sub']) ?></p>
+                  <p class="text-sm sm:text-lg mb-4 sm:mb-8 leading-relaxed <?= $_tcSub ?>"><?= Helpers::e($_hsl['sub']) ?></p>
                   <?php endif; ?>
                 <?php endif; ?>
 
                 <!-- CTAs -->
                 <div class="<?= $_ctaRow ?>">
-                  <a href="/register" class="bg-primary-500 hover:bg-primary-600 text-white font-bold text-sm sm:text-base px-7 py-3.5 rounded-xl transition-all shadow-lg shadow-primary-500/30 hover:-translate-y-0.5 text-center">
+                  <a href="/register" class="bg-primary-500 hover:bg-primary-600 text-white font-bold text-xs sm:text-base px-5 sm:px-7 py-2.5 sm:py-3.5 rounded-xl transition-all shadow-lg shadow-primary-500/30 hover:-translate-y-0.5 text-center whitespace-nowrap">
                     <?= $c('cta_primary', 'Start Free 14-Day Trial →') ?>
                   </a>
-                  <a href="/pricing" class="<?= $_ctaSec ?> border-2 font-semibold text-sm sm:text-base px-7 py-3.5 rounded-xl transition-all text-center">
+                  <a href="/pricing" class="<?= $_ctaSec ?> border-2 font-semibold text-xs sm:text-base px-5 sm:px-7 py-2.5 sm:py-3.5 rounded-xl transition-all text-center whitespace-nowrap">
                     <?= $c('cta_secondary', 'View Pricing') ?>
                   </a>
                 </div>
