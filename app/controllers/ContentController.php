@@ -336,6 +336,74 @@ class ContentController extends BaseController
         $this->redirect('/admin/content/home');
     }
 
+    public function uploadFeaturesImage(): void
+    {
+        $this->requireAdmin();
+        $this->validateCsrf();
+
+        if (empty($_FILES['features_image']) || $_FILES['features_image']['error'] === UPLOAD_ERR_NO_FILE) {
+            Session::flash('error', 'No file selected.');
+            $this->redirect('/admin/content/home');
+        }
+
+        $file = $_FILES['features_image'];
+        if ($file['error'] !== UPLOAD_ERR_OK) {
+            Session::flash('error', 'Upload failed (error code ' . $file['error'] . ').');
+            $this->redirect('/admin/content/home');
+        }
+
+        $allowedMimes = ['image/jpeg', 'image/png', 'image/webp'];
+        $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+        $extMap = ['jpg' => 'image/jpeg', 'jpeg' => 'image/jpeg', 'png' => 'image/png', 'webp' => 'image/webp'];
+
+        if (!in_array($file['type'], $allowedMimes) || !isset($extMap[$ext])) {
+            Session::flash('error', 'Only JPG, PNG, or WebP images are allowed.');
+            $this->redirect('/admin/content/home');
+        }
+
+        if ($file['size'] > 5 * 1024 * 1024) {
+            Session::flash('error', 'Image must be under 5 MB.');
+            $this->redirect('/admin/content/home');
+        }
+
+        $old = Settings::get('content_home_features_image', '');
+        if ($old && str_starts_with($old, '/uploads/content/')) {
+            $oldPath = PUBLIC_PATH . $old;
+            if (file_exists($oldPath)) @unlink($oldPath);
+        }
+
+        $dir = UPLOAD_PATH . '/content/';
+        if (!is_dir($dir)) mkdir($dir, 0755, true);
+
+        $name = 'home_features_' . time() . '.' . $ext;
+        if (!Helpers::moveOptimizedImage($file['tmp_name'], $file['type'], $dir . $name)) {
+            Session::flash('error', 'Failed to save image. Check directory permissions.');
+            $this->redirect('/admin/content/home');
+        }
+
+        Settings::set('content_home_features_image', '/uploads/content/' . $name, 'content');
+        ActivityLog::log('admin_content_saved', 'Updated features section image');
+        Session::flash('success', 'Features image updated.');
+        $this->redirect('/admin/content/home');
+    }
+
+    public function removeFeaturesImage(): void
+    {
+        $this->requireAdmin();
+        $this->validateCsrf();
+
+        $old = Settings::get('content_home_features_image', '');
+        if ($old && str_starts_with($old, '/uploads/content/')) {
+            $oldPath = PUBLIC_PATH . $old;
+            if (file_exists($oldPath)) @unlink($oldPath);
+        }
+
+        Settings::set('content_home_features_image', '', 'content');
+        ActivityLog::log('admin_content_saved', 'Removed features section image');
+        Session::flash('success', 'Features image removed.');
+        $this->redirect('/admin/content/home');
+    }
+
     public function uploadHomeBanner(): void
     {
         $this->requireAdmin();

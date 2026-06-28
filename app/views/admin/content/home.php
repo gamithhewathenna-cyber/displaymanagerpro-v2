@@ -349,6 +349,48 @@
   </div>
 </div>
 
+<!-- Features Section Image -->
+<?php $_featImg = Settings::get('content_home_features_image', ''); ?>
+<div class="bg-white rounded-2xl border border-gray-100 p-6 mt-6">
+  <h2 class="font-semibold text-gray-900 mb-1 flex items-center gap-2">🖼️ Features Section Image</h2>
+  <p class="text-xs text-gray-400 mb-5">Square image shown on the left side of the Features section. Recommended: <strong>800 × 800 px</strong> · JPG, PNG, or WebP · max 5 MB.</p>
+  <div class="flex flex-col sm:flex-row gap-6 items-start">
+    <!-- Preview -->
+    <div class="w-40 h-40 flex-shrink-0 rounded-2xl overflow-hidden bg-gray-100 border border-gray-200">
+      <?php if ($_featImg): ?>
+        <img src="<?= Helpers::e($_featImg) ?>?v=<?= time() ?>" alt="Features image" class="w-full h-full object-cover">
+      <?php else: ?>
+        <div class="w-full h-full flex flex-col items-center justify-center gap-1.5 text-gray-300">
+          <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+          <span class="text-xs text-gray-400">No image</span>
+        </div>
+      <?php endif; ?>
+    </div>
+    <!-- Upload + remove -->
+    <div class="flex-1 space-y-3">
+      <form method="POST" action="/admin/content/home/features-image" enctype="multipart/form-data" class="space-y-2">
+        <input type="hidden" name="_csrf_token" value="<?= Csrf::token() ?>">
+        <div class="flex items-center gap-2">
+          <label class="flex-1 min-w-0 block">
+            <input type="file" name="features_image" accept="image/jpeg,image/png,image/webp"
+              class="block w-full text-xs text-gray-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100 cursor-pointer">
+          </label>
+          <button type="submit" class="bg-primary-500 hover:bg-primary-600 text-white font-semibold px-4 py-1.5 rounded-lg text-xs transition-colors whitespace-nowrap">
+            <?= $_featImg ? 'Replace' : 'Upload' ?>
+          </button>
+        </div>
+      </form>
+      <?php if ($_featImg): ?>
+      <form method="POST" action="/admin/content/home/features-image/remove">
+        <input type="hidden" name="_csrf_token" value="<?= Csrf::token() ?>">
+        <button type="submit" onclick="return confirm('Remove the features image?')"
+          class="text-xs text-red-500 hover:text-red-700 font-medium transition-colors">Remove image</button>
+      </form>
+      <?php endif; ?>
+    </div>
+  </div>
+</div>
+
 <!-- Static Banner Image -->
 <?php $_bannerImg = Settings::get('content_home_banner', ''); ?>
 <div class="bg-white rounded-2xl border border-gray-100 p-6 mt-6">

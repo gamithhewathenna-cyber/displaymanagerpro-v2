@@ -233,84 +233,103 @@ $_staticBanner = Settings::get('content_home_banner', '');
 <?php endif; ?>
 
 <!-- FEATURES / SERVICES -->
+<?php $_featImg = Settings::get('content_home_features_image', ''); ?>
 <section class="py-24 px-4 bg-white">
   <div class="max-w-7xl mx-auto">
-    <div class="text-center mb-14">
-      <p class="text-xs font-bold tracking-widest uppercase text-primary-600 mb-3">Our Features</p>
-      <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-4"><?= $c('features_title', 'Everything you need to manage your screens') ?></h2>
-      <p class="text-lg text-gray-500 max-w-2xl mx-auto"><?= $c('features_subtitle') ?></p>
-    </div>
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 xl:gap-16 items-center">
 
-      <!-- Card 1: Instant Updates -->
-      <div class="bg-white border border-gray-100 rounded-2xl p-7 hover:border-primary-200 hover:shadow-lg transition-all group">
-        <div class="w-13 h-13 bg-primary-50 rounded-xl flex items-center justify-center mb-5 group-hover:bg-primary-100 transition-colors" style="width:52px;height:52px;">
-          <svg class="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-        </div>
-        <h3 class="text-base font-semibold text-gray-900 mb-2">Instant Updates</h3>
-        <p class="text-gray-500 text-sm leading-relaxed mb-5">Change your menus, specials, or promotions from anywhere — updates appear on screens immediately.</p>
-        <a href="/features" class="inline-flex items-center gap-1.5 text-xs font-semibold text-primary-600 group-hover:gap-2.5 transition-all">
-          Learn more <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
-        </a>
+      <!-- Left: square image -->
+      <div class="w-full aspect-square rounded-3xl overflow-hidden bg-gradient-to-br from-primary-50 to-indigo-100 flex-shrink-0 shadow-xl">
+        <?php if ($_featImg): ?>
+          <img src="<?= Helpers::e($_featImg) ?>" alt="Features" class="w-full h-full object-cover">
+        <?php else: ?>
+          <!-- Placeholder illustration -->
+          <div class="w-full h-full flex flex-col items-center justify-center gap-6 p-10">
+            <div class="grid grid-cols-2 gap-4 w-full max-w-xs">
+              <div class="aspect-square rounded-2xl bg-primary-500/20 flex items-center justify-center">
+                <svg class="w-8 h-8 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+              </div>
+              <div class="aspect-square rounded-2xl bg-indigo-400/20 flex items-center justify-center">
+                <svg class="w-8 h-8 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"/></svg>
+              </div>
+              <div class="aspect-square rounded-2xl bg-violet-400/20 flex items-center justify-center">
+                <svg class="w-8 h-8 text-violet-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+              </div>
+              <div class="aspect-square rounded-2xl bg-primary-500/10 flex items-center justify-center">
+                <svg class="w-8 h-8 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+              </div>
+            </div>
+            <p class="text-xs text-primary-400 font-medium text-center">Upload a square image in the admin</p>
+          </div>
+        <?php endif; ?>
       </div>
 
-      <!-- Card 2: Cloud Dashboard (highlighted) -->
-      <div class="bg-primary-500 border border-primary-500 rounded-2xl p-7 shadow-lg shadow-primary-500/20 group">
-        <div class="w-13 h-13 bg-white/20 rounded-xl flex items-center justify-center mb-5" style="width:52px;height:52px;">
-          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"/></svg>
-        </div>
-        <h3 class="text-base font-semibold text-white mb-2">Cloud Dashboard</h3>
-        <p class="text-primary-100 text-sm leading-relaxed mb-5">Manage all your TV screens from one clean, intuitive dashboard. No software to install.</p>
-        <a href="/features" class="inline-flex items-center gap-1.5 text-xs font-semibold text-white/80 hover:text-white group-hover:gap-2.5 transition-all">
-          Learn more <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
-        </a>
-      </div>
+      <!-- Right: heading + feature cards -->
+      <div>
+        <p class="text-xs font-bold tracking-widest uppercase text-primary-600 mb-3">Our Features</p>
+        <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-3"><?= $c('features_title', 'Everything you need to manage your screens') ?></h2>
+        <p class="text-base text-gray-500 mb-8"><?= $c('features_subtitle') ?></p>
 
-      <!-- Card 3: Auto Refresh -->
-      <div class="bg-white border border-gray-100 rounded-2xl p-7 hover:border-primary-200 hover:shadow-lg transition-all group">
-        <div class="w-13 h-13 bg-primary-50 rounded-xl flex items-center justify-center mb-5 group-hover:bg-primary-100 transition-colors" style="width:52px;height:52px;">
-          <svg class="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
-        </div>
-        <h3 class="text-base font-semibold text-gray-900 mb-2">Auto Refresh</h3>
-        <p class="text-gray-500 text-sm leading-relaxed mb-5">Screens automatically reload content on your schedule — every 5, 15, or 60 minutes.</p>
-        <a href="/features" class="inline-flex items-center gap-1.5 text-xs font-semibold text-primary-600 group-hover:gap-2.5 transition-all">
-          Learn more <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
-        </a>
-      </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
-      <!-- Card 4: Drag & Drop -->
-      <div class="bg-white border border-gray-100 rounded-2xl p-7 hover:border-primary-200 hover:shadow-lg transition-all group">
-        <div class="w-13 h-13 bg-primary-50 rounded-xl flex items-center justify-center mb-5 group-hover:bg-primary-100 transition-colors" style="width:52px;height:52px;">
-          <svg class="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-        </div>
-        <h3 class="text-base font-semibold text-gray-900 mb-2">Drag &amp; Drop</h3>
-        <p class="text-gray-500 text-sm leading-relaxed mb-5">Upload images, drag to reorder your slides, and your screens update — no tech skills needed.</p>
-        <a href="/features" class="inline-flex items-center gap-1.5 text-xs font-semibold text-primary-600 group-hover:gap-2.5 transition-all">
-          Learn more <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
-        </a>
-      </div>
+          <!-- Card 1: Instant Updates -->
+          <div class="bg-white border border-gray-100 rounded-2xl p-5 hover:border-primary-200 hover:shadow-md transition-all group">
+            <div class="w-10 h-10 bg-primary-50 rounded-xl flex items-center justify-center mb-4 group-hover:bg-primary-100 transition-colors">
+              <svg class="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+            </div>
+            <h3 class="text-sm font-semibold text-gray-900 mb-1.5">Instant Updates</h3>
+            <p class="text-gray-500 text-xs leading-relaxed">Change menus, specials, or promotions from anywhere — screens update immediately.</p>
+          </div>
 
-      <!-- Card 5: Secure URLs -->
-      <div class="bg-white border border-gray-100 rounded-2xl p-7 hover:border-primary-200 hover:shadow-lg transition-all group">
-        <div class="w-13 h-13 bg-primary-50 rounded-xl flex items-center justify-center mb-5 group-hover:bg-primary-100 transition-colors" style="width:52px;height:52px;">
-          <svg class="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-        </div>
-        <h3 class="text-base font-semibold text-gray-900 mb-2">Secure URLs</h3>
-        <p class="text-gray-500 text-sm leading-relaxed mb-5">Every channel gets a unique, secure display URL with QR code. Simply open it on any screen.</p>
-        <a href="/features" class="inline-flex items-center gap-1.5 text-xs font-semibold text-primary-600 group-hover:gap-2.5 transition-all">
-          Learn more <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
-        </a>
-      </div>
+          <!-- Card 2: Cloud Dashboard (highlighted) -->
+          <div class="bg-primary-500 border border-primary-500 rounded-2xl p-5 shadow-lg shadow-primary-500/20 group">
+            <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center mb-4">
+              <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"/></svg>
+            </div>
+            <h3 class="text-sm font-semibold text-white mb-1.5">Cloud Dashboard</h3>
+            <p class="text-primary-100 text-xs leading-relaxed">Manage all your TV screens from one clean dashboard. No software to install.</p>
+          </div>
 
-      <!-- Card 6: Works Everywhere -->
-      <div class="bg-white border border-gray-100 rounded-2xl p-7 hover:border-primary-200 hover:shadow-lg transition-all group">
-        <div class="w-13 h-13 bg-primary-50 rounded-xl flex items-center justify-center mb-5 group-hover:bg-primary-100 transition-colors" style="width:52px;height:52px;">
-          <svg class="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M12 18h.01M8 21h8a2 2 0 002-2v-2a2 2 0 00-2-2H8a2 2 0 00-2 2v2a2 2 0 002 2zM4 7h16a1 1 0 011 1v7a1 1 0 01-1 1H4a1 1 0 01-1-1V8a1 1 0 011-1z"/></svg>
+          <!-- Card 3: Auto Refresh -->
+          <div class="bg-white border border-gray-100 rounded-2xl p-5 hover:border-primary-200 hover:shadow-md transition-all group">
+            <div class="w-10 h-10 bg-primary-50 rounded-xl flex items-center justify-center mb-4 group-hover:bg-primary-100 transition-colors">
+              <svg class="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+            </div>
+            <h3 class="text-sm font-semibold text-gray-900 mb-1.5">Auto Refresh</h3>
+            <p class="text-gray-500 text-xs leading-relaxed">Screens reload automatically on your schedule — every 5, 15, or 60 minutes.</p>
+          </div>
+
+          <!-- Card 4: Drag & Drop -->
+          <div class="bg-white border border-gray-100 rounded-2xl p-5 hover:border-primary-200 hover:shadow-md transition-all group">
+            <div class="w-10 h-10 bg-primary-50 rounded-xl flex items-center justify-center mb-4 group-hover:bg-primary-100 transition-colors">
+              <svg class="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+            </div>
+            <h3 class="text-sm font-semibold text-gray-900 mb-1.5">Drag &amp; Drop</h3>
+            <p class="text-gray-500 text-xs leading-relaxed">Upload images, drag to reorder slides — no tech skills needed.</p>
+          </div>
+
+          <!-- Card 5: Secure URLs -->
+          <div class="bg-white border border-gray-100 rounded-2xl p-5 hover:border-primary-200 hover:shadow-md transition-all group">
+            <div class="w-10 h-10 bg-primary-50 rounded-xl flex items-center justify-center mb-4 group-hover:bg-primary-100 transition-colors">
+              <svg class="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+            </div>
+            <h3 class="text-sm font-semibold text-gray-900 mb-1.5">Secure URLs</h3>
+            <p class="text-gray-500 text-xs leading-relaxed">Every channel gets a unique display URL + QR code. Open it on any screen.</p>
+          </div>
+
+          <!-- Card 6: Works Everywhere -->
+          <div class="bg-white border border-gray-100 rounded-2xl p-5 hover:border-primary-200 hover:shadow-md transition-all group">
+            <div class="w-10 h-10 bg-primary-50 rounded-xl flex items-center justify-center mb-4 group-hover:bg-primary-100 transition-colors">
+              <svg class="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M12 18h.01M8 21h8a2 2 0 002-2v-2a2 2 0 00-2-2H8a2 2 0 00-2 2v2a2 2 0 002 2zM4 7h16a1 1 0 011 1v7a1 1 0 01-1 1H4a1 1 0 01-1-1V8a1 1 0 011-1z"/></svg>
+            </div>
+            <h3 class="text-sm font-semibold text-gray-900 mb-1.5">Works Everywhere</h3>
+            <p class="text-gray-500 text-xs leading-relaxed">Smart TVs, Fire Stick, Android TV Box, Chrome — one URL works on all devices.</p>
+          </div>
+
         </div>
-        <h3 class="text-base font-semibold text-gray-900 mb-2">Works Everywhere</h3>
-        <p class="text-gray-500 text-sm leading-relaxed mb-5">Smart TVs, Fire Stick, Android TV Box, Chrome browser — one channel URL works on all devices.</p>
-        <a href="/features" class="inline-flex items-center gap-1.5 text-xs font-semibold text-primary-600 group-hover:gap-2.5 transition-all">
-          Learn more <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+
+        <a href="/features" class="inline-flex items-center gap-2 mt-8 text-sm font-semibold text-primary-600 hover:text-primary-700 transition-colors">
+          See all features <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
         </a>
       </div>
 
