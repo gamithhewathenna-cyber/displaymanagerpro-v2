@@ -938,25 +938,28 @@ class ContentController extends BaseController
         }
 
         $old = Settings::get('content_home_hiw_bg', '');
-        if ($old && str_starts_with($old, '/uploads/content/')) {
+        if ($old && str_starts_with($old, '/uploads/slider/')) {
             $oldPath = PUBLIC_PATH . $old;
             if (file_exists($oldPath)) @unlink($oldPath);
         }
 
-        $dir = UPLOAD_PATH . '/content/';
+        // Use /uploads/slider/ — same directory as slide images which are confirmed working
+        $dir = UPLOAD_PATH . '/slider/';
         if (!is_dir($dir)) mkdir($dir, 0755, true);
 
-        // Use move_uploaded_file directly — no GD re-encoding for large bg images
         $saveExt = ($ext === 'jpg') ? 'jpg' : $ext;
         $name    = 'home_hiw_bg_' . time() . '.' . $saveExt;
-        if (!move_uploaded_file($file['tmp_name'], $dir . $name)) {
-            Session::flash('error', 'Failed to save image. Check directory permissions.');
+        $dest    = $dir . $name;
+
+        if (!move_uploaded_file($file['tmp_name'], $dest)) {
+            Session::flash('error', 'Upload failed. Dir: ' . $dir . ' | Writable: ' . (is_writable($dir) ? 'yes' : 'no'));
             $this->redirect('/admin/content/home');
         }
 
-        Settings::set('content_home_hiw_bg', '/uploads/content/' . $name, 'content');
+        $webPath = '/uploads/slider/' . $name;
+        Settings::set('content_home_hiw_bg', $webPath, 'content');
         ActivityLog::log('admin_content_saved', 'Updated How It Works section background');
-        Session::flash('success', 'Background image updated.');
+        Session::flash('success', 'Background image saved → ' . $webPath);
         $this->redirect('/admin/content/home');
     }
 
@@ -966,7 +969,7 @@ class ContentController extends BaseController
         $this->validateCsrf();
 
         $old = Settings::get('content_home_hiw_bg', '');
-        if ($old && str_starts_with($old, '/uploads/content/')) {
+        if ($old) {
             $oldPath = PUBLIC_PATH . $old;
             if (file_exists($oldPath)) @unlink($oldPath);
         }
