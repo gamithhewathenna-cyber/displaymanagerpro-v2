@@ -62,15 +62,15 @@ $_staticBanner = Settings::get('content_home_banner', '');
       if ($_layout === 'center') {
           $_wrap   = 'w-full flex flex-col items-center text-center';
           $_prose  = 'max-w-[617px]';
-          $_ctaRow = 'flex flex-col items-center sm:flex-row gap-2 sm:gap-3 justify-center';
+          $_ctaRow = 'flex flex-row flex-wrap items-center gap-2 sm:gap-3 justify-center';
       } elseif ($_layout === 'right') {
           $_wrap   = 'w-full flex flex-col items-center text-center sm:ml-auto sm:text-right sm:items-end';
           $_prose  = 'max-w-[521px] lg:max-w-[617px]';
-          $_ctaRow = 'flex flex-col items-center sm:flex-row gap-2 sm:gap-3 justify-center sm:justify-end sm:items-start';
+          $_ctaRow = 'flex flex-row flex-wrap items-center gap-2 sm:gap-3 justify-center sm:justify-end';
       } else {
           $_wrap   = 'w-full flex flex-col items-center text-center sm:text-left sm:items-start';
           $_prose  = 'max-w-[521px] lg:max-w-[617px]';
-          $_ctaRow = 'flex flex-col items-center sm:flex-row gap-2 sm:gap-3 justify-center sm:justify-start sm:items-start';
+          $_ctaRow = 'flex flex-row flex-wrap items-center gap-2 sm:gap-3 justify-center sm:justify-start';
       }
 
       // Overlay: uniform dark tint, opacity controlled per slide (0 = none)
@@ -133,10 +133,10 @@ $_staticBanner = Settings::get('content_home_banner', '');
 
                 <!-- CTAs -->
                 <div class="<?= $_ctaRow ?>">
-                  <a href="/register" class="bg-primary-500 hover:bg-primary-600 text-white font-bold text-xs sm:text-base px-5 sm:px-7 py-2.5 sm:py-3.5 rounded-xl transition-all shadow-lg shadow-primary-500/30 hover:-translate-y-0.5 text-center whitespace-nowrap">
+                  <a href="/register" class="bg-primary-500 hover:bg-primary-600 text-white font-bold text-[11px] sm:text-base px-3 sm:px-7 py-1.5 sm:py-3.5 rounded-lg sm:rounded-xl transition-all shadow-md shadow-primary-500/30 hover:-translate-y-0.5 text-center whitespace-nowrap">
                     <?= $c('cta_primary', 'Start Free 14-Day Trial →') ?>
                   </a>
-                  <a href="/pricing" class="<?= $_ctaSec ?> border-2 font-semibold text-xs sm:text-base px-5 sm:px-7 py-2.5 sm:py-3.5 rounded-xl transition-all text-center whitespace-nowrap">
+                  <a href="/pricing" class="<?= $_ctaSec ?> border-2 font-semibold text-[11px] sm:text-base px-3 sm:px-7 py-1.5 sm:py-3.5 rounded-lg sm:rounded-xl transition-all text-center whitespace-nowrap">
                     <?= $c('cta_secondary', 'View Pricing') ?>
                   </a>
                 </div>
