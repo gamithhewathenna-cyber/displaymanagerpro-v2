@@ -104,9 +104,10 @@ $_staticBanner = Settings::get('content_home_banner', '');
         <div class="relative z-10 w-full h-full min-h-[395px] sm:min-h-[430px] lg:min-h-[520px]">
           <div class="max-w-7xl mx-auto px-4 sm:px-6 flex items-start sm:items-center min-h-[395px] sm:min-h-[430px] lg:min-h-[520px]">
             <div class="<?= $_wrap ?> py-6 sm:py-16 lg:py-20 w-full">
+              <!-- Text (height-capped) -->
               <div class="<?= $_prose ?> max-h-[236px] overflow-hidden">
 
-                <!-- Badge (first slide only, or all slides with heading) -->
+                <!-- Badge -->
                 <?php if ($_hsl['heading'] === null || $_hi === 0): ?>
                 <div class="inline-flex items-center gap-2 <?= $_badgeBg ?> border rounded-full px-4 py-1.5 text-xs sm:text-sm font-medium mb-6">
                   <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse flex-shrink-0"></span>
@@ -121,17 +122,20 @@ $_staticBanner = Settings::get('content_home_banner', '');
                     <span style="background:linear-gradient(90deg,#a78bfa,#60a5fa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text"><?= $c('hero_title_2', 'In Seconds') ?></span>
                   </h1>
                   <p class="text-sm sm:text-lg font-medium mb-1 sm:mb-2 <?= $_tcSub ?>"><?= $c('hero_subtitle', 'No USB Drives. No Complicated Software.') ?></p>
-                  <p class="hidden sm:block text-sm sm:text-base mb-5 sm:mb-8 leading-relaxed <?= $_tcDesc ?>"><?= $c('hero_description', 'Manage menus, specials, promotions and announcements across all your TV screens from one simple cloud dashboard.') ?></p>
+                  <p class="hidden sm:block text-sm sm:text-base leading-relaxed <?= $_tcDesc ?>"><?= $c('hero_description', 'Manage menus, specials, promotions and announcements across all your TV screens from one simple cloud dashboard.') ?></p>
                 <?php elseif ($_hsl['heading'] !== ''): ?>
                   <h1 class="text-xl sm:text-3xl md:text-4xl xl:text-[3.25rem] font-extrabold leading-tight mb-3 sm:mb-5 <?= $_tcHead ?>">
                     <?= Helpers::e($_hsl['heading']) ?>
                   </h1>
                   <?php if ($_hsl['sub']): ?>
-                  <p class="text-sm sm:text-lg mb-4 sm:mb-8 leading-relaxed <?= $_tcSub ?>"><?= Helpers::e($_hsl['sub']) ?></p>
+                  <p class="text-sm sm:text-lg leading-relaxed <?= $_tcSub ?>"><?= Helpers::e($_hsl['sub']) ?></p>
                   <?php endif; ?>
                 <?php endif; ?>
 
-                <!-- CTAs -->
+              </div>
+
+              <!-- CTAs — outside the height cap so they are never clipped -->
+              <div class="<?= $_prose ?> mt-4 sm:mt-6">
                 <div class="<?= $_ctaRow ?>">
                   <a href="/register" class="bg-primary-500 hover:bg-primary-600 text-white font-bold text-[11px] sm:text-base px-3 sm:px-7 py-1.5 sm:py-3.5 rounded-lg sm:rounded-xl transition-all shadow-md shadow-primary-500/30 hover:-translate-y-0.5 text-center whitespace-nowrap">
                     <?= $c('cta_primary', 'Start Free 14-Day Trial →') ?>
@@ -140,7 +144,6 @@ $_staticBanner = Settings::get('content_home_banner', '');
                     <?= $c('cta_secondary', 'View Pricing') ?>
                   </a>
                 </div>
-
               </div>
             </div>
           </div>
