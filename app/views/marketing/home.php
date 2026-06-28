@@ -234,12 +234,12 @@ $_staticBanner = Settings::get('content_home_banner', '');
 
 <!-- FEATURES / SERVICES -->
 <?php $_featImg = Settings::get('content_home_features_image', ''); ?>
-<section class="py-24 px-4 bg-white">
-  <div class="max-w-7xl mx-auto">
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 xl:gap-16 items-center">
+<section class="px-4 bg-white" style="min-height:800px;">
+  <div class="max-w-7xl mx-auto h-full" style="min-height:800px;">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 xl:gap-16 items-stretch" style="min-height:800px;">
 
-      <!-- Left: square image -->
-      <div class="w-full aspect-square rounded-3xl overflow-hidden bg-gradient-to-br from-primary-50 to-indigo-100 flex-shrink-0 shadow-xl">
+      <!-- Left: image fills full section height -->
+      <div class="w-full min-h-[420px] lg:min-h-0 rounded-3xl overflow-hidden bg-gradient-to-br from-primary-50 to-indigo-100 flex-shrink-0 shadow-xl">
         <?php if ($_featImg): ?>
           <img src="<?= Helpers::e($_featImg) ?>" alt="Features" class="w-full h-full object-cover">
         <?php else: ?>
