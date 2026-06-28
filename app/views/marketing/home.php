@@ -318,28 +318,6 @@ $_staticBanner = Settings::get('content_home_banner', '');
   </div>
 </section>
 
-<!-- HOW IT WORKS -->
-<section class="bg-gray-50 py-24 px-4">
-  <div class="max-w-6xl mx-auto">
-    <div class="text-center mb-16">
-      <p class="text-xs font-bold tracking-widest uppercase text-primary-600 mb-3">Simple Setup</p>
-      <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-4"><?= $c('hiw_title', 'Up and running in 10 minutes') ?></h2>
-    </div>
-    <div class="relative">
-      <div class="hidden md:block absolute top-8 left-0 right-0 h-px bg-primary-100 mx-32"></div>
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
-        <?php for ($i = 1; $i <= 4; $i++): ?>
-        <div class="text-center relative">
-          <div class="w-16 h-16 bg-primary-500 rounded-2xl flex items-center justify-center text-white text-xl font-bold mx-auto mb-5 relative z-10 shadow-lg shadow-primary-500/30"><?= $i ?></div>
-          <h3 class="font-semibold text-gray-900 mb-2 text-sm"><?= $c("step_{$i}_title") ?></h3>
-          <p class="text-sm text-gray-500 leading-relaxed"><?= $c("step_{$i}_desc") ?></p>
-        </div>
-        <?php endfor; ?>
-      </div>
-    </div>
-  </div>
-</section>
-
 <!-- PRICING -->
 <section class="py-24 px-4 bg-white">
   <div class="max-w-5xl mx-auto">
@@ -432,31 +410,24 @@ $_staticBanner = Settings::get('content_home_banner', '');
 })();
 </script>
 
-<!-- INTERNAL LINK STRIP -->
-<section class="bg-gray-50 border-y border-gray-100 py-8 px-4">
-  <div class="max-w-5xl mx-auto">
-    <p class="text-center text-xs font-semibold text-gray-400 uppercase tracking-widest mb-5">Explore DisplayManagerPro</p>
-    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-      <a href="/features" class="flex flex-col items-center gap-2 bg-white hover:bg-primary-50 border border-gray-100 hover:border-primary-200 rounded-xl p-4 text-center transition-all group shadow-sm hover:shadow-md">
-        <span class="text-2xl">⚡</span>
-        <span class="text-xs font-semibold text-gray-700 group-hover:text-primary-600 transition-colors">All Features</span>
-      </a>
-      <a href="/pricing" class="flex flex-col items-center gap-2 bg-white hover:bg-primary-50 border border-gray-100 hover:border-primary-200 rounded-xl p-4 text-center transition-all group shadow-sm hover:shadow-md">
-        <span class="text-2xl">💳</span>
-        <span class="text-xs font-semibold text-gray-700 group-hover:text-primary-600 transition-colors">Pricing Plans</span>
-      </a>
-      <a href="/industries" class="flex flex-col items-center gap-2 bg-white hover:bg-primary-50 border border-gray-100 hover:border-primary-200 rounded-xl p-4 text-center transition-all group shadow-sm hover:shadow-md">
-        <span class="text-2xl">🏢</span>
-        <span class="text-xs font-semibold text-gray-700 group-hover:text-primary-600 transition-colors">Industries We Serve</span>
-      </a>
-      <a href="/about" class="flex flex-col items-center gap-2 bg-white hover:bg-primary-50 border border-gray-100 hover:border-primary-200 rounded-xl p-4 text-center transition-all group shadow-sm hover:shadow-md">
-        <span class="text-2xl">👥</span>
-        <span class="text-xs font-semibold text-gray-700 group-hover:text-primary-600 transition-colors">About Us</span>
-      </a>
-      <a href="/faq" class="flex flex-col items-center gap-2 bg-white hover:bg-primary-50 border border-gray-100 hover:border-primary-200 rounded-xl p-4 text-center transition-all group shadow-sm hover:shadow-md">
-        <span class="text-2xl">❓</span>
-        <span class="text-xs font-semibold text-gray-700 group-hover:text-primary-600 transition-colors">FAQ</span>
-      </a>
+<!-- HOW IT WORKS -->
+<section class="bg-gray-50 py-24 px-4">
+  <div class="max-w-6xl mx-auto">
+    <div class="text-center mb-16">
+      <p class="text-xs font-bold tracking-widest uppercase text-primary-600 mb-3">Simple Setup</p>
+      <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-4"><?= $c('hiw_title', 'Up and running in 10 minutes') ?></h2>
+    </div>
+    <div class="relative">
+      <div class="hidden md:block absolute top-8 left-0 right-0 h-px bg-primary-100 mx-32"></div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
+        <?php for ($i = 1; $i <= 4; $i++): ?>
+        <div class="text-center relative">
+          <div class="w-16 h-16 bg-primary-500 rounded-2xl flex items-center justify-center text-white text-xl font-bold mx-auto mb-5 relative z-10 shadow-lg shadow-primary-500/30"><?= $i ?></div>
+          <h3 class="font-semibold text-gray-900 mb-2 text-sm"><?= $c("step_{$i}_title") ?></h3>
+          <p class="text-sm text-gray-500 leading-relaxed"><?= $c("step_{$i}_desc") ?></p>
+        </div>
+        <?php endfor; ?>
+      </div>
     </div>
   </div>
 </section>
@@ -534,6 +505,35 @@ $_staticBanner = Settings::get('content_home_banner', '');
   </div>
 </section>
 <?php endif; ?>
+
+<!-- INTERNAL LINK STRIP -->
+<section class="bg-gray-50 border-y border-gray-100 py-8 px-4">
+  <div class="max-w-5xl mx-auto">
+    <p class="text-center text-xs font-semibold text-gray-400 uppercase tracking-widest mb-5">Explore DisplayManagerPro</p>
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+      <a href="/features" class="flex flex-col items-center gap-2 bg-white hover:bg-primary-50 border border-gray-100 hover:border-primary-200 rounded-xl p-4 text-center transition-all group shadow-sm hover:shadow-md">
+        <span class="text-2xl">⚡</span>
+        <span class="text-xs font-semibold text-gray-700 group-hover:text-primary-600 transition-colors">All Features</span>
+      </a>
+      <a href="/pricing" class="flex flex-col items-center gap-2 bg-white hover:bg-primary-50 border border-gray-100 hover:border-primary-200 rounded-xl p-4 text-center transition-all group shadow-sm hover:shadow-md">
+        <span class="text-2xl">💳</span>
+        <span class="text-xs font-semibold text-gray-700 group-hover:text-primary-600 transition-colors">Pricing Plans</span>
+      </a>
+      <a href="/industries" class="flex flex-col items-center gap-2 bg-white hover:bg-primary-50 border border-gray-100 hover:border-primary-200 rounded-xl p-4 text-center transition-all group shadow-sm hover:shadow-md">
+        <span class="text-2xl">🏢</span>
+        <span class="text-xs font-semibold text-gray-700 group-hover:text-primary-600 transition-colors">Industries We Serve</span>
+      </a>
+      <a href="/about" class="flex flex-col items-center gap-2 bg-white hover:bg-primary-50 border border-gray-100 hover:border-primary-200 rounded-xl p-4 text-center transition-all group shadow-sm hover:shadow-md">
+        <span class="text-2xl">👥</span>
+        <span class="text-xs font-semibold text-gray-700 group-hover:text-primary-600 transition-colors">About Us</span>
+      </a>
+      <a href="/faq" class="flex flex-col items-center gap-2 bg-white hover:bg-primary-50 border border-gray-100 hover:border-primary-200 rounded-xl p-4 text-center transition-all group shadow-sm hover:shadow-md">
+        <span class="text-2xl">❓</span>
+        <span class="text-xs font-semibold text-gray-700 group-hover:text-primary-600 transition-colors">FAQ</span>
+      </a>
+    </div>
+  </div>
+</section>
 
 <!-- CTA -->
 <section class="hero-gradient text-white py-24 px-4 relative overflow-hidden">
