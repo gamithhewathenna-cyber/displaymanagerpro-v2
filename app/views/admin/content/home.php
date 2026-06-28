@@ -189,13 +189,24 @@
     <div class="mb-5 flex gap-5 items-start">
       <div class="w-40 h-24 rounded-xl overflow-hidden bg-gray-100 border border-gray-200 flex items-center justify-center flex-shrink-0">
         <?php if ($_hiwBg): ?>
-        <img src="<?= Helpers::e($_hiwBg) ?>" class="w-full h-full object-cover">
+        <img src="<?= Helpers::e($_hiwBg) ?>?v=<?= time() ?>" class="w-full h-full object-cover"
+             onerror="this.style.display='none';document.getElementById('hiw-bg-broken').style.display='block'">
+        <div id="hiw-bg-broken" style="display:none" class="text-center p-2">
+          <div class="text-red-400 text-xs font-medium">File missing</div>
+        </div>
         <?php else: ?>
         <span class="text-xs text-gray-400">No image</span>
         <?php endif; ?>
       </div>
       <div class="flex-1 space-y-2">
         <p class="text-xs font-medium text-gray-500">Section Background Image (full-width)</p>
+        <?php if ($_hiwBg): ?>
+        <p class="text-xs text-gray-400 font-mono break-all">
+          Stored path: <a href="<?= Helpers::e($_hiwBg) ?>" target="_blank" class="text-indigo-600 underline"><?= Helpers::e($_hiwBg) ?></a>
+          <?php $physPath = PUBLIC_PATH . $_hiwBg; ?>
+          · <?= file_exists($physPath) ? '<span class="text-green-600">✓ file exists</span>' : '<span class="text-red-500">✗ file missing on disk</span>' ?>
+        </p>
+        <?php endif; ?>
         <form method="POST" action="/admin/content/home/hiw-bg" enctype="multipart/form-data" class="flex items-center gap-2">
           <input type="hidden" name="_csrf_token" value="<?= Csrf::token() ?>">
           <label class="flex-1 min-w-0 block">
