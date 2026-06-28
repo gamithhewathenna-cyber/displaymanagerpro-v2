@@ -185,34 +185,25 @@
   <!-- How it works -->
   <div class="bg-white rounded-2xl border border-gray-100 p-6">
     <h2 class="font-semibold text-gray-900 mb-5">🔢 How It Works</h2>
-    <?php $_hiwBg = Settings::get('content_home_hiw_bg', ''); ?>
+    <?php
+      $_hiwBgRaw = Settings::get('content_home_hiw_bg', '');
+      // Ignore stale values that aren't proper upload paths
+      $_hiwBg = (str_starts_with($_hiwBgRaw, '/uploads/')) ? $_hiwBgRaw : '';
+      if ($_hiwBgRaw && !$_hiwBg) {
+          // Auto-clear the garbage value
+          Settings::set('content_home_hiw_bg', '', 'content');
+      }
+    ?>
     <div class="mb-5 flex gap-5 items-start">
       <div class="w-40 h-24 rounded-xl overflow-hidden bg-gray-100 border border-gray-200 flex items-center justify-center flex-shrink-0">
         <?php if ($_hiwBg): ?>
-        <img src="<?= Helpers::e($_hiwBg) ?>?v=<?= time() ?>" class="w-full h-full object-cover"
-             onerror="this.style.display='none';document.getElementById('hiw-bg-broken').style.display='block'">
-        <div id="hiw-bg-broken" style="display:none" class="text-center p-2">
-          <div class="text-red-400 text-xs font-medium">File missing</div>
-        </div>
+        <img src="<?= Helpers::e($_hiwBg) ?>" class="w-full h-full object-cover">
         <?php else: ?>
         <span class="text-xs text-gray-400">No image</span>
         <?php endif; ?>
       </div>
       <div class="flex-1 space-y-2">
         <p class="text-xs font-medium text-gray-500">Section Background Image (full-width)</p>
-        <?php if ($_hiwBg): ?>
-        <p class="text-xs text-gray-400 font-mono break-all">
-          URL: <a href="<?= Helpers::e($_hiwBg) ?>" target="_blank" class="text-indigo-600 underline"><?= Helpers::e($_hiwBg) ?></a><br>
-          PUBLIC_PATH = <?= PUBLIC_PATH ?><br>
-          DOCUMENT_ROOT = <?= $_SERVER['DOCUMENT_ROOT'] ?><br>
-          <?php
-            $checkA = PUBLIC_PATH . $_hiwBg;
-            $checkB = rtrim($_SERVER['DOCUMENT_ROOT'], '/') . $_hiwBg;
-          ?>
-          PUBLIC_PATH check: <?= file_exists($checkA) ? '<span class="text-green-600">✓ exists</span>' : '<span class="text-red-500">✗ missing</span>' ?><br>
-          DOCUMENT_ROOT check: <?= file_exists($checkB) ? '<span class="text-green-600">✓ exists</span>' : '<span class="text-red-500">✗ missing</span>' ?>
-        </p>
-        <?php endif; ?>
         <form method="POST" action="/admin/content/home/hiw-bg" enctype="multipart/form-data" class="flex items-center gap-2">
           <input type="hidden" name="_csrf_token" value="<?= Csrf::token() ?>">
           <label class="flex-1 min-w-0 block">

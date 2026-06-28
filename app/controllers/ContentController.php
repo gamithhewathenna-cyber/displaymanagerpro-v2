@@ -943,23 +943,26 @@ class ContentController extends BaseController
             if (file_exists($oldPath)) @unlink($oldPath);
         }
 
-        // Use /uploads/slider/ — same directory as slide images which are confirmed working
-        $dir = UPLOAD_PATH . '/slider/';
-        if (!is_dir($dir)) mkdir($dir, 0755, true);
+        $dir  = UPLOAD_PATH . '/slider/';
+        $dirOk = is_dir($dir) || mkdir($dir, 0755, true);
 
-        $saveExt = ($ext === 'jpg') ? 'jpg' : $ext;
+        $saveExt = ($ext === 'jpeg') ? 'jpg' : $ext;
         $name    = 'home_hiw_bg_' . time() . '.' . $saveExt;
         $dest    = $dir . $name;
 
+        error_log("[HiwBg] upload_tmp={$file['tmp_name']} size={$file['size']} dest={$dest} dir_ok=" . ($dirOk ? 'y' : 'n') . " writable=" . (is_writable($dir) ? 'y' : 'n'));
+
         if (!move_uploaded_file($file['tmp_name'], $dest)) {
-            Session::flash('error', 'Upload failed. Dir: ' . $dir . ' | Writable: ' . (is_writable($dir) ? 'yes' : 'no'));
+            $msg = 'Upload failed. dest=' . $dest . ' | dir_exists=' . (is_dir($dir) ? 'yes' : 'no') . ' | writable=' . (is_writable($dir) ? 'yes' : 'no');
+            error_log("[HiwBg] FAIL: $msg");
+            Session::flash('error', $msg);
             $this->redirect('/admin/content/home');
         }
 
         $webPath = '/uploads/slider/' . $name;
         Settings::set('content_home_hiw_bg', $webPath, 'content');
         ActivityLog::log('admin_content_saved', 'Updated How It Works section background');
-        Session::flash('success', 'Background image saved → ' . $webPath);
+        Session::flash('success', 'Done! Saved to: ' . $webPath . ' (size: ' . round(filesize($dest) / 1024) . ' KB)');
         $this->redirect('/admin/content/home');
     }
 
