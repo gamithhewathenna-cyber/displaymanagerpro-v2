@@ -533,27 +533,28 @@ $_staticBanner = Settings::get('content_home_banner', '');
 
     <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
 
-      <!-- Card 1: Features — wide, light gray, floating keyword tags -->
-      <a href="/features" class="col-span-2 bg-gray-100 rounded-2xl p-6 relative overflow-hidden group block transition-all hover:shadow-md hover:bg-gray-50 min-h-[170px] flex flex-col justify-between">
-        <div class="flex flex-wrap gap-2 mb-6">
-          <span class="bg-white text-gray-600 text-xs font-medium px-3 py-1 rounded-full shadow-sm">Instant Updates</span>
-          <span class="bg-white text-gray-600 text-xs font-medium px-3 py-1 rounded-full shadow-sm">Cloud Dashboard</span>
-          <span class="bg-white text-gray-600 text-xs font-medium px-3 py-1 rounded-full shadow-sm">Auto Refresh</span>
-          <span class="bg-white text-gray-600 text-xs font-medium px-3 py-1 rounded-full shadow-sm">Drag &amp; Drop</span>
-          <span class="bg-white text-gray-600 text-xs font-medium px-3 py-1 rounded-full shadow-sm">Secure URLs</span>
-          <span class="bg-white text-gray-600 text-xs font-medium px-3 py-1 rounded-full shadow-sm">Works on Any TV</span>
+      <!-- Card 1: Features — light gray, floating keyword tags -->
+      <a href="/features" class="bg-gray-100 rounded-2xl p-5 relative overflow-hidden group block transition-all hover:shadow-md hover:bg-gray-50 min-h-[200px] flex flex-col justify-between">
+        <div class="flex flex-wrap gap-1.5 mb-4">
+          <span class="bg-white text-gray-600 text-xs font-medium px-2.5 py-1 rounded-full shadow-sm">Instant Updates</span>
+          <span class="bg-white text-gray-600 text-xs font-medium px-2.5 py-1 rounded-full shadow-sm">Cloud Dashboard</span>
+          <span class="bg-white text-gray-600 text-xs font-medium px-2.5 py-1 rounded-full shadow-sm">Auto Refresh</span>
+          <span class="bg-white text-gray-600 text-xs font-medium px-2.5 py-1 rounded-full shadow-sm">Drag &amp; Drop</span>
         </div>
-        <div class="text-sm font-bold text-gray-800 group-hover:text-primary-600 transition-colors flex items-center gap-1">
-          All Features
-          <svg class="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+        <div>
+          <div class="text-xs text-gray-400 font-medium mb-1">Platform</div>
+          <div class="text-sm font-bold text-gray-800 group-hover:text-primary-600 transition-colors flex items-center gap-1">
+            All Features
+            <svg class="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+          </div>
         </div>
       </a>
 
       <!-- Card 2: Pricing — brand accent color, bold stat -->
-      <a href="/pricing" class="col-span-1 bg-primary-500 hover:bg-primary-600 rounded-2xl p-5 flex flex-col justify-between group block transition-all hover:shadow-lg min-h-[170px]">
+      <a href="/pricing" class="bg-primary-500 hover:bg-primary-600 rounded-2xl p-5 flex flex-col justify-between group block transition-all hover:shadow-lg min-h-[200px]">
         <p class="text-primary-100 text-xs font-medium">Start free for</p>
         <div>
-          <div class="text-5xl font-extrabold text-white leading-none mb-1">14</div>
+          <div class="text-6xl font-extrabold text-white leading-none mb-2">14</div>
           <div class="text-primary-100 text-sm leading-snug">day free trial.<br>No card needed.</div>
         </div>
         <div class="text-white text-xs font-semibold flex items-center gap-1 group-hover:gap-2 transition-all mt-2">
@@ -563,11 +564,11 @@ $_staticBanner = Settings::get('content_home_banner', '');
       </a>
 
       <!-- Card 3: Industries — dark with subtle gradient glow -->
-      <a href="/industries" class="col-span-1 bg-gray-900 hover:bg-gray-800 rounded-2xl p-5 flex flex-col justify-between group block transition-all hover:shadow-lg min-h-[170px] relative overflow-hidden">
+      <a href="/industries" class="bg-gray-900 hover:bg-gray-800 rounded-2xl p-5 flex flex-col justify-between group block transition-all hover:shadow-lg min-h-[200px] relative overflow-hidden">
         <div class="absolute inset-0 pointer-events-none opacity-25" style="background:radial-gradient(circle at 25% 75%,#6366f1,transparent 60%)"></div>
         <p class="text-white/50 text-xs font-medium relative z-10">Industries served</p>
         <div class="relative z-10">
-          <div class="text-5xl font-extrabold text-white leading-none mb-1">8+</div>
+          <div class="text-6xl font-extrabold text-white leading-none mb-2">8+</div>
           <div class="text-white/60 text-sm leading-snug">Restaurant, Cafe,<br>Retail &amp; more.</div>
         </div>
         <div class="text-white/50 text-xs font-semibold flex items-center gap-1 group-hover:text-white group-hover:gap-2 transition-all relative z-10 mt-2">
@@ -576,27 +577,14 @@ $_staticBanner = Settings::get('content_home_banner', '');
         </div>
       </a>
 
-      <!-- Card 4: About — white card, light -->
-      <a href="/about" class="col-span-2 bg-white border border-gray-100 hover:border-primary-200 rounded-2xl p-5 flex flex-col justify-between group block transition-all hover:shadow-md min-h-[120px]">
-        <p class="text-gray-400 text-xs font-medium">Our Story</p>
-        <div class="mt-2">
-          <div class="text-xl font-extrabold text-gray-900 mb-1">About Us</div>
-          <div class="text-gray-500 text-sm">Meet the team building DisplayManagerPro.</div>
-        </div>
-        <div class="text-primary-600 text-xs font-semibold flex items-center gap-1 group-hover:gap-2 transition-all mt-3">
-          Learn more
-          <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
-        </div>
-      </a>
-
-      <!-- Card 5: FAQ — light gray card -->
-      <a href="/faq" class="col-span-2 bg-gray-100 hover:bg-gray-50 border border-transparent hover:border-gray-200 rounded-2xl p-5 flex flex-col justify-between group block transition-all hover:shadow-md min-h-[120px]">
+      <!-- Card 4: FAQ — light gray -->
+      <a href="/faq" class="bg-gray-100 hover:bg-white border border-gray-200 hover:border-primary-200 rounded-2xl p-5 flex flex-col justify-between group block transition-all hover:shadow-md min-h-[200px]">
         <p class="text-gray-400 text-xs font-medium">Have Questions?</p>
-        <div class="mt-2">
-          <div class="text-xl font-extrabold text-gray-900 mb-1">FAQ</div>
-          <div class="text-gray-500 text-sm">Quick answers to common questions about our platform.</div>
+        <div>
+          <div class="text-6xl font-extrabold text-gray-200 leading-none mb-2">?</div>
+          <div class="text-gray-500 text-sm leading-snug">Quick answers to<br>common questions.</div>
         </div>
-        <div class="text-primary-600 text-xs font-semibold flex items-center gap-1 group-hover:gap-2 transition-all mt-3">
+        <div class="text-primary-600 text-xs font-semibold flex items-center gap-1 group-hover:gap-2 transition-all mt-2">
           Read FAQ
           <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
         </div>
