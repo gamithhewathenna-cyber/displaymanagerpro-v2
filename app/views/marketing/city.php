@@ -233,19 +233,4 @@ $currency = match($city['country']) {
   </div>
 </section>
 
-<!-- CTA -->
-<section class="hero-gradient text-white py-24 px-4">
-  <div class="max-w-3xl mx-auto text-center">
-    <h2 class="text-4xl font-bold mb-4">Ready to modernise your <?= $cityName ?> screens?</h2>
-    <p class="text-gray-300 mb-4 text-lg">
-      Join businesses across <?= $countryName ?> using DisplayManagerPro to manage digital signage from one powerful cloud platform.
-    </p>
-    <p class="text-gray-400 mb-10">Start your free trial today. No credit card required. Cancel anytime.</p>
-    <a href="/register" class="inline-block bg-white text-primary-600 font-bold text-lg px-12 py-4 rounded-xl hover:bg-gray-50 transition-all shadow-lg">
-      Start Free 14-Day Trial →
-    </a>
-    <p class="mt-5 text-sm text-gray-400">
-      Have questions? <a href="/faq" class="text-white/80 hover:text-white underline underline-offset-2">Read our FAQ</a> or <a href="/contact" class="text-white/80 hover:text-white underline underline-offset-2">contact us</a>.
-    </p>
-  </div>
-</section>
+<?php require VIEWS_PATH . '/marketing/_cta.php'; ?>

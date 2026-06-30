@@ -31,3 +31,5 @@
 .policy-content strong { font-weight:600; }
 .policy-content a  { color:#6366f1; text-decoration:underline; }
 </style>
+
+<?php require VIEWS_PATH . '/marketing/_cta.php'; ?>

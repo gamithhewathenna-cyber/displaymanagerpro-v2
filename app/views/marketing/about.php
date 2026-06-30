@@ -186,14 +186,4 @@
   </div>
 </section>
 
-<!-- CTA -->
-<section class="hero-gradient text-white py-24 px-4">
-  <div class="max-w-3xl mx-auto text-center">
-    <h2 class="text-4xl font-bold mb-4"><?= $c('cta_title','Start Your Free 14-Day Trial') ?></h2>
-    <p class="text-gray-300 mb-4 text-lg"><?= $c('cta_body1') ?></p>
-    <p class="text-gray-400 mb-10 max-w-2xl mx-auto"><?= $c('cta_body2') ?></p>
-    <a href="/register" class="inline-block bg-white text-primary-600 font-bold text-lg px-12 py-4 rounded-xl hover:bg-gray-50 transition-all shadow-lg">
-      <?= $c('cta_button','Start Free Trial Today →') ?>
-    </a>
-  </div>
-</section>
+<?php require VIEWS_PATH . '/marketing/_cta.php'; ?>

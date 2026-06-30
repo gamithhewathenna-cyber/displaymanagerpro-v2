@@ -125,3 +125,5 @@ $seoTitle    = $post['meta_title']       ?: $post['title'];
 .blog-prose hr  { border: none; border-top: 1px solid #e5e7eb; margin: 2rem 0; }
 .blog-prose code { background: #f3f4f6; padding: .1em .3em; border-radius: .3em; font-size: .875em; font-family: monospace; }
 </style>
+
+<?php require VIEWS_PATH . '/marketing/_cta.php'; ?>

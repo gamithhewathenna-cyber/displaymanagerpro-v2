@@ -47,9 +47,4 @@
     </div>
   </div>
 </section>
-<section class="bg-indigo-600 text-white py-20 px-4 text-center">
-  <h2 class="text-xl sm:text-3xl font-bold mb-4"><?= $c('cta_title','Ready to get started?') ?></h2>
-  <p class="text-indigo-200 mb-8"><?= $c('cta_subtitle') ?></p>
-  <a href="/register" class="inline-block bg-white text-indigo-600 font-bold px-10 py-4 rounded-xl hover:bg-gray-50 transition-all shadow-lg"><?= $c('cta_button','Start Free Trial →') ?></a>
-  <p class="mt-5 text-sm text-indigo-300">Compare plans on our <a href="/pricing" class="text-white hover:underline">pricing page</a> · <a href="/contact" class="text-white hover:underline">Contact us</a> for questions</p>
-</section>
+<?php require VIEWS_PATH . '/marketing/_cta.php'; ?>

@@ -136,3 +136,5 @@
   };
 })();
 </script>
+
+<?php require VIEWS_PATH . '/marketing/_cta.php'; ?>

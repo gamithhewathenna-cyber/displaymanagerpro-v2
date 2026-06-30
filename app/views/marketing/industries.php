@@ -205,14 +205,4 @@ $_img2 = Settings::get('content_industries_image2','');
   </div>
 </section>
 
-<!-- CTA -->
-<section class="hero-gradient text-white py-24 px-4">
-  <div class="max-w-3xl mx-auto text-center">
-    <h2 class="text-4xl font-bold mb-4"><?= $c('cta_title','Ready To Modernise Your Business Displays?') ?></h2>
-    <p class="text-gray-300 mb-4 text-lg"><?= $c('cta_body1','Join businesses worldwide using DisplayManagerPro to manage digital menu boards, promotions, announcements, and customer communications from one powerful cloud platform.') ?></p>
-    <p class="text-gray-400 mb-10 max-w-2xl mx-auto"><?= $c('cta_body2','Start your free trial today and discover how easy it is to manage every screen from anywhere.') ?></p>
-    <a href="/register" class="inline-block bg-white text-primary-600 font-bold text-lg px-12 py-4 rounded-xl hover:bg-gray-50 transition-all shadow-lg">
-      <?= $c('cta_button','Start Your 14-Day Free Trial →') ?>
-    </a>
-  </div>
-</section>
+<?php require VIEWS_PATH . '/marketing/_cta.php'; ?>
