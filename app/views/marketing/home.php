@@ -571,17 +571,19 @@ $_staticBanner = Settings::get('content_home_banner', '');
 
 <!-- CTA -->
 <?php $_ctaBg = Settings::get('content_home_cta_bg', ''); ?>
-<section class="hero-gradient text-white py-24 px-4 relative overflow-hidden bg-cover bg-center"<?= $_ctaBg ? ' style="background-image:url(' . Helpers::e($_ctaBg) . ')"' : '' ?>>
-  <?php if (!$_ctaBg): ?>
-  <div class="absolute inset-0 pointer-events-none opacity-10" style="background-image:radial-gradient(circle at 20% 50%,#6366f1 0%,transparent 50%),radial-gradient(circle at 80% 20%,#8b5cf6 0%,transparent 40%)"></div>
-  <?php endif; ?>
-  <div class="max-w-[1250px] mx-auto text-center relative">
-    <p class="text-xs font-bold tracking-widest uppercase text-primary-300 mb-4">Get Started Today</p>
-    <h2 class="text-3xl sm:text-4xl font-bold mb-5"><?= $c('cta_title', 'Ready to modernise your screens?') ?></h2>
-    <p class="text-gray-300 mb-10 text-lg"><?= $c('cta_subtitle') ?></p>
-    <a href="/register" class="inline-block bg-white text-primary-600 font-bold text-base sm:text-lg px-10 py-4 rounded-xl hover:bg-primary-50 transition-all shadow-xl">
-      <?= $c('cta_button', 'Get Started Free →') ?>
-    </a>
-    <p class="mt-6 text-sm text-gray-400">Have questions? <a href="/faq" class="text-white/80 hover:text-white underline underline-offset-2 transition-colors">Read our FAQ</a> or <a href="/contact" class="text-white/80 hover:text-white underline underline-offset-2 transition-colors">contact us</a>.</p>
+<section class="py-10 px-4 sm:px-6 lg:px-8 bg-white">
+  <div class="max-w-[1250px] mx-auto hero-gradient text-white rounded-3xl overflow-hidden relative bg-cover bg-center py-24 px-6"<?= $_ctaBg ? ' style="background-image:url(' . Helpers::e($_ctaBg) . ')"' : '' ?>>
+    <?php if (!$_ctaBg): ?>
+    <div class="absolute inset-0 pointer-events-none opacity-10" style="background-image:radial-gradient(circle at 20% 50%,#6366f1 0%,transparent 50%),radial-gradient(circle at 80% 20%,#8b5cf6 0%,transparent 40%)"></div>
+    <?php endif; ?>
+    <div class="text-center relative">
+      <p class="text-xs font-bold tracking-widest uppercase text-primary-300 mb-4">Get Started Today</p>
+      <h2 class="text-3xl sm:text-4xl font-bold mb-5"><?= $c('cta_title', 'Ready to modernise your screens?') ?></h2>
+      <p class="text-gray-300 mb-10 text-lg"><?= $c('cta_subtitle') ?></p>
+      <a href="/register" class="inline-block bg-white text-primary-600 font-bold text-base sm:text-lg px-10 py-4 rounded-xl hover:bg-primary-50 transition-all shadow-xl">
+        <?= $c('cta_button', 'Get Started Free →') ?>
+      </a>
+      <p class="mt-6 text-sm text-gray-400">Have questions? <a href="/faq" class="text-white/80 hover:text-white underline underline-offset-2 transition-colors">Read our FAQ</a> or <a href="/contact" class="text-white/80 hover:text-white underline underline-offset-2 transition-colors">contact us</a>.</p>
+    </div>
   </div>
 </section>
