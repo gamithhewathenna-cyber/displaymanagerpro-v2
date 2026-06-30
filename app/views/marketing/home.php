@@ -533,60 +533,36 @@ $_staticBanner = Settings::get('content_home_banner', '');
 
     <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
 
-      <!-- Card 1: Features — light gray, floating keyword tags -->
-      <a href="/features" class="bg-gray-100 rounded-2xl p-5 relative overflow-hidden group block transition-all hover:shadow-md hover:bg-gray-50 min-h-[200px] flex flex-col justify-between">
-        <div class="flex flex-wrap gap-1.5 mb-4">
-          <span class="bg-white text-gray-600 text-xs font-medium px-2.5 py-1 rounded-full shadow-sm">Instant Updates</span>
-          <span class="bg-white text-gray-600 text-xs font-medium px-2.5 py-1 rounded-full shadow-sm">Cloud Dashboard</span>
-          <span class="bg-white text-gray-600 text-xs font-medium px-2.5 py-1 rounded-full shadow-sm">Auto Refresh</span>
-          <span class="bg-white text-gray-600 text-xs font-medium px-2.5 py-1 rounded-full shadow-sm">Drag &amp; Drop</span>
+      <!-- Card 1: Features — light gray -->
+      <a href="/features" class="bg-gray-100 rounded-2xl p-6 group block transition-all hover:shadow-md hover:bg-gray-50 flex flex-col items-center justify-center gap-3 min-h-[160px] text-center">
+        <div class="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-sm group-hover:shadow-md transition-shadow">
+          <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
         </div>
-        <div>
-          <div class="text-xs text-gray-400 font-medium mb-1">Platform</div>
-          <div class="text-sm font-bold text-gray-800 group-hover:text-primary-600 transition-colors flex items-center gap-1">
-            All Features
-            <svg class="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
-          </div>
-        </div>
+        <span class="text-sm font-semibold text-gray-700 group-hover:text-primary-600 transition-colors">All Features</span>
       </a>
 
-      <!-- Card 2: Pricing — brand accent color, bold stat -->
-      <a href="/pricing" class="bg-primary-500 hover:bg-primary-600 rounded-2xl p-5 flex flex-col justify-between group block transition-all hover:shadow-lg min-h-[200px]">
-        <p class="text-primary-100 text-xs font-medium">Start free for</p>
-        <div>
-          <div class="text-6xl font-extrabold text-white leading-none mb-2">14</div>
-          <div class="text-primary-100 text-sm leading-snug">day free trial.<br>No card needed.</div>
+      <!-- Card 2: Pricing — brand color -->
+      <a href="/pricing" class="bg-primary-500 hover:bg-primary-600 rounded-2xl p-6 group block transition-all hover:shadow-lg flex flex-col items-center justify-center gap-3 min-h-[160px] text-center">
+        <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A2 2 0 013 12V7a4 4 0 014-4z"/></svg>
         </div>
-        <div class="text-white text-xs font-semibold flex items-center gap-1 group-hover:gap-2 transition-all mt-2">
-          View Pricing
-          <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
-        </div>
+        <span class="text-sm font-semibold text-white">Pricing Plans</span>
       </a>
 
       <!-- Card 3: Industries — solid dark -->
-      <a href="/industries" class="bg-gray-900 hover:bg-gray-800 rounded-2xl p-5 flex flex-col justify-between group block transition-all hover:shadow-lg min-h-[200px]">
-        <p class="text-white/50 text-xs font-medium">Industries served</p>
-        <div>
-          <div class="text-6xl font-extrabold text-white leading-none mb-2">8+</div>
-          <div class="text-white/60 text-sm leading-snug">Restaurant, Cafe,<br>Retail &amp; more.</div>
+      <a href="/industries" class="bg-gray-900 hover:bg-gray-800 rounded-2xl p-6 group block transition-all hover:shadow-lg flex flex-col items-center justify-center gap-3 min-h-[160px] text-center">
+        <div class="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
         </div>
-        <div class="text-white/50 text-xs font-semibold flex items-center gap-1 group-hover:text-white group-hover:gap-2 transition-all mt-2">
-          See Industries
-          <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
-        </div>
+        <span class="text-sm font-semibold text-white">Industries</span>
       </a>
 
-      <!-- Card 4: FAQ — light gray -->
-      <a href="/faq" class="bg-gray-100 hover:bg-white border border-gray-200 hover:border-primary-200 rounded-2xl p-5 flex flex-col justify-between group block transition-all hover:shadow-md min-h-[200px]">
-        <p class="text-gray-400 text-xs font-medium">Have Questions?</p>
-        <div>
-          <div class="text-6xl font-extrabold text-gray-200 leading-none mb-2">?</div>
-          <div class="text-gray-500 text-sm leading-snug">Quick answers to<br>common questions.</div>
+      <!-- Card 4: FAQ — light gray with border -->
+      <a href="/faq" class="bg-gray-100 hover:bg-white border border-gray-200 hover:border-primary-200 rounded-2xl p-6 group block transition-all hover:shadow-md flex flex-col items-center justify-center gap-3 min-h-[160px] text-center">
+        <div class="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-sm group-hover:shadow-md transition-shadow">
+          <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
         </div>
-        <div class="text-primary-600 text-xs font-semibold flex items-center gap-1 group-hover:gap-2 transition-all mt-2">
-          Read FAQ
-          <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
-        </div>
+        <span class="text-sm font-semibold text-gray-700 group-hover:text-primary-600 transition-colors">FAQ</span>
       </a>
 
     </div>
