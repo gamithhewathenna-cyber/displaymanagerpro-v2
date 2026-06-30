@@ -575,7 +575,7 @@ $_staticBanner = Settings::get('content_home_banner', '');
   <?php if (!$_ctaBg): ?>
   <div class="absolute inset-0 pointer-events-none opacity-10" style="background-image:radial-gradient(circle at 20% 50%,#6366f1 0%,transparent 50%),radial-gradient(circle at 80% 20%,#8b5cf6 0%,transparent 40%)"></div>
   <?php endif; ?>
-  <div class="max-w-[1200px] mx-auto text-center relative">
+  <div class="max-w-[1250px] mx-auto text-center relative">
     <p class="text-xs font-bold tracking-widest uppercase text-primary-300 mb-4">Get Started Today</p>
     <h2 class="text-3xl sm:text-4xl font-bold mb-5"><?= $c('cta_title', 'Ready to modernise your screens?') ?></h2>
     <p class="text-gray-300 mb-10 text-lg"><?= $c('cta_subtitle') ?></p>

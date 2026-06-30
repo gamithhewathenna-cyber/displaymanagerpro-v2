@@ -244,7 +244,7 @@
 ?>
 <div class="bg-white rounded-2xl border border-gray-100 p-6 mt-6">
   <h2 class="font-semibold text-gray-900 mb-1 flex items-center gap-2">🎯 Call to Action — Section Background Image</h2>
-  <p class="text-xs text-gray-400 mb-5">Full-width background image behind the CTA section. Recommended: <strong>1920 × 600 px</strong> · JPG, PNG or WebP · max 10 MB.</p>
+  <p class="text-xs text-gray-400 mb-5">Full-width background image behind the CTA section. Recommended: <strong>1250 × 600 px</strong> · JPG, PNG or WebP · max 10 MB.</p>
   <div class="flex gap-5 items-start">
     <div class="w-40 h-24 rounded-xl overflow-hidden bg-gray-100 border border-gray-200 flex items-center justify-center flex-shrink-0">
       <?php if ($_ctaBgImg): ?>
