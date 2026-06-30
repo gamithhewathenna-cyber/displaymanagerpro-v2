@@ -528,7 +528,7 @@ $_staticBanner = Settings::get('content_home_banner', '');
 
 <!-- EXPLORE BENTO GRID -->
 <section class="bg-gray-50 border-y border-gray-100 py-12 px-4">
-  <div class="max-w-5xl mx-auto">
+  <div class="max-w-[1200px] mx-auto">
     <p class="text-center text-xs font-semibold text-gray-400 uppercase tracking-widest mb-6">Explore DisplayManagerPro</p>
 
     <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
@@ -563,15 +563,14 @@ $_staticBanner = Settings::get('content_home_banner', '');
         </div>
       </a>
 
-      <!-- Card 3: Industries — dark with subtle gradient glow -->
-      <a href="/industries" class="bg-gray-900 hover:bg-gray-800 rounded-2xl p-5 flex flex-col justify-between group block transition-all hover:shadow-lg min-h-[200px] relative overflow-hidden">
-        <div class="absolute inset-0 pointer-events-none opacity-25" style="background:radial-gradient(circle at 25% 75%,#6366f1,transparent 60%)"></div>
-        <p class="text-white/50 text-xs font-medium relative z-10">Industries served</p>
-        <div class="relative z-10">
+      <!-- Card 3: Industries — solid dark -->
+      <a href="/industries" class="bg-gray-900 hover:bg-gray-800 rounded-2xl p-5 flex flex-col justify-between group block transition-all hover:shadow-lg min-h-[200px]">
+        <p class="text-white/50 text-xs font-medium">Industries served</p>
+        <div>
           <div class="text-6xl font-extrabold text-white leading-none mb-2">8+</div>
           <div class="text-white/60 text-sm leading-snug">Restaurant, Cafe,<br>Retail &amp; more.</div>
         </div>
-        <div class="text-white/50 text-xs font-semibold flex items-center gap-1 group-hover:text-white group-hover:gap-2 transition-all relative z-10 mt-2">
+        <div class="text-white/50 text-xs font-semibold flex items-center gap-1 group-hover:text-white group-hover:gap-2 transition-all mt-2">
           See Industries
           <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
         </div>
