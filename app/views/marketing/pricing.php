@@ -87,33 +87,6 @@
       All prices in USD. <a href="/contact" class="text-primary-600 hover:text-primary-700">Need custom pricing?</a>
     </p>
 
-    <!-- Internal links -->
-    <div class="mt-12 border-t border-gray-100 pt-10">
-      <p class="text-center text-xs font-semibold text-gray-400 uppercase tracking-widest mb-6">Related Pages</p>
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <a href="/features" class="bg-gray-50 border border-gray-100 hover:border-primary-300 rounded-2xl p-5 flex items-center gap-4 transition-all group hover:shadow-md">
-          <span class="text-2xl flex-shrink-0">⚡</span>
-          <div>
-            <div class="text-sm font-semibold text-gray-800 group-hover:text-primary-600 transition-colors">See All Features</div>
-            <div class="text-xs text-gray-400 mt-0.5">Everything included in every plan</div>
-          </div>
-        </a>
-        <a href="/faq" class="bg-gray-50 border border-gray-100 hover:border-primary-300 rounded-2xl p-5 flex items-center gap-4 transition-all group hover:shadow-md">
-          <span class="text-2xl flex-shrink-0">❓</span>
-          <div>
-            <div class="text-sm font-semibold text-gray-800 group-hover:text-primary-600 transition-colors">Pricing FAQ</div>
-            <div class="text-xs text-gray-400 mt-0.5">Trial, billing, cancellation answers</div>
-          </div>
-        </a>
-        <a href="/industries" class="bg-gray-50 border border-gray-100 hover:border-primary-300 rounded-2xl p-5 flex items-center gap-4 transition-all group hover:shadow-md">
-          <span class="text-2xl flex-shrink-0">🏢</span>
-          <div>
-            <div class="text-sm font-semibold text-gray-800 group-hover:text-primary-600 transition-colors">Industries We Serve</div>
-            <div class="text-xs text-gray-400 mt-0.5">Digital signage for your industry</div>
-          </div>
-        </a>
-      </div>
-    </div>
   </div>
 </section>
 

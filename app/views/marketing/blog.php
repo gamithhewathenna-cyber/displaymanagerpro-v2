@@ -75,29 +75,5 @@
   </div>
 </section>
 
-<!-- RELATED PAGES -->
-<section class="py-10 px-4 bg-gray-50 border-t border-gray-100">
-  <div class="max-w-5xl mx-auto">
-    <p class="text-center text-xs font-semibold text-gray-400 uppercase tracking-widest mb-5">Explore More</p>
-    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-      <a href="/features" class="bg-white border border-gray-100 hover:border-primary-300 rounded-xl p-4 flex items-center gap-3 transition-all group hover:shadow-sm">
-        <span class="text-xl flex-shrink-0">⚡</span>
-        <div><div class="text-sm font-semibold text-gray-800 group-hover:text-primary-600 transition-colors">Features</div><div class="text-xs text-gray-400">What's included</div></div>
-      </a>
-      <a href="/pricing" class="bg-white border border-gray-100 hover:border-primary-300 rounded-xl p-4 flex items-center gap-3 transition-all group hover:shadow-sm">
-        <span class="text-xl flex-shrink-0">💳</span>
-        <div><div class="text-sm font-semibold text-gray-800 group-hover:text-primary-600 transition-colors">Pricing</div><div class="text-xs text-gray-400">Plans & trial</div></div>
-      </a>
-      <a href="/industries" class="bg-white border border-gray-100 hover:border-primary-300 rounded-xl p-4 flex items-center gap-3 transition-all group hover:shadow-sm">
-        <span class="text-xl flex-shrink-0">🏢</span>
-        <div><div class="text-sm font-semibold text-gray-800 group-hover:text-primary-600 transition-colors">Industries</div><div class="text-xs text-gray-400">Your sector</div></div>
-      </a>
-      <a href="/faq" class="bg-white border border-gray-100 hover:border-primary-300 rounded-xl p-4 flex items-center gap-3 transition-all group hover:shadow-sm">
-        <span class="text-xl flex-shrink-0">❓</span>
-        <div><div class="text-sm font-semibold text-gray-800 group-hover:text-primary-600 transition-colors">FAQ</div><div class="text-xs text-gray-400">Common questions</div></div>
-      </a>
-    </div>
-  </div>
-</section>
 
 <?php require VIEWS_PATH . '/marketing/_cta.php'; ?>
