@@ -236,6 +236,42 @@
   <button type="submit" class="bg-primary-500 hover:bg-primary-600 text-white font-semibold px-8 py-3 rounded-xl transition-colors">Save Homepage Content</button>
 </form>
 
+<!-- CTA — Background Image (outside main form so enctype works) -->
+<?php
+  $_ctaBgRaw = Settings::get('content_home_cta_bg', '');
+  $_ctaBgImg = str_starts_with($_ctaBgRaw, '/uploads/') ? $_ctaBgRaw : '';
+  if ($_ctaBgRaw && !$_ctaBgImg) Settings::set('content_home_cta_bg', '', 'content');
+?>
+<div class="bg-white rounded-2xl border border-gray-100 p-6 mt-6">
+  <h2 class="font-semibold text-gray-900 mb-1 flex items-center gap-2">🎯 Call to Action — Section Background Image</h2>
+  <p class="text-xs text-gray-400 mb-5">Full-width background image behind the CTA section. Recommended: <strong>1920 × 600 px</strong> · JPG, PNG or WebP · max 10 MB.</p>
+  <div class="flex gap-5 items-start">
+    <div class="w-40 h-24 rounded-xl overflow-hidden bg-gray-100 border border-gray-200 flex items-center justify-center flex-shrink-0">
+      <?php if ($_ctaBgImg): ?>
+      <img src="<?= Helpers::e($_ctaBgImg) ?>" class="w-full h-full object-cover">
+      <?php else: ?>
+      <span class="text-xs text-gray-400">No image</span>
+      <?php endif; ?>
+    </div>
+    <div class="flex-1 space-y-3">
+      <form method="POST" action="/admin/content/home/cta-bg" enctype="multipart/form-data" class="flex items-center gap-2">
+        <input type="hidden" name="_csrf_token" value="<?= Csrf::token() ?>">
+        <label class="flex-1 min-w-0 block">
+          <input type="file" name="cta_bg" accept="image/jpeg,image/png,image/webp"
+            class="block w-full text-xs text-gray-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 cursor-pointer">
+        </label>
+        <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors whitespace-nowrap">Upload</button>
+      </form>
+      <?php if ($_ctaBgImg): ?>
+      <form method="POST" action="/admin/content/home/cta-bg/remove">
+        <input type="hidden" name="_csrf_token" value="<?= Csrf::token() ?>">
+        <button type="submit" onclick="return confirm('Remove CTA background image?')" class="text-xs text-red-500 hover:text-red-700 font-medium transition-colors">Remove image</button>
+      </form>
+      <?php endif; ?>
+    </div>
+  </div>
+</div>
+
 <!-- How It Works — Background Image (outside main form so enctype works) -->
 <?php
   $_hiwBgRaw = Settings::get('content_home_hiw_bg', '');

@@ -908,6 +908,74 @@ class ContentController extends BaseController
         };
     }
 
+    public function uploadCtaBg(): void
+    {
+        $this->requireAdmin();
+        $this->validateCsrf();
+
+        if (empty($_FILES['cta_bg']) || $_FILES['cta_bg']['error'] === UPLOAD_ERR_NO_FILE) {
+            Session::flash('error', 'No file selected.');
+            $this->redirect('/admin/content/home');
+        }
+
+        $file = $_FILES['cta_bg'];
+        if ($file['error'] !== UPLOAD_ERR_OK) {
+            Session::flash('error', 'Upload failed (error code ' . $file['error'] . ').');
+            $this->redirect('/admin/content/home');
+        }
+
+        $ext     = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+        $allowed = ['jpg' => true, 'jpeg' => true, 'png' => true, 'webp' => true];
+        if (!isset($allowed[$ext])) {
+            Session::flash('error', 'Only JPG, PNG, or WebP images are allowed.');
+            $this->redirect('/admin/content/home');
+        }
+
+        if ($file['size'] > 10 * 1024 * 1024) {
+            Session::flash('error', 'File exceeds 10 MB limit.');
+            $this->redirect('/admin/content/home');
+        }
+
+        $dir   = UPLOAD_PATH . '/slider/';
+        if (!is_dir($dir)) mkdir($dir, 0755, true);
+
+        $saveExt = ($ext === 'jpeg') ? 'jpg' : $ext;
+        $name    = 'home_cta_bg_' . time() . '.' . $saveExt;
+        $dest    = $dir . $name;
+
+        if (!move_uploaded_file($file['tmp_name'], $dest)) {
+            Session::flash('error', 'Upload failed. dest=' . $dest);
+            $this->redirect('/admin/content/home');
+        }
+
+        $old = Settings::get('content_home_cta_bg', '');
+        if ($old && str_starts_with($old, '/uploads/')) {
+            $oldPath = PUBLIC_PATH . $old;
+            if (file_exists($oldPath)) @unlink($oldPath);
+        }
+
+        $webPath = '/uploads/slider/' . $name;
+        Settings::set('content_home_cta_bg', $webPath, 'content');
+        Session::flash('success', 'CTA background image updated.');
+        $this->redirect('/admin/content/home');
+    }
+
+    public function removeCtaBg(): void
+    {
+        $this->requireAdmin();
+        $this->validateCsrf();
+
+        $old = Settings::get('content_home_cta_bg', '');
+        if ($old && str_starts_with($old, '/uploads/')) {
+            $oldPath = PUBLIC_PATH . $old;
+            if (file_exists($oldPath)) @unlink($oldPath);
+        }
+
+        Settings::set('content_home_cta_bg', '', 'content');
+        Session::flash('success', 'CTA background image removed.');
+        $this->redirect('/admin/content/home');
+    }
+
     public function uploadHiwBg(): void
     {
         $this->requireAdmin();

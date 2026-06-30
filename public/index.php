@@ -198,6 +198,8 @@ $router->post('/admin/content/home/slide/{slot}/mobile/remove', 'ContentControll
 $router->post('/admin/content/home/banner',                    'ContentController', 'uploadHomeBanner');
 $router->post('/admin/content/home/features-image',            'ContentController', 'uploadFeaturesImage');
 $router->post('/admin/content/home/features-image/remove',     'ContentController', 'removeFeaturesImage');
+$router->post('/admin/content/home/cta-bg',                    'ContentController', 'uploadCtaBg');
+$router->post('/admin/content/home/cta-bg/remove',             'ContentController', 'removeCtaBg');
 $router->post('/admin/content/home/hiw-bg',                    'ContentController', 'uploadHiwBg');
 $router->post('/admin/content/home/hiw-bg/remove',             'ContentController', 'removeHiwBg');
 $router->post('/admin/content/home/banner/remove',             'ContentController', 'removeHomeBanner');
