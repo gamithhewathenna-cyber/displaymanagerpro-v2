@@ -28,4 +28,34 @@ class BlogController extends BaseController
             'post'             => $post,
         ], 'marketing');
     }
+
+    public function sitemap(): void
+    {
+        $appUrl = rtrim(Settings::get('app_url', Helpers::baseUrl()), '/');
+        $posts  = BlogPost::allPublished();
+
+        header('Content-Type: application/xml; charset=utf-8');
+        header('X-Robots-Tag: noindex');
+        echo '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
+        echo '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n";
+
+        echo "  <url>\n";
+        echo '    <loc>' . htmlspecialchars($appUrl . '/blog') . "</loc>\n";
+        echo "    <changefreq>weekly</changefreq>\n";
+        echo "    <priority>0.8</priority>\n";
+        echo "  </url>\n";
+
+        foreach ($posts as $post) {
+            $lastmod = date('Y-m-d', strtotime($post['updated_at'] ?: $post['published_at']));
+            echo "  <url>\n";
+            echo '    <loc>' . htmlspecialchars($appUrl . '/blog/' . $post['slug']) . "</loc>\n";
+            echo '    <lastmod>' . $lastmod . "</lastmod>\n";
+            echo "    <changefreq>monthly</changefreq>\n";
+            echo "    <priority>0.7</priority>\n";
+            echo "  </url>\n";
+        }
+
+        echo '</urlset>';
+        exit;
+    }
 }

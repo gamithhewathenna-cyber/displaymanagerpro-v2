@@ -69,6 +69,7 @@ $router->post('/install',       'InstallerController', 'process');
 $router->get('/install/{step}', 'InstallerController', 'step');
 
 $router->get('/sitemap.xml', 'MarketingController', 'sitemap');
+$router->get('/sitemap-blog.xml', 'BlogController', 'sitemap');
 $router->get('/',           'MarketingController', 'home');
 $router->get('/about',                    'MarketingController', 'about');
 $router->get('/blog',                     'BlogController',       'index');
