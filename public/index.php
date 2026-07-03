@@ -70,6 +70,7 @@ $router->get('/install/{step}', 'InstallerController', 'step');
 
 $router->get('/sitemap.xml', 'MarketingController', 'sitemap');
 $router->get('/sitemap-blog.xml', 'BlogController', 'sitemap');
+$router->get('/sitemap-geo.xml', 'MarketingController', 'geoSitemap');
 $router->get('/',           'MarketingController', 'home');
 $router->get('/about',                    'MarketingController', 'about');
 $router->get('/blog',                     'BlogController',       'index');

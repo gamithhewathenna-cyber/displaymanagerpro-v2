@@ -24,3 +24,4 @@ Disallow: /verify-email/
 
 Sitemap: https://displaymanagerpro.com/sitemap.xml
 Sitemap: https://displaymanagerpro.com/sitemap-blog.xml
+Sitemap: https://displaymanagerpro.com/sitemap-geo.xml

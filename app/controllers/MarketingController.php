@@ -92,6 +92,27 @@ class MarketingController extends BaseController
         ], 'marketing');
     }
 
+    public function geoSitemap(): void
+    {
+        $appUrl = rtrim(Settings::get('app_url', Helpers::baseUrl()), '/');
+
+        header('Content-Type: application/xml; charset=utf-8');
+        header('X-Robots-Tag: noindex');
+        echo '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
+        echo '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n";
+
+        foreach (self::getCities() as $citySlug => $city) {
+            echo "  <url>\n";
+            echo '    <loc>' . htmlspecialchars($appUrl . '/digital-signage/' . $citySlug) . "</loc>\n";
+            echo "    <changefreq>monthly</changefreq>\n";
+            echo "    <priority>0.8</priority>\n";
+            echo "  </url>\n";
+        }
+
+        echo '</urlset>';
+        exit;
+    }
+
     private static function getCities(): array
     {
         return [
