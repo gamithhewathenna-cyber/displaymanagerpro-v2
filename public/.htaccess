@@ -1,6 +1,11 @@
 Options -Indexes
 RewriteEngine On
 RewriteBase /
+
+# Canonicalize www -> non-www (avoids duplicate-content across hostnames)
+RewriteCond %{HTTP_HOST} ^www\.displaymanagerpro\.com$ [NC]
+RewriteRule ^ https://displaymanagerpro.com%{REQUEST_URI} [L,R=301]
+
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^ index.php [L]

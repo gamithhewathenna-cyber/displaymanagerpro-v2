@@ -28,8 +28,12 @@ class Router
         $uri = strtok($uri, '?');
         $uri = '/' . trim($uri, '/');
 
+        // HEAD requests are answered like GET, but with the body discarded
+        $isHead      = strtoupper($httpMethod) === 'HEAD';
+        $matchMethod = $isHead ? 'GET' : strtoupper($httpMethod);
+
         foreach ($this->routes as $route) {
-            if ($route['httpMethod'] !== strtoupper($httpMethod)) continue;
+            if ($route['httpMethod'] !== $matchMethod) continue;
 
             $pattern = $this->patternToRegex($route['pattern']);
             if (preg_match($pattern, $uri, $matches)) {
@@ -39,7 +43,9 @@ class Router
                 }
                 array_shift($matches);
                 $ctrl = new $route['controller']();
+                if ($isHead) ob_start();
                 call_user_func_array([$ctrl, $route['action']], $matches);
+                if ($isHead) ob_end_clean();
                 return;
             }
         }
