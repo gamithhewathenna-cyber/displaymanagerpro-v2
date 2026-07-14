@@ -42,6 +42,51 @@ class AdminController extends BaseController
         ], 'admin');
     }
 
+    public function createCustomer(): void
+    {
+        $this->requireAdmin();
+        $this->view('admin/customer-create', ['title' => 'Create Account'], 'admin');
+    }
+
+    public function storeCustomer(): void
+    {
+        $this->requireAdmin();
+        $this->validateCsrf();
+
+        $name     = trim(Helpers::sanitize($_POST['name'] ?? ''));
+        $email    = strtolower(trim($_POST['email'] ?? ''));
+        $password = $_POST['password'] ?? '';
+        $role     = in_array($_POST['role'] ?? '', ['admin', 'customer'], true) ? $_POST['role'] : 'customer';
+        $status   = in_array($_POST['status'] ?? '', ['active', 'pending', 'suspended'], true) ? $_POST['status'] : 'active';
+
+        $errors = [];
+        if (strlen($name) < 2) $errors[] = 'Name must be at least 2 characters.';
+        if (!Helpers::validateEmail($email)) $errors[] = 'Please enter a valid email address.';
+        if (strlen($password) < PASSWORD_MIN_LENGTH) $errors[] = 'Password must be at least ' . PASSWORD_MIN_LENGTH . ' characters.';
+        if (User::findByEmail($email)) $errors[] = 'An account with this email already exists.';
+
+        if ($errors) {
+            Session::flash('error', implode(' ', $errors));
+            $this->redirect('/admin/customers/create');
+        }
+
+        $userId = User::create([
+            'name'     => $name,
+            'email'    => $email,
+            'password' => $password,
+            'role'     => $role,
+            'status'   => $status,
+        ]);
+
+        if ($status === 'active') {
+            User::verifyEmail($userId);
+        }
+
+        ActivityLog::log('admin_create_user', "Created user #$userId ($email) with role $role");
+        Session::flash('success', 'Account created successfully.');
+        $this->redirect('/admin/customers');
+    }
+
     public function viewCustomer(string $id): void
     {
         $this->requireAdmin();

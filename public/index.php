@@ -142,6 +142,8 @@ $router->get('/display/{slug}/data', 'DisplayController', 'data');
 
 $router->get('/admin',                                'AdminController', 'dashboard');
 $router->get('/admin/customers',                      'AdminController', 'customers');
+$router->get('/admin/customers/create',               'AdminController', 'createCustomer');
+$router->post('/admin/customers',                     'AdminController', 'storeCustomer');
 $router->get('/admin/customers/{id}',                 'AdminController', 'viewCustomer');
 $router->post('/admin/customers/{id}/suspend',        'AdminController', 'suspendCustomer');
 $router->post('/admin/customers/{id}/activate',       'AdminController', 'activateCustomer');
