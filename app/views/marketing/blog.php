@@ -25,7 +25,7 @@
 
         <?php if ($p['featured_image']): ?>
         <a href="/blog/<?= Helpers::e($p['slug']) ?>" class="block overflow-hidden" style="aspect-ratio:16/9;">
-          <img src="<?= Helpers::e($p['featured_image']) ?>" alt="<?= Helpers::e($p['title']) ?>"
+          <img src="<?= Helpers::e($p['featured_image']) ?>" alt="<?= Helpers::e($p['title']) ?>" loading="lazy" decoding="async"
             class="w-full h-full object-cover hover:scale-105 transition-transform duration-300">
         </a>
         <?php else: ?>

@@ -228,7 +228,7 @@ $_staticBanner = Settings::get('content_home_banner', '');
 <!-- STATIC BANNER IMAGE -->
 <?php if ($_staticBanner): ?>
 <section class="overflow-hidden">
-  <img src="<?= Helpers::e($_staticBanner) ?>" alt="" class="w-full h-auto block">
+  <img src="<?= Helpers::e($_staticBanner) ?>" alt="" loading="lazy" decoding="async" class="w-full h-auto block">
 </section>
 <?php endif; ?>
 
@@ -241,7 +241,7 @@ $_staticBanner = Settings::get('content_home_banner', '');
       <!-- Left: image fills full section height -->
       <div class="w-full min-h-[420px] lg:min-h-0 rounded-3xl overflow-hidden bg-gradient-to-br from-primary-50 to-indigo-100 flex-shrink-0 shadow-xl">
         <?php if ($_featImg): ?>
-          <img src="<?= Helpers::e($_featImg) ?>" alt="Features" class="w-full h-full object-cover">
+          <img src="<?= Helpers::e($_featImg) ?>" alt="Features" loading="lazy" decoding="async" class="w-full h-full object-cover">
         <?php else: ?>
           <!-- Placeholder illustration -->
           <div class="w-full h-full flex flex-col items-center justify-center gap-6 p-10">
@@ -496,7 +496,7 @@ $_staticBanner = Settings::get('content_home_banner', '');
       <a href="/blog/<?= Helpers::e($bp['slug']) ?>" class="group bg-white border border-gray-100 rounded-2xl overflow-hidden hover:border-primary-200 hover:shadow-md transition-all flex flex-col">
         <?php if ($bp['featured_image']): ?>
         <div class="overflow-hidden bg-gray-100" style="aspect-ratio:16/9;">
-          <img src="<?= Helpers::e($bp['featured_image']) ?>" alt="<?= Helpers::e($bp['title']) ?>" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+          <img src="<?= Helpers::e($bp['featured_image']) ?>" alt="<?= Helpers::e($bp['title']) ?>" loading="lazy" decoding="async" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
         </div>
         <?php else: ?>
         <div class="bg-gradient-to-br from-primary-50 to-indigo-100 flex items-center justify-center" style="aspect-ratio:16/9;">

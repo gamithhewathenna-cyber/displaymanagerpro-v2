@@ -51,7 +51,7 @@ $_img2 = Settings::get('content_industries_image2','');
       </div>
       <div class="rounded-2xl overflow-hidden" style="aspect-ratio:4/3;">
         <?php if ($_img1): ?>
-          <img src="<?= Helpers::e($_img1) ?>" alt="Multi-location management" class="w-full h-full object-cover">
+          <img src="<?= Helpers::e($_img1) ?>" alt="Multi-location management" loading="lazy" decoding="async" class="w-full h-full object-cover">
         <?php else: ?>
           <div class="w-full h-full bg-gradient-to-br from-primary-50 to-indigo-100 flex items-center justify-center">
             <div class="text-center p-8">
@@ -72,7 +72,7 @@ $_img2 = Settings::get('content_industries_image2','');
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-14 items-center">
       <div class="rounded-2xl overflow-hidden order-2 lg:order-1" style="aspect-ratio:4/3;">
         <?php if ($_img2): ?>
-          <img src="<?= Helpers::e($_img2) ?>" alt="Increase sales with digital displays" class="w-full h-full object-cover">
+          <img src="<?= Helpers::e($_img2) ?>" alt="Increase sales with digital displays" loading="lazy" decoding="async" class="w-full h-full object-cover">
         <?php else: ?>
           <div class="w-full h-full bg-gradient-to-br from-indigo-50 to-violet-100 flex items-center justify-center">
             <div class="text-center p-8">

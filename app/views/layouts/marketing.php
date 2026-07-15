@@ -115,7 +115,21 @@
   .float { animation: float 4s ease-in-out infinite; }
   #mobile-menu { transition: max-height 0.3s ease, opacity 0.3s ease; max-height: 0; opacity: 0; overflow: hidden; }
   #mobile-menu.open { max-height: 400px; opacity: 1; }
+
+  /* Scroll-reveal for page sections */
+  .reveal { opacity: 0; transform: translateY(24px); transition: opacity .6s ease, transform .6s ease; }
+  .reveal.is-visible { opacity: 1; transform: translateY(0); }
+
+  /* Fade lazy-loaded images in once they've actually loaded, instead of popping in */
+  img[loading="lazy"] { opacity: 0; transition: opacity .5s ease; }
+  img[loading="lazy"].img-loaded { opacity: 1; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { opacity: 1; transform: none; transition: none; }
+    img[loading="lazy"] { opacity: 1; transition: none; }
+  }
 </style>
+<noscript><style>.reveal, img[loading="lazy"] { opacity: 1 !important; transform: none !important; }</style></noscript>
 </head>
 <body class="bg-white text-gray-900">
 
@@ -401,6 +415,44 @@
       line1.style.transform = open ? 'translateY(8px) rotate(45deg)' : '';
       line3.style.transform = open ? 'translateY(-8px) rotate(-45deg)' : '';
       document.getElementById('ham-line-2').style.opacity = open ? '0' : '1';
+    });
+  })();
+
+  // Reveal page sections as they scroll into view (skip the first — usually the hero, shown immediately)
+  (function() {
+    var sections = Array.prototype.slice.call(document.querySelectorAll('main > section')).slice(1);
+    if (!sections.length) return;
+
+    if (!('IntersectionObserver' in window)) {
+      sections.forEach(function(el) { el.classList.add('reveal', 'is-visible'); });
+      return;
+    }
+
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+    sections.forEach(function(el) {
+      el.classList.add('reveal');
+      observer.observe(el);
+    });
+  })();
+
+  // Fade lazy-loaded images in once they've actually finished loading
+  (function() {
+    var imgs = document.querySelectorAll('img[loading="lazy"]');
+    imgs.forEach(function(img) {
+      if (img.complete && img.naturalWidth > 0) {
+        img.classList.add('img-loaded');
+      } else {
+        img.addEventListener('load', function() { img.classList.add('img-loaded'); });
+        img.addEventListener('error', function() { img.classList.add('img-loaded'); });
+      }
     });
   })();
 </script>
