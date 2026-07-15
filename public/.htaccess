@@ -2,9 +2,8 @@ Options -Indexes
 RewriteEngine On
 RewriteBase /
 
-# Canonicalize www -> non-www (avoids duplicate-content across hostnames)
-RewriteCond %{HTTP_HOST} ^www\.displaymanagerpro\.com$ [NC]
-RewriteRule ^ https://displaymanagerpro.com%{REQUEST_URI} [L,R=301]
+# www -> non-www canonicalization now lives in the root .htaccess, before the
+# internal forward into public/ (see comment there for why it must run first).
 
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d

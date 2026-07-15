@@ -4,6 +4,13 @@ Options -Indexes
     RewriteEngine On
     RewriteBase /
 
+    # Canonicalize www -> non-www. Must run here, before the internal forward
+    # to public/ below — once that forward rewrites the URI, REQUEST_URI
+    # includes the /public prefix and a redirect rule further down the chain
+    # would send external requests to https://displaymanagerpro.com/public/...
+    RewriteCond %{HTTP_HOST} ^www\.displaymanagerpro\.com$ [NC]
+    RewriteRule ^ https://displaymanagerpro.com%{REQUEST_URI} [L,R=301]
+
     # Block direct web access to application source directories
     RewriteRule ^(app|config|storage|install|signagecloud_clean)(/.*)?$ - [F,L]
 
