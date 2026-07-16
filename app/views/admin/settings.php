@@ -180,6 +180,34 @@
     </form>
   </div>
 
+  <!-- PayHere -->
+  <div class="bg-white rounded-xl border border-gray-100 p-6" id="payhere">
+    <h2 class="font-semibold text-gray-900 mb-1">PayHere</h2>
+    <p class="text-sm text-gray-400 mb-4">Alternate checkout gateway, offered alongside PayPal. One-time payments only (no recurring auto-renewal yet). Get credentials from <a href="https://www.payhere.lk/merchant/sandbox" target="_blank" class="text-primary-600">PayHere's Sandbox dashboard</a>.</p>
+    <form method="POST" action="/admin/settings" class="space-y-4">
+      <input type="hidden" name="_csrf_token" value="<?= Csrf::token() ?>">
+      <input type="hidden" name="group" value="payhere">
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Mode</label>
+        <select name="payhere_mode" class="border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500">
+          <option value="sandbox" <?= (Settings::get('payhere_mode','sandbox'))==='sandbox'?'selected':'' ?>>Sandbox (Testing)</option>
+          <option value="live" <?= (Settings::get('payhere_mode','sandbox'))==='live'?'selected':'' ?>>Live (Production)</option>
+        </select>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="sm:col-span-2"><label class="block text-xs font-medium text-gray-500 mb-1">Merchant ID</label>
+          <input type="text" name="payhere_merchant_id" value="<?= Helpers::e(Settings::get('payhere_merchant_id','')) ?>" placeholder="1234567" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary-500"></div>
+        <div class="sm:col-span-2"><label class="block text-xs font-medium text-gray-500 mb-1">Merchant Secret</label>
+          <input type="password" name="payhere_merchant_secret" value="<?= Helpers::e(Settings::get('payhere_merchant_secret','')) ?>" placeholder="•••••••••••••••" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary-500"></div>
+      </div>
+      <div class="bg-blue-50 border border-blue-200 rounded-xl p-3 text-xs text-blue-700 space-y-1 overflow-x-auto">
+        <div>Notify URL: <code class="font-mono font-bold break-all"><?= Helpers::baseUrl('billing/payhere/notify') ?></code></div>
+        <div>Return URL: <code class="font-mono font-bold break-all"><?= Helpers::baseUrl('billing/payhere/return') ?></code></div>
+      </div>
+      <button type="submit" class="bg-primary-500 hover:bg-primary-600 text-white font-semibold px-5 py-2.5 rounded-xl text-sm transition-colors">Save PayHere</button>
+    </form>
+  </div>
+
   <!-- SMTP -->
   <div class="bg-white rounded-xl border border-gray-100 p-6" id="mail">
     <h2 class="font-semibold text-gray-900 mb-4">Email (SMTP)</h2>

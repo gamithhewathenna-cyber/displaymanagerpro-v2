@@ -315,6 +315,67 @@ class PayPalService
 }
 
 /**
+ * PayHere hosted-checkout gateway — one-time payments only (no recurring/preapproval API).
+ * Separate from PayPal; used as an alternate checkout option.
+ */
+class PayHereService
+{
+    private string $merchantId;
+    private string $merchantSecret;
+    private string $mode;
+
+    public function __construct()
+    {
+        $this->merchantId     = Settings::get('payhere_merchant_id', '');
+        $this->merchantSecret = Settings::get('payhere_merchant_secret', '');
+        $this->mode           = Settings::get('payhere_mode', 'sandbox');
+    }
+
+    public function isConfigured(): bool
+    {
+        return $this->merchantId !== '' && $this->merchantSecret !== '';
+    }
+
+    public function merchantId(): string
+    {
+        return $this->merchantId;
+    }
+
+    public function checkoutUrl(): string
+    {
+        return $this->mode === 'live'
+            ? 'https://www.payhere.lk/pay/checkout'
+            : 'https://sandbox.payhere.lk/pay/checkout';
+    }
+
+    // PayHere checkout hash: MD5(merchant_id + order_id + amount + currency + MD5(merchant_secret)), uppercased
+    public function hash(string $orderId, string $amountFormatted, string $currency): string
+    {
+        $secretHash = strtoupper(md5($this->merchantSecret));
+        return strtoupper(md5($this->merchantId . $orderId . $amountFormatted . $currency . $secretHash));
+    }
+
+    // Verifies the server-to-server notify_url POST using the same hash formula plus status_code
+    public function verifyNotify(array $post): bool
+    {
+        if (!$this->isConfigured()) return false;
+        if (($post['merchant_id'] ?? '') !== $this->merchantId) return false;
+
+        $secretHash = strtoupper(md5($this->merchantSecret));
+        $localSig = strtoupper(md5(
+            $this->merchantId .
+            ($post['order_id'] ?? '') .
+            ($post['payhere_amount'] ?? '') .
+            ($post['payhere_currency'] ?? '') .
+            ($post['status_code'] ?? '') .
+            $secretHash
+        ));
+
+        return hash_equals($localSig, strtoupper($post['md5sig'] ?? ''));
+    }
+}
+
+/**
  * Lightweight SMTP client — no external dependencies required.
  * Supports SSL (port 465) and STARTTLS (port 587).
  */

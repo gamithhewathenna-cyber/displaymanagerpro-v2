@@ -128,7 +128,9 @@ $trialDaysLeft= Subscription::trialDaysLeft($sub);
             <?= $isCurrent ? 'border-primary-400 bg-primary-50' : 'border-gray-100 hover:border-primary-200' ?>"
             data-plan-id="<?= $plan['id'] ?>"
             data-has-monthly="<?= $plan['stripe_price_id_monthly'] ? '1' : '0' ?>"
-            data-has-annual="<?= $plan['stripe_price_id_annual'] ? '1' : '0' ?>">
+            data-has-annual="<?= $plan['stripe_price_id_annual'] ? '1' : '0' ?>"
+            data-price-monthly="<?= (float)$plan['price_monthly'] ?>"
+            data-price-annual="<?= (float)$plan['price_annual'] ?>">
 
             <!-- Radio dot -->
             <div class="w-5 h-5 rounded-full border-2 flex-shrink-0 flex items-center justify-center transition-all
@@ -217,6 +219,15 @@ $trialDaysLeft= Subscription::trialDaysLeft($sub);
           <span id="continue-btn-label">Subscribe with PayPal</span>
         </button>
         <p id="continue-hint" class="text-xs text-center text-gray-400 mt-2">Select a plan above to continue.</p>
+
+        <?php if ($payhereEnabled): ?>
+        <button type="submit" id="payhere-btn" disabled formaction="/billing/payhere/checkout"
+          class="w-full flex items-center justify-center gap-2 bg-gray-900 hover:bg-black text-white font-semibold py-3 rounded-xl text-sm transition-colors mt-2
+                 disabled:opacity-40 disabled:cursor-not-allowed">
+          <span id="payhere-btn-label">Pay with PayHere</span>
+        </button>
+        <p id="payhere-hint" class="text-xs text-center text-gray-400 mt-2">One-time payment — does not auto-renew.</p>
+        <?php endif; ?>
       </form>
     </div>
     <?php endif; ?>
@@ -316,6 +327,9 @@ $trialDaysLeft= Subscription::trialDaysLeft($sub);
     };
 
     // ── Evaluate whether the selected card+cycle has PayPal configured ──
+    const payhereBtn  = document.getElementById('payhere-btn');
+    const payhereHint = document.getElementById('payhere-hint');
+
     function evaluateCard(card) {
       const hasPaypal = currentCycle === 'annual'
         ? card.dataset.hasAnnual === '1'
@@ -329,6 +343,17 @@ $trialDaysLeft= Subscription::trialDaysLeft($sub);
         btn.disabled = true;
         const which = currentCycle === 'annual' ? 'Annual' : 'Monthly';
         hint.textContent = which + ' PayPal Plan ID not configured for this plan. Contact admin.';
+      }
+
+      if (payhereBtn) {
+        const price = parseFloat(currentCycle === 'annual' ? card.dataset.priceAnnual : card.dataset.priceMonthly) || 0;
+        if (price > 0) {
+          payhereBtn.disabled = false;
+          payhereHint.textContent = 'One-time payment via PayHere — does not auto-renew.';
+        } else {
+          payhereBtn.disabled = true;
+          payhereHint.textContent = 'No price set for this plan/cycle.';
+        }
       }
     }
 

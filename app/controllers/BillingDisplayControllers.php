@@ -13,11 +13,12 @@ class BillingController extends BaseController
         $payments = Payment::forUser($user['id']);
 
         $this->view('billing/index', [
-            'title'    => 'Billing',
-            'user'     => User::find($user['id']),
-            'sub'      => $sub,
-            'plans'    => $plans,
-            'payments' => $payments,
+            'title'          => 'Billing',
+            'user'           => User::find($user['id']),
+            'sub'            => $sub,
+            'plans'          => $plans,
+            'payments'       => $payments,
+            'payhereEnabled' => (new PayHereService())->isConfigured(),
         ]);
     }
 
@@ -160,6 +161,159 @@ class BillingController extends BaseController
         Session::forget('paypal_pending');
         Session::flash('error', 'PayPal subscription was cancelled. You can try again any time.');
         $this->redirect('/billing');
+    }
+
+    // ── PayHere (one-time checkout, separate from PayPal subscriptions) ────
+
+    public function payhereCheckout(): void
+    {
+        $this->requireAuth();
+        $this->validateCsrf();
+        $user   = $this->currentUser();
+        $planId = (int)($_POST['plan_id'] ?? 0);
+        $cycle  = ($_POST['billing_cycle'] ?? 'monthly') === 'annual' ? 'annual' : 'monthly';
+        $plan   = Plan::find($planId);
+
+        if (!$plan || !$plan['is_active']) {
+            Session::flash('error', 'Plan not found.');
+            $this->redirect('/billing');
+        }
+
+        $amount = $cycle === 'annual' ? (float)$plan['price_annual'] : (float)$plan['price_monthly'];
+        if ($amount <= 0) {
+            Session::flash('error', 'This plan has no price configured.');
+            $this->redirect('/billing');
+        }
+
+        $payhere = new PayHereService();
+        if (!$payhere->isConfigured()) {
+            Session::flash('error', 'PayHere is not configured yet. Please contact support.');
+            $this->redirect('/billing');
+        }
+
+        // order_id encodes user/plan/cycle directly — the notify_url call is server-to-server
+        // from PayHere's servers, so it never carries our session cookie and can't rely on
+        // Session::get() to recover this context. Cycle is 'M'/'A' to keep the format simple.
+        $cycleCode = $cycle === 'annual' ? 'A' : 'M';
+        $orderId   = 'PH-' . $user['id'] . '-' . $planId . '-' . $cycleCode . '-' . time();
+        $currency  = 'USD';
+        $amountFormatted = number_format($amount, 2, '.', '');
+
+        $fullUser  = User::find($user['id']);
+        $nameParts = explode(' ', trim($fullUser['name']), 2);
+
+        $this->view('billing/payhere-redirect', [
+            'title'       => 'Redirecting to PayHere…',
+            'checkoutUrl' => $payhere->checkoutUrl(),
+            'merchantId'  => $payhere->merchantId(),
+            'orderId'     => $orderId,
+            'itemsName'   => $plan['name'] . ' Plan (' . ucfirst($cycle) . ')',
+            'amount'      => $amountFormatted,
+            'currency'    => $currency,
+            'hash'        => $payhere->hash($orderId, $amountFormatted, $currency),
+            'firstName'   => $nameParts[0] !== '' ? $nameParts[0] : 'Customer',
+            'lastName'    => $nameParts[1] ?? '',
+            'email'       => $fullUser['email'],
+            'returnUrl'   => Helpers::baseUrl('billing/payhere/return'),
+            'cancelUrl'   => Helpers::baseUrl('billing/payhere/cancel'),
+            'notifyUrl'   => Helpers::baseUrl('billing/payhere/notify'),
+        ], null);
+    }
+
+    public function payhereReturn(): void
+    {
+        $this->requireAuth();
+        // The notify_url webhook (server-to-server) does the actual activation — this page
+        // is just the user-facing landing screen after they finish on PayHere's hosted page.
+        Session::flash('success', 'Payment received! It may take a few seconds to reflect on your account.');
+        $this->redirect('/billing');
+    }
+
+    public function payhereCancel(): void
+    {
+        $this->requireAuth();
+        Session::flash('error', 'PayHere checkout was cancelled. You can try again any time.');
+        $this->redirect('/billing');
+    }
+
+    public function payhereNotify(): void
+    {
+        $payhere = new PayHereService();
+
+        if (!$payhere->verifyNotify($_POST)) {
+            error_log('PayHere notify: signature verification failed for order ' . ($_POST['order_id'] ?? ''));
+            http_response_code(400);
+            return;
+        }
+
+        $statusCode = (string)($_POST['status_code'] ?? '');
+        $orderId    = $_POST['order_id'] ?? '';
+        if ($statusCode !== '2' || !$orderId) {
+            // 0=pending, -1=cancelled, -2=failed, -3=chargedback — nothing to activate
+            http_response_code(200);
+            return;
+        }
+
+        // order_id format: PH-{userId}-{planId}-{cycleCode}-{timestamp}
+        if (!preg_match('/^PH-(\d+)-(\d+)-([MA])-\d+$/', $orderId, $m)) {
+            error_log("PayHere notify: unrecognised order_id format: $orderId");
+            http_response_code(200);
+            return;
+        }
+        $userId = (int)$m[1];
+        $planId = (int)$m[2];
+        $cycle  = $m[3] === 'A' ? 'annual' : 'monthly';
+
+        $amount    = (float)($_POST['payhere_amount'] ?? 0);
+        $currency  = $_POST['payhere_currency'] ?? 'USD';
+        $paymentId = $_POST['payment_id'] ?? '';
+
+        // Avoid double-processing if PayHere retries the notify call
+        $existing = Database::fetchOne('SELECT id FROM payments WHERE stripe_payment_intent_id = ?', [$paymentId]);
+        if ($existing) {
+            http_response_code(200);
+            return;
+        }
+
+        if (!Plan::find($planId)) {
+            error_log("PayHere notify: plan $planId from order $orderId no longer exists");
+            http_response_code(200);
+            return;
+        }
+
+        $periodEnd = $cycle === 'annual' ? date('Y-m-d H:i:s', strtotime('+1 year')) : date('Y-m-d H:i:s', strtotime('+1 month'));
+
+        $data = [
+            'plan_id'              => $planId,
+            'billing_cycle'        => $cycle,
+            'status'               => 'active',
+            'current_period_start' => date('Y-m-d H:i:s'),
+            'current_period_end'   => $periodEnd,
+            // stripe_subscription_id intentionally left untouched/null — this is a one-time
+            // charge, not a gateway-managed recurring subscription, so the "Cancel subscription"
+            // button (which calls the PayPal API) must not appear for it.
+        ];
+
+        $existingSub = Subscription::forUser($userId);
+        if ($existingSub) {
+            Subscription::update($existingSub['id'], $data);
+        } else {
+            Subscription::create(array_merge($data, ['user_id' => $userId]));
+        }
+
+        Payment::create([
+            'user_id'                   => $userId,
+            'stripe_payment_intent_id'  => $paymentId,
+            'amount'                    => $amount,
+            'currency'                  => $currency,
+            'status'                    => 'succeeded',
+            'description'               => 'PayHere payment — order ' . $orderId,
+            'paid_at'                   => date('Y-m-d H:i:s'),
+        ]);
+
+        ActivityLog::log('subscription_activated', "PayHere payment $paymentId activated (order $orderId)", $userId);
+
+        http_response_code(200);
     }
 
     public function cancelSubscription(): void

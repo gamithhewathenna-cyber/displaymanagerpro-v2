@@ -41,6 +41,7 @@ $_skipMaint = in_array($uriPath, ['/login', '/logout'])
     || strpos($uriPath, '/admin')   === 0
     || strpos($uriPath, '/display') === 0
     || $uriPath === '/billing/paypal/webhook'
+    || $uriPath === '/billing/payhere/notify'
     || $isInstallRoute;
 
 if (!$_skipMaint && file_exists($lockFile)) {
@@ -129,6 +130,10 @@ $router->post('/billing/subscribe',         'BillingController', 'subscribe');
 $router->get('/billing/paypal/return',      'BillingController', 'paypalReturn');
 $router->get('/billing/paypal/cancel',      'BillingController', 'paypalCancel');
 $router->post('/billing/paypal/webhook',    'BillingController', 'paypalWebhook');
+$router->post('/billing/payhere/checkout',  'BillingController', 'payhereCheckout');
+$router->get('/billing/payhere/return',     'BillingController', 'payhereReturn');
+$router->get('/billing/payhere/cancel',     'BillingController', 'payhereCancel');
+$router->post('/billing/payhere/notify',    'BillingController', 'payhereNotify');
 $router->post('/billing/cancel',            'BillingController', 'cancelSubscription');
 
 $router->get('/support',             'SupportController', 'index');
