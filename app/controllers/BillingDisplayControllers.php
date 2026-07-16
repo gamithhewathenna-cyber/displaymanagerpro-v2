@@ -11,6 +11,11 @@ class BillingController extends BaseController
         $sub      = Subscription::forUser($user['id']);
         $plans    = Plan::active();
         $payments = Payment::forUser($user['id']);
+        $payhere  = new PayHereService();
+
+        // While PayHere is in sandbox mode, only admins see/use it — regular customers
+        // shouldn't be able to "pay" through a test gateway. Live mode is visible to everyone.
+        $payhereEnabled = $payhere->isConfigured() && (!$payhere->isSandbox() || $user['role'] === 'admin');
 
         $this->view('billing/index', [
             'title'          => 'Billing',
@@ -18,7 +23,7 @@ class BillingController extends BaseController
             'sub'            => $sub,
             'plans'          => $plans,
             'payments'       => $payments,
-            'payhereEnabled' => (new PayHereService())->isConfigured(),
+            'payhereEnabled' => $payhereEnabled,
         ]);
     }
 
@@ -188,6 +193,12 @@ class BillingController extends BaseController
         $payhere = new PayHereService();
         if (!$payhere->isConfigured()) {
             Session::flash('error', 'PayHere is not configured yet. Please contact support.');
+            $this->redirect('/billing');
+        }
+        if ($payhere->isSandbox() && $user['role'] !== 'admin') {
+            // Mirrors the visibility gate in index() — sandbox mode is admin-only, even via
+            // a direct POST that bypasses the hidden button in the UI.
+            Session::flash('error', 'PayHere is in sandbox/testing mode and not yet available.');
             $this->redirect('/billing');
         }
 

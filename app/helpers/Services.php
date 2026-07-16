@@ -341,6 +341,11 @@ class PayHereService
         return $this->merchantId;
     }
 
+    public function isSandbox(): bool
+    {
+        return $this->mode === 'sandbox';
+    }
+
     public function checkoutUrl(): string
     {
         return $this->mode === 'live'
