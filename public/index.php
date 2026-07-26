@@ -1,6 +1,6 @@
 <?php
 /**
- * SignageCloud – Front Controller
+ * DisplayNex – Front Controller
  */
 require_once __DIR__ . '/../config/app.php';
 
@@ -51,7 +51,7 @@ if (!$_skipMaint && file_exists($lockFile)) {
             $isAdmin     = isset($userSession['role']) && $userSession['role'] === 'admin';
             if (!$isAdmin) {
                 http_response_code(503);
-                $siteName           = Settings::get('company_name', 'SignageCloud');
+                $siteName           = Settings::get('company_name', 'DisplayNex');
                 $maintenanceMessage = Settings::get('maintenance_message', 'We are currently performing scheduled maintenance. We\'ll be back shortly.');
                 require VIEWS_PATH . '/maintenance.php';
                 exit;

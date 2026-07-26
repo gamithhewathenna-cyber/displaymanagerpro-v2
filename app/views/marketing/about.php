@@ -7,13 +7,13 @@
 <!-- ABOUT HERO -->
 <section class="hero-gradient text-white py-24 px-4">
   <div class="max-w-4xl mx-auto text-center">
-    <span class="inline-block text-xs font-semibold text-indigo-300 bg-white/10 px-3 py-1 rounded-full mb-5">About Display Manager Pro</span>
+    <span class="inline-block text-xs font-semibold text-indigo-300 bg-white/10 px-3 py-1 rounded-full mb-5">About DisplayNex</span>
     <h1 class="text-4xl sm:text-6xl font-extrabold leading-tight mb-6">
       Manage Every Screen<br>
       <span style="background:linear-gradient(90deg,#a78bfa,#60a5fa);-webkit-background-clip:text;-webkit-text-fill-color:transparent">From Anywhere</span>
     </h1>
     <p class="text-lg sm:text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
-      <?= $c('hero_subtitle','At Display Manager Pro, we help businesses update TV screens, digital menu boards, promotions, announcements, and in-store displays from one simple cloud-based dashboard.') ?>
+      <?= $c('hero_subtitle','At DisplayNex, we help businesses update TV screens, digital menu boards, promotions, announcements, and in-store displays from one simple cloud-based dashboard.') ?>
     </p>
   </div>
 </section>
@@ -123,7 +123,7 @@
   <div class="max-w-6xl mx-auto">
     <div class="text-center mb-14">
       <span class="inline-block text-xs font-semibold text-primary-600 bg-primary-50 px-3 py-1 rounded-full mb-4"><?= $c('s3_badge','Why Choose Us') ?></span>
-      <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-4"><?= $c('s3_title','Why businesses choose Display Manager Pro') ?></h2>
+      <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-4"><?= $c('s3_title','Why businesses choose DisplayNex') ?></h2>
       <p class="text-gray-500 max-w-2xl mx-auto"><?= $c('s3_subtitle') ?></p>
     </div>
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">

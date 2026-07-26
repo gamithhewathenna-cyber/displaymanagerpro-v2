@@ -30,7 +30,7 @@ $currency = match($city['country']) {
 {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
-  "name": "DisplayManagerPro",
+  "name": "DisplayNex",
   "applicationCategory": "BusinessApplication",
   "operatingSystem": "Web",
   "description": "Digital signage software for <?= $cityName ?>, <?= $countryName ?>. Manage TV screens, digital menu boards and promotional displays from a secure cloud dashboard.",
@@ -59,7 +59,7 @@ $currency = match($city['country']) {
       <span style="background:linear-gradient(90deg,#a78bfa,#60a5fa);-webkit-background-clip:text;-webkit-text-fill-color:transparent">for <?= $cityName ?> Businesses</span>
     </h1>
     <p class="text-lg sm:text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed mb-8">
-      DisplayManagerPro helps <?= $cityName ?> businesses manage TV screens, digital menu boards,
+      DisplayNex helps <?= $cityName ?> businesses manage TV screens, digital menu boards,
       promotional displays, and customer communications from one simple cloud dashboard.
       Update your content from anywhere — no USB drives, no on-site visits.
     </p>
@@ -77,7 +77,7 @@ $currency = match($city['country']) {
     <div class="text-center mb-14">
       <span class="inline-block text-xs font-semibold text-primary-600 bg-primary-50 px-3 py-1 rounded-full mb-4">Built for <?= $cityName ?></span>
       <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-4">
-        Why <?= $cityName ?> businesses choose DisplayManagerPro
+        Why <?= $cityName ?> businesses choose DisplayNex
       </h2>
       <p class="text-gray-500 max-w-2xl mx-auto">
         From small independent cafés to multi-location franchises across <?= $countryName ?>,
@@ -116,7 +116,7 @@ $currency = match($city['country']) {
           Trusted by <?= $cityName ?> businesses across every sector
         </h2>
         <p class="text-gray-500 leading-relaxed mb-6">
-          DisplayManagerPro is used by <?= $industryPhrase ?> in <?= $cityName ?>.
+          DisplayNex is used by <?= $industryPhrase ?> in <?= $cityName ?>.
           Whether you operate a single location or manage screens across <?= $countryName ?>,
           our platform scales with your business.
         </p>

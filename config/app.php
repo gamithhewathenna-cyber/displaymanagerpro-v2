@@ -1,9 +1,9 @@
 <?php
 /**
- * SignageCloud – Application Configuration
+ * DisplayNex – Application Configuration
  */
 
-define('APP_NAME',    'SignageCloud');
+define('APP_NAME',    'DisplayNex');
 define('APP_VERSION', '1.0.0');
 define('ROOT_PATH',   dirname(__DIR__));
 define('APP_PATH',    ROOT_PATH . '/app');
@@ -28,7 +28,7 @@ if (file_exists($envFile)) {
 // ── Database ──────────────────────────────────────────────────────────────────
 define('DB_HOST',    getenv('DB_HOST') ?: 'localhost');
 define('DB_PORT',    getenv('DB_PORT') ?: '3306');
-define('DB_NAME',    getenv('DB_NAME') ?: 'signagecloud');
+define('DB_NAME',    getenv('DB_NAME') ?: 'displaynex');
 define('DB_USER',    getenv('DB_USER') ?: 'root');
 define('DB_PASS',    getenv('DB_PASS') ?: '');
 define('DB_CHARSET', 'utf8mb4');

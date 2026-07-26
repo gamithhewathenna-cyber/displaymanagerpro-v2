@@ -23,7 +23,7 @@ $_ctaButton  = htmlspecialchars(ContentController::get('home', 'cta_button',  'G
 <!-- EXPLORE -->
 <section class="bg-gray-900 py-10 px-4">
   <div class="max-w-[1200px] mx-auto">
-    <p class="text-center text-xs font-semibold text-white/40 uppercase tracking-widest mb-6">Explore DisplayManagerPro</p>
+    <p class="text-center text-xs font-semibold text-white/40 uppercase tracking-widest mb-6">Explore DisplayNex</p>
     <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
 
       <a href="/features" class="border border-white/10 rounded-2xl p-6 group block transition-all hover:bg-white/5 flex flex-col items-center justify-center gap-3 min-h-[140px] text-center">

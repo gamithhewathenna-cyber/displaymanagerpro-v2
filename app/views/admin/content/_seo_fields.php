@@ -10,7 +10,7 @@
         <label class="block text-xs font-medium text-gray-700 mb-1">SEO Title <span class="text-gray-400 font-normal">(overrides browser tab title in search results)</span></label>
         <input type="text" name="seo_title" maxlength="70"
           value="<?= htmlspecialchars($content['seo_title'] ?? '') ?>"
-          placeholder="e.g. Digital Signage Software for Restaurants | <?= Helpers::e(Settings::get('company_name', 'SignageCloud')) ?>"
+          placeholder="e.g. Digital Signage Software for Restaurants | <?= Helpers::e(Settings::get('company_name', 'DisplayNex')) ?>"
           class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500">
         <p class="text-xs text-gray-400 mt-1">Recommended: 50–70 characters</p>
       </div>

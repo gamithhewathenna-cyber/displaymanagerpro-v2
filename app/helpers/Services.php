@@ -266,7 +266,7 @@ class PayPalService
         $data = $this->request('POST', '/v1/billing/subscriptions', [
             'plan_id'             => $paypalPlanId,
             'application_context' => [
-                'brand_name'          => Settings::get('company_name', 'SignageCloud'),
+                'brand_name'          => Settings::get('company_name', 'DisplayNex'),
                 'locale'              => 'en-US',
                 'shipping_preference' => 'NO_SHIPPING',
                 'user_action'         => 'SUBSCRIBE_NOW',

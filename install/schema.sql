@@ -1,4 +1,4 @@
--- SignageCloud Database Schema v1.0
+-- DisplayNex Database Schema v1.0
 -- Compatible with MySQL 8.0+
 
 SET FOREIGN_KEY_CHECKS = 0;
@@ -301,7 +301,7 @@ INSERT INTO `plans` (`name`, `slug`, `description`, `price_monthly`, `price_annu
 -- Seed: Default Settings
 -- -----------------------------------------------
 INSERT INTO `settings` (`key`, `value`, `group`) VALUES
-('company_name', 'SignageCloud', 'general'),
+('company_name', 'DisplayNex', 'general'),
 ('company_logo', '', 'general'),
 ('company_url', 'https://yourdomain.com', 'general'),
 ('app_env', 'production', 'general'),
@@ -316,7 +316,7 @@ INSERT INTO `settings` (`key`, `value`, `group`) VALUES
 ('smtp_user', '', 'mail'),
 ('smtp_pass', '', 'mail'),
 ('smtp_from_email', 'noreply@yourdomain.com', 'mail'),
-('smtp_from_name', 'SignageCloud', 'mail'),
+('smtp_from_name', 'DisplayNex', 'mail'),
 ('smtp_encryption', 'tls', 'mail'),
 ('storage_driver', 'local', 'storage'),
 ('s3_bucket', '', 'storage'),

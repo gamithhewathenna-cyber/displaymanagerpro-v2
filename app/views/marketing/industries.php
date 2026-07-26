@@ -12,7 +12,7 @@ $_img2 = Settings::get('content_industries_image2','');
       <?= $c('hero_title','Transform Any TV Into A Powerful Digital Sign') ?>
     </h1>
     <p class="text-lg sm:text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed mb-8">
-      <?= $c('hero_body','DisplayManagerPro is a cloud-based digital signage platform that helps businesses manage TV screens, digital menu boards, promotional displays, and customer communications from anywhere.') ?>
+      <?= $c('hero_body','DisplayNex is a cloud-based digital signage platform that helps businesses manage TV screens, digital menu boards, promotional displays, and customer communications from anywhere.') ?>
     </p>
     <div class="flex flex-wrap items-center justify-center gap-4">
       <a href="/register" class="inline-block bg-white text-primary-600 font-bold px-8 py-3 rounded-xl hover:bg-gray-50 transition-all shadow-lg text-sm">Start Free 14-Day Trial →</a>
@@ -31,7 +31,7 @@ $_img2 = Settings::get('content_industries_image2','');
           <?= $c('s1_title','Designed For Growing Multi-Location Businesses') ?>
         </h2>
         <p class="text-gray-500 leading-relaxed mb-4"><?= $c('s1_body1','Managing content across multiple locations can be challenging. Traditional printed signage is costly, time-consuming, and difficult to keep updated.') ?></p>
-        <p class="text-gray-500 leading-relaxed mb-4"><?= $c('s1_body2','DisplayManagerPro solves this problem by allowing businesses to centrally manage all screens from a secure cloud platform.') ?></p>
+        <p class="text-gray-500 leading-relaxed mb-4"><?= $c('s1_body2','DisplayNex solves this problem by allowing businesses to centrally manage all screens from a secure cloud platform.') ?></p>
         <p class="text-gray-600 font-medium mb-4"><?= $c('s1_intro','Whether you have 1 screen or 100 screens, you can:') ?></p>
         <?php
           $_bullets1 = array_filter(array_map('trim', explode("\n", ContentController::get('industries','s1_bullets',''))));
@@ -47,7 +47,7 @@ $_img2 = Settings::get('content_industries_image2','');
           </li>
           <?php endforeach; ?>
         </ul>
-        <p class="text-gray-500 text-sm leading-relaxed"><?= $c('s1_footer','This makes DisplayManagerPro ideal for franchises, hospitality groups, retail chains, healthcare providers, fitness centres, and corporate organisations.') ?></p>
+        <p class="text-gray-500 text-sm leading-relaxed"><?= $c('s1_footer','This makes DisplayNex ideal for franchises, hospitality groups, retail chains, healthcare providers, fitness centres, and corporate organisations.') ?></p>
       </div>
       <div class="rounded-2xl overflow-hidden" style="aspect-ratio:4/3;">
         <?php if ($_img1): ?>
@@ -90,7 +90,7 @@ $_img2 = Settings::get('content_industries_image2','');
         </h2>
         <p class="text-gray-500 leading-relaxed mb-4"><?= $c('s2_body1','Studies consistently show that digital signage attracts more attention than static printed materials.') ?></p>
         <p class="text-gray-500 leading-relaxed mb-4"><?= $c('s2_body2','Customers naturally look at screens displaying menus, promotions, product information, and announcements. This creates more opportunities to influence purchasing decisions at the point of sale.') ?></p>
-        <p class="text-gray-600 font-medium mb-4"><?= $c('s2_intro','Businesses use DisplayManagerPro to:') ?></p>
+        <p class="text-gray-600 font-medium mb-4"><?= $c('s2_intro','Businesses use DisplayNex to:') ?></p>
         <?php
           $_bullets2 = array_filter(array_map('trim', explode("\n", ContentController::get('industries','s2_bullets',''))));
           if (empty($_bullets2)) $_bullets2 = ['Promote high-margin products','Advertise limited-time offers','Highlight new arrivals','Display seasonal campaigns','Cross-sell related products and services','Increase average transaction value'];
@@ -170,7 +170,7 @@ $_img2 = Settings::get('content_industries_image2','');
       <?php endforeach; ?>
     </div>
     <p class="text-center text-gray-500 max-w-2xl mx-auto">
-      <?= $c('s4_footer','No matter where your business operates, DisplayManagerPro provides a simple and reliable way to manage your digital displays from anywhere.') ?>
+      <?= $c('s4_footer','No matter where your business operates, DisplayNex provides a simple and reliable way to manage your digital displays from anywhere.') ?>
     </p>
   </div>
 </section>

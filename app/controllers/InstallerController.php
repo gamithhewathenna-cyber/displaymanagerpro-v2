@@ -17,7 +17,7 @@ class InstallerController extends BaseController
         if (file_exists($this->lockFile)) {
             $this->redirect('/login');
         }
-        $this->view('installer/index', ['title' => 'Install SignageCloud'], 'installer');
+        $this->view('installer/index', ['title' => 'Install DisplayNex'], 'installer');
     }
 
     public function step(string $step): void
@@ -158,7 +158,7 @@ class InstallerController extends BaseController
                 'smtp_user'       => Helpers::sanitize($_POST['smtp_user'] ?? ''),
                 'smtp_pass'       => $_POST['smtp_pass'] ?? '',
                 'smtp_from_email' => Helpers::sanitize($_POST['smtp_from_email'] ?? ''),
-                'smtp_from_name'  => Helpers::sanitize($_POST['smtp_from_name'] ?? 'SignageCloud'),
+                'smtp_from_name'  => Helpers::sanitize($_POST['smtp_from_name'] ?? 'DisplayNex'),
                 'smtp_encryption' => $encryption,
             ]);
 
@@ -190,7 +190,7 @@ class InstallerController extends BaseController
     {
         try {
             Settings::setMany([
-                'company_name' => Helpers::sanitize($_POST['company_name'] ?? 'SignageCloud'),
+                'company_name' => Helpers::sanitize($_POST['company_name'] ?? 'DisplayNex'),
                 'company_url'  => Helpers::sanitize($_POST['company_url'] ?? ''),
             ]);
 

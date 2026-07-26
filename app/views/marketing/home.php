@@ -458,7 +458,7 @@ $_staticBanner = Settings::get('content_home_banner', '');
     <div class="text-center mb-14">
       <p class="text-xs font-bold tracking-widest uppercase text-primary-600 mb-3">Customer Reviews</p>
       <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">Loved by hospitality businesses</h2>
-      <p class="text-gray-500 max-w-2xl mx-auto">Real results from real businesses using DisplayManagerPro every day.</p>
+      <p class="text-gray-500 max-w-2xl mx-auto">Real results from real businesses using DisplayNex every day.</p>
     </div>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       <?php for ($i = 1; $i <= 6; $i++): ?>

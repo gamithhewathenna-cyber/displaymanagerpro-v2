@@ -1,4 +1,4 @@
-# SignageCloud – Digital Signage SaaS Platform
+# DisplayNex – Digital Signage SaaS Platform
 
 Cloud-based digital signage management for restaurants, cafes, and retail. Manage all your TV screens remotely from one dashboard.
 
@@ -41,7 +41,7 @@ chmod 755 public/uploads/
 ## Directory Structure
 
 ```
-signagecloud/
+displaynex/
 ├── app/
 │   ├── controllers/     # All controllers
 │   ├── helpers/         # Core, Database, Helpers, Services, StorageService

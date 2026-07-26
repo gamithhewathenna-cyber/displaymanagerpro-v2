@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Install SignageCloud</title>
+<title>Install DisplayNex</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.tailwindcss.com"></script>
 <script>tailwind.config={theme:{extend:{fontFamily:{sans:['Poppins','sans-serif']},colors:{primary:{500:'#6366f1',600:'#4f46e5'}}}}}</script>
@@ -14,7 +14,7 @@
     <div class="w-14 h-14 bg-primary-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-primary-500/30">
       <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
     </div>
-    <h1 class="text-3xl font-bold text-gray-900">SignageCloud</h1>
+    <h1 class="text-3xl font-bold text-gray-900">DisplayNex</h1>
     <p class="text-gray-400 mt-1">Web-based installer · v<?= APP_VERSION ?></p>
   </div>
 
@@ -42,7 +42,7 @@
           <div class="col-span-2"><label class="block text-xs font-medium text-gray-500 mb-1">Host</label><input id="db_host" type="text" value="localhost" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"></div>
           <div><label class="block text-xs font-medium text-gray-500 mb-1">Port</label><input id="db_port" type="text" value="3306" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"></div>
         </div>
-        <div><label class="block text-xs font-medium text-gray-500 mb-1">Database Name</label><input id="db_name" type="text" placeholder="signagecloud" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"></div>
+        <div><label class="block text-xs font-medium text-gray-500 mb-1">Database Name</label><input id="db_name" type="text" placeholder="displaynex" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"></div>
         <div class="grid grid-cols-2 gap-3">
           <div><label class="block text-xs font-medium text-gray-500 mb-1">Username</label><input id="db_user" type="text" placeholder="root" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"></div>
           <div><label class="block text-xs font-medium text-gray-500 mb-1">Password</label><input id="db_pass" type="password" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"></div>
@@ -88,7 +88,7 @@
         </div>
         <div class="grid grid-cols-2 gap-3">
           <div><label class="block text-xs font-medium text-gray-500 mb-1">From Email</label><input id="smtp_from_email" type="email" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"></div>
-          <div><label class="block text-xs font-medium text-gray-500 mb-1">From Name</label><input id="smtp_from_name" type="text" value="SignageCloud" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"></div>
+          <div><label class="block text-xs font-medium text-gray-500 mb-1">From Name</label><input id="smtp_from_name" type="text" value="DisplayNex" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"></div>
         </div>
       </div>
       <div id="step4-msg" class="hidden mt-4 p-3 rounded-xl text-sm"></div>
@@ -119,7 +119,7 @@
       <h2 class="text-xl font-bold text-gray-900 mb-1">Finalise Installation</h2>
       <p class="text-gray-400 text-sm mb-6">Set your company name, then complete the installation.</p>
       <div class="space-y-4">
-        <div><label class="block text-xs font-medium text-gray-500 mb-1">Company Name</label><input id="company_name" type="text" value="SignageCloud" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"></div>
+        <div><label class="block text-xs font-medium text-gray-500 mb-1">Company Name</label><input id="company_name" type="text" value="DisplayNex" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"></div>
         <div><label class="block text-xs font-medium text-gray-500 mb-1">Site URL</label><input id="company_url" type="text" placeholder="https://yourdomain.com" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"></div>
       </div>
       <div id="step6-msg" class="hidden mt-4 p-3 rounded-xl text-sm"></div>

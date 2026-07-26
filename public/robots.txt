@@ -22,6 +22,6 @@ Disallow: /forgot-password
 Disallow: /reset-password/
 Disallow: /verify-email/
 
-Sitemap: https://displaymanagerpro.com/sitemap.xml
-Sitemap: https://displaymanagerpro.com/sitemap-blog.xml
-Sitemap: https://displaymanagerpro.com/sitemap-geo.xml
+Sitemap: https://displaynex.com/sitemap.xml
+Sitemap: https://displaynex.com/sitemap-blog.xml
+Sitemap: https://displaynex.com/sitemap-geo.xml
