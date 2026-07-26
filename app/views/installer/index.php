@@ -5,7 +5,7 @@
 <title>Install DisplayNex</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.tailwindcss.com"></script>
-<script>tailwind.config={theme:{extend:{fontFamily:{sans:['Poppins','sans-serif']},colors:{primary:{500:'#6366f1',600:'#4f46e5'}}}}}</script>
+<script>tailwind.config={theme:{extend:{fontFamily:{sans:['Poppins','sans-serif']},colors:{primary:{50:'#fdf2f8',100:'#fce7f3',200:'#fbcfe8',300:'#f9a8d4',400:'#f472b6',500:'#ec4899',600:'#db2777',700:'#be185d',800:'#9d174d',900:'#831843'}}}}}</script>
 <style>body{font-family:'Poppins',sans-serif;}</style>
 </head>
 <body class="bg-gray-50 min-h-screen flex items-center justify-center p-4">

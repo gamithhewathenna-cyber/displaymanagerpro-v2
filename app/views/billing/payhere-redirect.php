@@ -8,7 +8,7 @@
 <style>
   body { font-family: sans-serif; background: #f9fafb; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
   .box { text-align: center; color: #374151; }
-  .spinner { width: 36px; height: 36px; border: 3px solid #e5e7eb; border-top-color: #6366f1; border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 16px; }
+  .spinner { width: 36px; height: 36px; border: 3px solid #e5e7eb; border-top-color: #ec4899; border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 16px; }
   @keyframes spin { to { transform: rotate(360deg); } }
 </style>
 </head>

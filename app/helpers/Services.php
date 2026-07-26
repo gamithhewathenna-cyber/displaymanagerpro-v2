@@ -561,7 +561,7 @@ class Mailer
             "<p>Hi {$user['name']},</p>
             <p>Welcome to $company! Please verify your email address to get started.</p>
             <p style='text-align:center;margin:32px 0'>
-                <a href='$url' style='background:#6366f1;color:#fff;padding:14px 28px;border-radius:8px;text-decoration:none;font-weight:600;display:inline-block'>Verify Email Address</a>
+                <a href='$url' style='background:#ec4899;color:#fff;padding:14px 28px;border-radius:8px;text-decoration:none;font-weight:600;display:inline-block'>Verify Email Address</a>
             </p>
             <p style='color:#6b7280;font-size:14px'>If you didn't create an account, you can ignore this email. The link expires in 24 hours.</p>"
         );
@@ -577,7 +577,7 @@ class Mailer
             "<p>Hi {$user['name']},</p>
             <p>We received a request to reset your $company password.</p>
             <p style='text-align:center;margin:32px 0'>
-                <a href='$url' style='background:#6366f1;color:#fff;padding:14px 28px;border-radius:8px;text-decoration:none;font-weight:600;display:inline-block'>Reset Password</a>
+                <a href='$url' style='background:#ec4899;color:#fff;padding:14px 28px;border-radius:8px;text-decoration:none;font-weight:600;display:inline-block'>Reset Password</a>
             </p>
             <p style='color:#6b7280;font-size:14px'>This link expires in 1 hour. If you didn't request a reset, you can safely ignore this email.</p>"
         );
@@ -593,7 +593,7 @@ class Mailer
             "<p>Hi {$user['name']},</p>
             <p>Your account is ready. Your 14-day free trial has started — no credit card required yet.</p>
             <p style='text-align:center;margin:32px 0'>
-                <a href='$dashUrl' style='background:#6366f1;color:#fff;padding:14px 28px;border-radius:8px;text-decoration:none;font-weight:600;display:inline-block'>Go to Dashboard</a>
+                <a href='$dashUrl' style='background:#ec4899;color:#fff;padding:14px 28px;border-radius:8px;text-decoration:none;font-weight:600;display:inline-block'>Go to Dashboard</a>
             </p>
             <p>Questions? Reply to this email — we're happy to help.</p>"
         );
@@ -636,9 +636,9 @@ class Mailer
               </table>
             </div>
             <p style='text-align:center;margin:24px 0'>
-              <a href='$dashUrl' style='background:#6366f1;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:600;display:inline-block'>View Billing History</a>
+              <a href='$dashUrl' style='background:#ec4899;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:600;display:inline-block'>View Billing History</a>
             </p>
-            <p style='color:#6b7280;font-size:13px'>Questions about this payment? <a href='$contactUrl' style='color:#6366f1'>Contact support</a>.</p>"
+            <p style='color:#6b7280;font-size:13px'>Questions about this payment? <a href='$contactUrl' style='color:#ec4899'>Contact support</a>.</p>"
         );
 
         return self::send($user['email'], $user['name'], "Payment receipt – $planName – \$$amount $currency", $body);
@@ -661,7 +661,7 @@ class Mailer
                <div style='color:#4b5563;font-size:14px'>{$msgHtml}</div>
              </div>
              <p style='text-align:center;margin:24px 0'>
-               <a href='{$ticketUrl}' style='background:#6366f1;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:600;display:inline-block'>View Ticket</a>
+               <a href='{$ticketUrl}' style='background:#ec4899;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:600;display:inline-block'>View Ticket</a>
              </p>"
         );
         self::send($user['email'], $user['name'], "Support ticket received – #{$ticket['ticket_number']}", $userBody);
@@ -682,7 +682,7 @@ class Mailer
                    <div style='color:#4b5563;font-size:14px'>{$msgHtml}</div>
                  </div>
                  <p style='text-align:center;margin:24px 0'>
-                   <a href='" . Helpers::baseUrl("admin/tickets/{$ticket['id']}") . "' style='background:#6366f1;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:600;display:inline-block'>Reply in Admin Panel</a>
+                   <a href='" . Helpers::baseUrl("admin/tickets/{$ticket['id']}") . "' style='background:#ec4899;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:600;display:inline-block'>Reply in Admin Panel</a>
                  </p>"
             );
             self::send($admin['email'], $admin['name'], "New ticket #{$ticket['ticket_number']}: {$subject}", $adminBody);
@@ -708,11 +708,11 @@ class Mailer
                 "<p>Hi {$customer['name']},</p>
                  <p>The support team has replied to your ticket.</p>
                  <div style='background:#eef2ff;border:1px solid #c7d2fe;border-radius:8px;padding:16px;margin:24px 0'>
-                   <div style='font-size:12px;color:#6366f1;font-weight:600;margin-bottom:8px'>SUPPORT TEAM REPLY</div>
-                   <div style='color:#1e1b4b;font-size:14px'>{$msgHtml}</div>
+                   <div style='font-size:12px;color:#ec4899;font-weight:600;margin-bottom:8px'>SUPPORT TEAM REPLY</div>
+                   <div style='color:#831843;font-size:14px'>{$msgHtml}</div>
                  </div>
                  <p style='text-align:center;margin:24px 0'>
-                   <a href='{$ticketUrl}' style='background:#6366f1;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:600;display:inline-block'>View &amp; Reply</a>
+                   <a href='{$ticketUrl}' style='background:#ec4899;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:600;display:inline-block'>View &amp; Reply</a>
                  </p>"
             );
             return self::send($customer['email'], $customer['name'], "Reply on ticket #{$ticket['ticket_number']}: {$subject}", $body);
@@ -736,7 +736,7 @@ class Mailer
                    <div style='color:#4b5563;font-size:14px'>{$msgHtml}</div>
                  </div>
                  <p style='text-align:center;margin:24px 0'>
-                   <a href='" . Helpers::baseUrl("admin/tickets/{$ticket['id']}") . "' style='background:#6366f1;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:600;display:inline-block'>Reply in Admin Panel</a>
+                   <a href='" . Helpers::baseUrl("admin/tickets/{$ticket['id']}") . "' style='background:#ec4899;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:600;display:inline-block'>Reply in Admin Panel</a>
                  </p>"
             );
             return self::send($admin['email'], $admin['name'], "Customer reply on ticket #{$ticket['ticket_number']}: {$subject}", $body);
@@ -751,7 +751,7 @@ class Mailer
             ? '<div style="background:#ffffff;padding:20px 32px;border-bottom:1px solid #e5e7eb;text-align:left">
                  <img src="' . Helpers::baseUrl(ltrim($logoPath, '/')) . '" alt="' . htmlspecialchars($company) . '" style="max-height:44px;max-width:180px;object-fit:contain;display:block">
                </div>'
-            : '<div style="background:#6366f1;padding:24px 32px">
+            : '<div style="background:#ec4899;padding:24px 32px">
                  <h1 style="margin:0;color:#fff;font-size:20px;font-weight:700">' . htmlspecialchars($company) . '</h1>
                </div>';
 

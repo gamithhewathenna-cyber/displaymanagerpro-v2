@@ -94,9 +94,9 @@ $seoTitle    = $post['meta_title']       ?: $post['title'];
 .blog-prose ul li { list-style-type: disc; }
 .blog-prose ol li { list-style-type: decimal; }
 .blog-prose strong { font-weight: 600; color: #111827; }
-.blog-prose a  { color: #4f46e5; text-decoration: underline; text-underline-offset: 2px; }
-.blog-prose a:hover { color: #4338ca; }
-.blog-prose blockquote { border-left: 4px solid #e0e0ff; padding: .75rem 1rem; margin: 1.5rem 0; background: #f8f8ff; border-radius: 0 .75rem .75rem 0; color: #4b5563; font-style: italic; }
+.blog-prose a  { color: #db2777; text-decoration: underline; text-underline-offset: 2px; }
+.blog-prose a:hover { color: #be185d; }
+.blog-prose blockquote { border-left: 4px solid #fce7f3; padding: .75rem 1rem; margin: 1.5rem 0; background: #fdf2f8; border-radius: 0 .75rem .75rem 0; color: #4b5563; font-style: italic; }
 .blog-prose img { max-width: 100%; border-radius: .75rem; margin: 1.5rem 0; }
 .blog-prose hr  { border: none; border-top: 1px solid #e5e7eb; margin: 2rem 0; }
 .blog-prose code { background: #f3f4f6; padding: .1em .3em; border-radius: .3em; font-size: .875em; font-family: monospace; }

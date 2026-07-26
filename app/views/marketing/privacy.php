@@ -29,7 +29,7 @@
 .policy-content ol { list-style:decimal; padding-left:1.5rem; margin:.5rem 0; }
 .policy-content li { margin:.25rem 0; }
 .policy-content strong { font-weight:600; }
-.policy-content a  { color:#6366f1; text-decoration:underline; }
+.policy-content a  { color:#db2777; text-decoration:underline; }
 </style>
 
 <?php require VIEWS_PATH . '/marketing/_cta.php'; ?>

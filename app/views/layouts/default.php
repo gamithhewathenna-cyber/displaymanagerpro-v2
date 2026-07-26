@@ -10,13 +10,13 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <script>
   tailwind.config = {
-    theme: { extend: { fontFamily: { sans: ['Poppins','sans-serif'] }, colors: { primary: { 50:'#f0f0ff',100:'#e0e0ff',200:'#c7c7ff',500:'#6366f1',600:'#4f46e5',700:'#4338ca' } } } }
+    theme: { extend: { fontFamily: { sans: ['Poppins','sans-serif'] }, colors: { primary: { 50:'#fdf2f8',100:'#fce7f3',200:'#fbcfe8',300:'#f9a8d4',400:'#f472b6',500:'#ec4899',600:'#db2777',700:'#be185d',800:'#9d174d',900:'#831843' } } } }
   }
 </script>
 <style>
   body { font-family: 'Poppins', sans-serif; }
-  .sidebar-item.active { background: #eef2ff; color: #4f46e5; font-weight: 600; }
-  .sidebar-item.active svg { color: #4f46e5; }
+  .sidebar-item.active { background: #fce7f3; color: #db2777; font-weight: 600; }
+  .sidebar-item.active svg { color: #db2777; }
 </style>
 </head>
 <body class="bg-gray-50 min-h-screen">

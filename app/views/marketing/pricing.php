@@ -98,7 +98,7 @@
     var dot = document.getElementById('toggle-dot');
     var btn = document.getElementById('billing-toggle');
     dot.style.transform = isAnnual ? 'translateX(1.75rem)' : 'translateX(0.25rem)';
-    btn.style.backgroundColor = isAnnual ? '#6366f1' : '';
+    btn.style.backgroundColor = isAnnual ? '#ec4899' : '';
     document.querySelectorAll('.price-monthly').forEach(function(el) { el.classList.toggle('hidden', isAnnual); });
     document.querySelectorAll('.price-annual').forEach(function(el) { el.classList.toggle('hidden', !isAnnual); });
     document.querySelectorAll('.price-annual-note').forEach(function(el) { el.classList.toggle('hidden', !isAnnual); });

@@ -109,7 +109,7 @@
       extend: {
         fontFamily: { sans: ['Poppins', 'sans-serif'] },
         colors: {
-          primary: { 50:'#f0f0ff',100:'#e0e0ff',500:'#6366f1',600:'#4f46e5',700:'#4338ca' },
+          primary: { 50:'#fdf2f8',100:'#fce7f3',200:'#fbcfe8',300:'#f9a8d4',400:'#f472b6',500:'#ec4899',600:'#db2777',700:'#be185d',800:'#9d174d',900:'#831843' },
           surface: '#fafafa',
         }
       }
@@ -118,9 +118,9 @@
 </script>
 <style>
   body { font-family: 'Poppins', sans-serif; }
-  .gradient-text { background: linear-gradient(135deg, #6366f1, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .gradient-text { background: linear-gradient(135deg, #7c3aed 0%, #ec4899 55%, #f97316 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
   .hero-gradient { background: linear-gradient(135deg, #0f0f1a 0%, #1a1a3e 50%, #0f0f1a 100%); }
-  .hero-light { background: linear-gradient(135deg, #f5f3ff 0%, #ffffff 60%, #eef2ff 100%); }
+  .hero-light { background: linear-gradient(135deg, #fdf2f8 0%, #ffffff 60%, #fce7f3 100%); }
   @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
   .float { animation: float 4s ease-in-out infinite; }
   #mobile-menu { transition: max-height 0.3s ease, opacity 0.3s ease; max-height: 0; opacity: 0; overflow: hidden; }
