@@ -257,8 +257,32 @@
 
   <!-- SEO & Analytics -->
   <div class="bg-white rounded-xl border border-gray-100 p-6" id="seo">
-    <h2 class="font-semibold text-gray-900 mb-1">SEO &amp; Analytics</h2>
+    <div class="flex items-center justify-between mb-1">
+      <h2 class="font-semibold text-gray-900">SEO &amp; Analytics</h2>
+      <?php $noindexOn = Settings::get('seo_noindex_all', '1') === '1'; ?>
+      <span class="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full <?= $noindexOn ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700' ?>">
+        <span class="w-2 h-2 rounded-full <?= $noindexOn ? 'bg-red-500' : 'bg-green-500' ?>"></span>
+        <?= $noindexOn ? 'Hidden from Google' : 'Indexable' ?>
+      </span>
+    </div>
     <p class="text-sm text-gray-400 mb-4">Connect Google Analytics and Google Search Console to your public website.</p>
+
+    <form method="POST" action="/admin/settings" class="space-y-4 mb-5">
+      <input type="hidden" name="_csrf_token" value="<?= Csrf::token() ?>">
+      <input type="hidden" name="group" value="seo_noindex">
+      <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
+        <div>
+          <div class="text-sm font-semibold text-gray-800">Hide entire site from search engines (noindex)</div>
+          <div class="text-xs text-gray-400 mt-0.5">Forces noindex,nofollow on every public page and strips meta description/keywords/canonical/structured data — use while the rebrand is unfinished. Turn off once ready to be indexed again. Search Console verification stays active either way.</div>
+        </div>
+        <label class="relative inline-flex items-center cursor-pointer flex-shrink-0 ml-4">
+          <input type="checkbox" name="seo_noindex_all" value="1" <?= $noindexOn ? 'checked' : '' ?> class="sr-only peer">
+          <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-500"></div>
+        </label>
+      </div>
+      <button type="submit" class="bg-primary-500 hover:bg-primary-600 text-white font-semibold px-5 py-2.5 rounded-xl text-sm transition-colors">Save</button>
+    </form>
+
     <form method="POST" action="/admin/settings" class="space-y-5">
       <input type="hidden" name="_csrf_token" value="<?= Csrf::token() ?>">
       <input type="hidden" name="group" value="seo">

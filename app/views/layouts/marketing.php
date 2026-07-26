@@ -29,11 +29,20 @@
   if (!empty($meta_description)) {
       $_meta_desc = $meta_description;
   }
+
+  // Site-wide kill switch while the rebrand is unfinished — defaults ON (noindex) until
+  // explicitly turned off in Admin → Settings → SEO, so it takes effect immediately without
+  // requiring a settings save first. Strips the SEO-descriptive tags too (description,
+  // keywords, geo, canonical, Organization schema) so nothing showing the old brand name
+  // gets crawled or previewed. GSC verification is deliberately left in place — that's for
+  // Search Console access/monitoring, not indexing, and stays useful during the noindex period.
+  $_noindexAll = Settings::get('seo_noindex_all', '1') === '1';
 ?>
 <title><?= $_full_title ?></title>
 <?php $_fav = Settings::get('site_favicon',''); if ($_fav): ?><link rel="icon" href="<?= Helpers::e($_fav) ?>?v=<?= filemtime(PUBLIC_PATH.$_fav) ?>"><?php endif; ?>
+<meta name="robots" content="<?= $_noindexAll ? 'noindex, nofollow' : 'index, follow' ?>">
+<?php if (!$_noindexAll): ?>
 <link rel="canonical" href="<?= Helpers::e($_canonical_url) ?>">
-<meta name="robots" content="index, follow">
 <meta name="description" content="<?= Helpers::e($_meta_desc) ?>">
 <?php if ($_seo_keyphrase !== ''): ?>
 <meta name="keywords" content="<?= Helpers::e($_seo_keyphrase) ?>">
@@ -61,6 +70,7 @@
   ]
 }
 </script>
+<?php endif; ?>
 <?php if ($_gsc_code !== ''): ?>
 <meta name="google-site-verification" content="<?= Helpers::e($_gsc_code) ?>">
 <?php endif; ?>

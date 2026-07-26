@@ -357,13 +357,14 @@ class AdminController extends BaseController
             'media'       => ['max_upload_size_kb'],
             'maintenance' => ['maintenance_mode','maintenance_message'],
             'seo'         => ['ga_measurement_id','gsc_verification','meta_pixel_code'],
+            'seo_noindex' => ['seo_noindex_all'],
             'social'      => ['facebook_url','instagram_url','google_business_url'],
         ];
 
         if (!isset($allowed[$group])) $this->abort(400, 'Invalid settings group.');
 
         // Checkbox fields default to '0' if not submitted
-        $checkboxFields = ['maintenance_mode'];
+        $checkboxFields = ['maintenance_mode', 'seo_noindex_all'];
         foreach ($allowed[$group] as $key) {
             if (in_array($key, $checkboxFields)) {
                 Settings::set($key, isset($_POST[$key]) ? '1' : '0', $group);
