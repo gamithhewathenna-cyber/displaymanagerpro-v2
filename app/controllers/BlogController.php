@@ -31,7 +31,7 @@ class BlogController extends BaseController
 
     public function sitemap(): void
     {
-        $appUrl = rtrim(Settings::get('app_url', Helpers::baseUrl()), '/');
+        $appUrl = Helpers::appUrl();
         $posts  = BlogPost::allPublished();
 
         header('Content-Type: application/xml; charset=utf-8');

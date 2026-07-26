@@ -21,7 +21,7 @@
   $_pixel_code      = Settings::get('meta_pixel_code', '');
 
   // Canonical: strip query string, use configured app_url as base to avoid http/www drift
-  $_app_url_base  = rtrim(Settings::get('app_url', Helpers::baseUrl()), '/');
+  $_app_url_base  = Helpers::appUrl();
   $_canon_path    = strtok($_SERVER['REQUEST_URI'] ?? '/', '?');
   $_canonical_url = $_app_url_base . $_canon_path;
 
@@ -47,7 +47,7 @@
   "@context": "https://schema.org",
   "@type": "Organization",
   "name": "<?= Helpers::e(Settings::get('company_name', APP_NAME)) ?>",
-  "url": "<?= Helpers::e(Settings::get('app_url', '')) ?>",
+  "url": "<?= Helpers::e(Helpers::appUrl() . '/') ?>",
   "description": "Cloud-based digital signage platform for businesses in Australia, New Zealand, United Kingdom, and United States.",
   "areaServed": ["AU","NZ","GB","US"],
   "sameAs": [

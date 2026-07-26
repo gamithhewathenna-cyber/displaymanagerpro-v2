@@ -187,6 +187,23 @@ class Helpers
         return self::baseUrl('display/' . $slug);
     }
 
+    // Canonical/sitemap base URL, no trailing slash. Forces https regardless of what's
+    // stored in the app_url setting — the site only ever serves over HTTPS (HTTP requests
+    // get 301'd), so a stray http:// saved in Settings has repeatedly caused canonical tag
+    // and sitemap scheme mismatches. This makes that class of mistake impossible going forward.
+    public static function appUrl(): string
+    {
+        $url = trim(Settings::get('app_url', ''));
+        if ($url === '') {
+            return rtrim(self::baseUrl(), '/');
+        }
+        if (!preg_match('#^https?://#i', $url)) {
+            $url = 'https://' . $url;
+        }
+        $url = preg_replace('#^http://#i', 'https://', $url);
+        return rtrim($url, '/');
+    }
+
     public static function generateTicketNumber(): string
     {
         return 'TKT-' . strtoupper(substr(uniqid(), -6));

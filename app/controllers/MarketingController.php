@@ -94,7 +94,7 @@ class MarketingController extends BaseController
 
     public function geoSitemap(): void
     {
-        $appUrl = rtrim(Settings::get('app_url', Helpers::baseUrl()), '/');
+        $appUrl = Helpers::appUrl();
 
         header('Content-Type: application/xml; charset=utf-8');
         header('X-Robots-Tag: noindex');
@@ -136,7 +136,7 @@ class MarketingController extends BaseController
 
     public function sitemap(): void
     {
-        $appUrl = rtrim(Settings::get('app_url', Helpers::baseUrl()), '/');
+        $appUrl = Helpers::appUrl();
 
         $staticUrls = [
             ['loc' => $appUrl . '/',               'priority' => '1.0', 'changefreq' => 'weekly'],
