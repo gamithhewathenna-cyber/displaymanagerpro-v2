@@ -81,7 +81,7 @@ class MarketingController extends BaseController
         $data    = $cities[$city];
         $name    = $data['name'];
         $country = $data['country'];
-        $title   = 'Digital Signage Software for ' . $name . ' Businesses | DisplayNex';
+        $title   = 'Digital Signage Software for ' . $name . ' Businesses';
 
         $this->view('marketing/city', [
             'title'      => $title,
