@@ -190,6 +190,7 @@ $router->post('/coupon/validate',            'CouponController', 'validate');
 $router->get('/admin/blog',              'AdminBlogController', 'index');
 $router->get('/admin/blog/create',       'AdminBlogController', 'create');
 $router->post('/admin/blog',             'AdminBlogController', 'store');
+$router->post('/admin/blog/bulk-status', 'AdminBlogController', 'bulkStatus');
 $router->get('/admin/blog/{id}/edit',    'AdminBlogController', 'edit');
 $router->post('/admin/blog/{id}',        'AdminBlogController', 'update');
 $router->post('/admin/blog/{id}/delete', 'AdminBlogController', 'destroy');

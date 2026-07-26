@@ -96,6 +96,25 @@ class BlogPost
         Database::execute('DELETE FROM blog_posts WHERE id = ?', [$id]);
     }
 
+    public static function bulkSetStatus(array $ids, string $status): void
+    {
+        if (!$ids) return;
+        $placeholders = implode(',', array_fill(0, count($ids), '?'));
+
+        if ($status === 'published') {
+            // Preserve an existing published_at (e.g. re-publishing) rather than resetting it
+            Database::execute(
+                "UPDATE blog_posts SET status='published', published_at = COALESCE(published_at, NOW()), updated_at = NOW() WHERE id IN ($placeholders)",
+                $ids
+            );
+        } else {
+            Database::execute(
+                "UPDATE blog_posts SET status='draft', published_at = NULL, updated_at = NOW() WHERE id IN ($placeholders)",
+                $ids
+            );
+        }
+    }
+
     public static function makeSlug(string $title, int $excludeId = 0): string
     {
         $slug = strtolower(trim(preg_replace('/[^a-z0-9]+/i', '-', $title), '-'));

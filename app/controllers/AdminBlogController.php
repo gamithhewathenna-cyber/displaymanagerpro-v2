@@ -97,6 +97,30 @@ class AdminBlogController extends BaseController
         $this->redirect('/admin/blog/' . $id . '/edit');
     }
 
+    // ── Bulk actions ─────────────────────────────────────────────────────────
+
+    public function bulkStatus(): void
+    {
+        $this->requireAdmin();
+        $this->validateCsrf();
+
+        $ids    = array_values(array_unique(array_filter(array_map('intval', $_POST['ids'] ?? []))));
+        $status = in_array($_POST['status'] ?? '', ['published', 'draft'], true) ? $_POST['status'] : null;
+
+        if (!$ids || !$status) {
+            Session::flash('error', 'Select at least one article first.');
+            $this->redirect('/admin/blog');
+        }
+
+        BlogPost::bulkSetStatus($ids, $status);
+        ActivityLog::log(
+            'blog_bulk_' . $status,
+            count($ids) . ' post(s) set to ' . $status . ': ' . implode(',', $ids)
+        );
+        Session::flash('success', count($ids) . ' article' . (count($ids) === 1 ? '' : 's') . ' ' . ($status === 'published' ? 'published' : 'unpublished') . '.');
+        $this->redirect('/admin/blog');
+    }
+
     // ── Delete ────────────────────────────────────────────────────────────────
 
     public function destroy(string $id): void
