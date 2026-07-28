@@ -108,7 +108,7 @@
 </script>
 <style>
   body { font-family: 'Poppins', sans-serif; }
-  .gradient-text { background: linear-gradient(135deg, #7c3aed 0%, #ec4899 55%, #f97316 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .gradient-text { background: linear-gradient(135deg, #C218C8 0%, #F218A0 35%, #FF4A6E 65%, #FF7A1A 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
   .hero-gradient { background: linear-gradient(135deg, #0f0f1a 0%, #1a1a3e 50%, #0f0f1a 100%); }
   .hero-light { background: linear-gradient(135deg, #fdf2f8 0%, #ffffff 60%, #fce7f3 100%); }
   @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }

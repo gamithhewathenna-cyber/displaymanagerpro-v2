@@ -7,7 +7,7 @@ $_ctaButton  = htmlspecialchars(ContentController::get('home', 'cta_button',  'G
 <!-- CTA -->
 <section class="hero-gradient text-white py-24 px-4 relative overflow-hidden bg-cover bg-center"<?= $_ctaBg ? ' style="background-image:url(' . Helpers::e($_ctaBg) . ')"' : '' ?>>
   <?php if (!$_ctaBg): ?>
-  <div class="absolute inset-0 pointer-events-none opacity-10" style="background-image:radial-gradient(circle at 20% 50%,#ec4899 0%,transparent 50%),radial-gradient(circle at 80% 20%,#f97316 0%,transparent 40%)"></div>
+  <div class="absolute inset-0 pointer-events-none opacity-10" style="background-image:radial-gradient(circle at 20% 50%,#F218A0 0%,transparent 50%),radial-gradient(circle at 80% 20%,#FF7A1A 0%,transparent 40%)"></div>
   <?php endif; ?>
   <div class="max-w-[1250px] mx-auto text-center relative">
     <p class="text-xs font-bold tracking-widest uppercase text-primary-300 mb-4">Get Started Today</p>
