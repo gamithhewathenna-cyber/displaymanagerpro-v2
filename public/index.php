@@ -127,6 +127,7 @@ $router->post('/media/{id}/delete', 'MediaController', 'delete');
 
 $router->get('/billing',                    'BillingController', 'index');
 $router->post('/billing/subscribe',         'BillingController', 'subscribe');
+$router->post('/billing/activate-free',     'BillingController', 'activateFree');
 $router->get('/billing/paypal/return',      'BillingController', 'paypalReturn');
 $router->get('/billing/paypal/cancel',      'BillingController', 'paypalCancel');
 $router->post('/billing/paypal/webhook',    'BillingController', 'paypalWebhook');

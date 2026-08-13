@@ -116,14 +116,17 @@ class AuthController extends BaseController
                 'status'   => 'pending',
             ]);
 
-            // Create trial subscription
-            $trialEnd = date('Y-m-d H:i:s', strtotime('+' . TRIAL_DAYS . ' days'));
+            // Free plans (price 0 for the chosen cycle) activate immediately with no trial —
+            // there's nothing to charge, so there's nothing to trial toward.
+            $planPrice = $billingCycle === 'annual' ? (float)$plan['price_annual'] : (float)$plan['price_monthly'];
+            $isFree    = $planPrice <= 0;
+
             Subscription::create([
                 'user_id'        => $userId,
                 'plan_id'        => $plan['id'],
-                'status'         => 'trialing',
+                'status'         => $isFree ? 'active' : 'trialing',
                 'billing_cycle'  => $billingCycle,
-                'trial_ends_at'  => $trialEnd,
+                'trial_ends_at'  => $isFree ? null : date('Y-m-d H:i:s', strtotime('+' . TRIAL_DAYS . ' days')),
             ]);
 
             // Email verification token

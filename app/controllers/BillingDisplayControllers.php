@@ -27,6 +27,65 @@ class BillingController extends BaseController
         ]);
     }
 
+    // Free plans (price 0 for the chosen cycle) skip PayPal/PayHere entirely — nothing to
+    // charge, so activate the subscription directly.
+    public function activateFree(): void
+    {
+        $this->requireAuth();
+        $this->validateCsrf();
+        $user   = $this->currentUser();
+        $planId = (int)($_POST['plan_id'] ?? 0);
+        $cycle  = ($_POST['billing_cycle'] ?? 'monthly') === 'annual' ? 'annual' : 'monthly';
+        $plan   = Plan::find($planId);
+
+        if (!$plan || !$plan['is_active']) {
+            Session::flash('error', 'Plan not found.');
+            $this->redirect('/billing');
+        }
+
+        $price = $cycle === 'annual' ? (float)$plan['price_annual'] : (float)$plan['price_monthly'];
+        if ($price > 0) {
+            Session::flash('error', 'That plan requires payment — please choose a payment method.');
+            $this->redirect('/billing');
+        }
+
+        $existingSub = Subscription::forUser($user['id']);
+
+        // Switching down from a real gateway subscription — cancel it at PayPal first so it
+        // stops charging. Without this, the old subscription would keep billing even though
+        // the app now shows the user on the free plan.
+        if ($existingSub && !empty($existingSub['stripe_subscription_id'])) {
+            try {
+                (new PayPalService())->cancelSubscription($existingSub['stripe_subscription_id']);
+            } catch (Exception $e) {
+                error_log('PayPal cancel-on-downgrade-to-free error: ' . $e->getMessage());
+                Session::flash('error', 'Could not cancel your current PayPal subscription automatically: ' . $e->getMessage() . ' Please cancel it first from the button above, then switch to the free plan.');
+                $this->redirect('/billing');
+            }
+        }
+
+        $data = [
+            'plan_id'                => $planId,
+            'billing_cycle'          => $cycle,
+            'status'                 => 'active',
+            'trial_ends_at'          => null,
+            'current_period_start'   => date('Y-m-d H:i:s'),
+            'current_period_end'     => null,
+            'stripe_subscription_id' => null,
+            'canceled_at'            => null,
+        ];
+
+        if ($existingSub) {
+            Subscription::update($existingSub['id'], $data);
+        } else {
+            Subscription::create(array_merge($data, ['user_id' => $user['id']]));
+        }
+
+        ActivityLog::log('subscription_activated', "Activated free plan #{$planId}");
+        Session::flash('success', "You're on the " . $plan['name'] . ' plan — free, no payment needed.');
+        $this->redirect('/billing');
+    }
+
     public function subscribe(): void
     {
         $this->requireAuth();
