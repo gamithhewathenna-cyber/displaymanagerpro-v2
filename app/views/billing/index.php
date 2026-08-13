@@ -165,15 +165,21 @@ $trialDaysLeft= Subscription::trialDaysLeft($sub);
 
             <!-- Monthly price -->
             <div class="plan-price-monthly flex flex-col items-end flex-shrink-0">
+              <?php if ((float)$plan['price_monthly'] <= 0): ?>
+              <span class="text-xl font-bold text-green-600">Free</span>
+              <?php else: ?>
               <div class="flex items-baseline gap-0.5">
                 <span class="text-xl font-bold text-gray-900">$<?= number_format($plan['price_monthly'], 0) ?></span>
                 <span class="text-xs text-gray-400 ml-0.5">USD/mo</span>
               </div>
+              <?php endif; ?>
             </div>
 
             <!-- Annual price (hidden by default) -->
             <div class="plan-price-annual hidden flex flex-col items-end flex-shrink-0">
-              <?php if ($plan['price_annual'] > 0): ?>
+              <?php if ((float)$plan['price_monthly'] <= 0): ?>
+              <span class="text-xl font-bold text-green-600">Free</span>
+              <?php elseif ($plan['price_annual'] > 0): ?>
               <div class="flex items-baseline gap-0.5">
                 <span class="text-xl font-bold text-gray-900">$<?= number_format($annualPerMonth, 0) ?></span>
                 <span class="text-xs text-gray-400 ml-0.5">USD/mo</span>

@@ -78,12 +78,16 @@ $_initialHasTrial = (bool)($_activePlan['has_trial'] ?? 1);
             <div class="text-xs text-gray-400">Up to <?= (int)$plan['max_screens'] ?> screen<?= $plan['max_screens'] > 1 ? 's' : '' ?></div>
           </div>
           <div class="text-right flex-shrink-0">
-            <div class="reg-price-monthly font-bold text-gray-900 text-sm <?= $selectedCycle === 'annual' ? 'hidden' : '' ?>">
-              $<?= number_format($plan['price_monthly'], 2) ?>/mo
+            <div class="reg-price-monthly font-bold text-sm <?= $selectedCycle === 'annual' ? 'hidden' : '' ?> <?= (float)$plan['price_monthly'] <= 0 ? 'text-green-600' : 'text-gray-900' ?>">
+              <?= (float)$plan['price_monthly'] <= 0 ? 'Free' : '$' . number_format($plan['price_monthly'], 2) . '/mo' ?>
             </div>
             <div class="reg-price-annual <?= $selectedCycle === 'annual' ? '' : 'hidden' ?>">
+              <?php if ((float)$plan['price_monthly'] <= 0): ?>
+              <div class="font-bold text-green-600 text-sm">Free</div>
+              <?php else: ?>
               <div class="font-bold text-gray-900 text-sm">$<?= number_format($annualPerMonth, 2) ?>/mo</div>
               <div class="text-xs text-green-600 font-medium">$<?= number_format($plan['price_annual'], 2) ?>/yr</div>
+              <?php endif; ?>
             </div>
           </div>
         </div>

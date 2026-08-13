@@ -369,16 +369,24 @@ $_staticBanner = Settings::get('content_home_banner', '');
 
         <!-- Monthly price (shown by default) -->
         <div class="price-monthly flex items-baseline gap-1 mb-1">
+          <?php if ((float)$plan['price_monthly'] <= 0): ?>
+          <span class="text-4xl font-extrabold text-green-600">Free</span>
+          <?php else: ?>
           <span class="text-4xl font-extrabold text-gray-900">$<?= number_format($plan['price_monthly'], 2) ?></span>
           <span class="text-gray-400 text-sm">USD/mo</span>
+          <?php endif; ?>
         </div>
         <!-- Annual price (hidden by default) -->
         <div class="price-annual hidden flex items-baseline gap-1 mb-1">
+          <?php if ((float)$plan['price_monthly'] <= 0): ?>
+          <span class="text-4xl font-extrabold text-green-600">Free</span>
+          <?php else: ?>
           <span class="text-4xl font-extrabold text-gray-900">$<?= number_format($annualMonthly, 2) ?></span>
           <span class="text-gray-400 text-sm">USD/mo</span>
+          <?php endif; ?>
         </div>
         <div class="price-annual-note hidden text-xs text-green-600 font-medium mb-1">
-          $<?= number_format($plan['price_annual'], 2) ?> billed annually
+          <?= (float)$plan['price_monthly'] <= 0 ? 'No payment required' : '$' . number_format($plan['price_annual'], 2) . ' billed annually' ?>
         </div>
 
         <div class="text-sm text-gray-400 mb-6">Up to <?= $plan['max_screens'] ?> TV screen<?= $plan['max_screens']>1?'s':'' ?></div>
