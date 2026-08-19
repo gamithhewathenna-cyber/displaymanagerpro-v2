@@ -46,7 +46,14 @@ class AdminBlogController extends BaseController
         }
         $data['featured_image'] = $imagePath;
 
-        $id = BlogPost::create($data);
+        try {
+            $id = BlogPost::create($data);
+        } catch (Exception $e) {
+            error_log('Blog post create error: ' . $e->getMessage());
+            Session::flash('error', 'Could not save the article: ' . $e->getMessage());
+            $this->redirect('/admin/blog/create');
+        }
+
         ActivityLog::log('blog_post_created', 'Created post: ' . $data['title']);
         Session::flash('success', 'Post created.');
         $this->redirect('/admin/blog/' . $id . '/edit');
@@ -91,7 +98,14 @@ class AdminBlogController extends BaseController
         $data['featured_image'] = $imagePath;
         $data['published_at']   = $post['published_at'];
 
-        BlogPost::update((int)$id, $data);
+        try {
+            BlogPost::update((int)$id, $data);
+        } catch (Exception $e) {
+            error_log('Blog post update error: ' . $e->getMessage());
+            Session::flash('error', 'Could not save the article: ' . $e->getMessage());
+            $this->redirect('/admin/blog/' . $id . '/edit');
+        }
+
         ActivityLog::log('blog_post_updated', 'Updated post: ' . $data['title']);
         Session::flash('success', 'Post saved.');
         $this->redirect('/admin/blog/' . $id . '/edit');
@@ -112,7 +126,14 @@ class AdminBlogController extends BaseController
             $this->redirect('/admin/blog');
         }
 
-        BlogPost::bulkSetStatus($ids, $status);
+        try {
+            BlogPost::bulkSetStatus($ids, $status);
+        } catch (Exception $e) {
+            error_log('Blog bulk status error: ' . $e->getMessage());
+            Session::flash('error', 'Could not update the selected articles: ' . $e->getMessage());
+            $this->redirect('/admin/blog');
+        }
+
         ActivityLog::log(
             'blog_bulk_' . $status,
             count($ids) . ' post(s) set to ' . $status . ': ' . implode(',', $ids)
