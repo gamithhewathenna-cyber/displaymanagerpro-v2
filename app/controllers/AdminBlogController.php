@@ -38,7 +38,11 @@ class AdminBlogController extends BaseController
             $this->redirect('/admin/blog/create');
         }
 
-        if (!$data['slug']) $data['slug'] = BlogPost::makeSlug($data['title']);
+        // Always run through makeSlug() — not just when blank — since the form's JS
+        // auto-fills the slug from the title, so it's almost never actually empty here.
+        // Without this, a genuine collision (e.g. resubmission, similar titles) throws a
+        // raw duplicate-key SQL error instead of auto-resolving with a -1, -2, ... suffix.
+        $data['slug'] = BlogPost::makeSlug($data['slug'] ?: $data['title']);
 
         $imagePath = '';
         if (!empty($_FILES['featured_image']['name'])) {
@@ -84,7 +88,8 @@ class AdminBlogController extends BaseController
             $this->redirect('/admin/blog/' . $id . '/edit');
         }
 
-        if (!$data['slug']) $data['slug'] = BlogPost::makeSlug($data['title'], (int)$id);
+        // Same as store() — always dedupe, since the slug field is rarely actually blank.
+        $data['slug'] = BlogPost::makeSlug($data['slug'] ?: $data['title'], (int)$id);
 
         // Image handling
         $imagePath = $post['featured_image'] ?? '';
