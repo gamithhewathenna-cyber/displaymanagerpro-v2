@@ -9,11 +9,10 @@ foreach ($plans as $_p) {
     if ($_p['slug'] === $selectedPlan) { $_activePlan = $_p; break; }
 }
 if (!$_activePlan) $_activePlan = $plans[0] ?? null;
-$_initialHasTrial = (bool)($_activePlan['has_trial'] ?? 1);
 ?>
 
-<h2 class="text-2xl font-bold text-gray-900 mb-1" id="register-heading"><?= $_initialHasTrial ? 'Start your free trial' : 'Create your account' ?></h2>
-<p class="text-gray-500 text-sm mb-6" id="register-subheading"><?= $_initialHasTrial ? '14 days free · No credit card required' : 'Get started today' ?></p>
+<h2 class="text-2xl font-bold text-gray-900 mb-1" id="register-heading">Create your account</h2>
+<p class="text-gray-500 text-sm mb-6" id="register-subheading">Get started today</p>
 
 <form method="POST" action="/register" class="space-y-4">
   <input type="hidden" name="_csrf_token" value="<?= Csrf::token() ?>">
@@ -115,7 +114,7 @@ $_initialHasTrial = (bool)($_activePlan['has_trial'] ?? 1);
   </div>
 
   <button type="submit" id="register-submit-btn" class="w-full bg-primary-500 hover:bg-primary-600 text-white font-semibold py-3 px-6 rounded-xl transition-colors text-sm mt-2">
-    <?= $_initialHasTrial ? 'Create Account – Free for 14 Days' : 'Create Account' ?>
+    Create Account
   </button>
   <p class="text-xs text-gray-400 text-center">By creating an account you agree to our Terms of Service and Privacy Policy.</p>
 </form>
@@ -126,20 +125,8 @@ $_initialHasTrial = (bool)($_activePlan['has_trial'] ?? 1);
 </p>
 
 <script>
-document.querySelectorAll('input[name="plan"]').forEach(function(radio) {
-  radio.addEventListener('change', function() {
-    var hasTrial = this.dataset.hasTrial === '1';
-    document.getElementById('register-submit-btn').textContent = hasTrial
-      ? 'Create Account – Free for 14 Days'
-      : 'Create Account';
-    document.getElementById('register-heading').textContent = hasTrial
-      ? 'Start your free trial'
-      : 'Create your account';
-    document.getElementById('register-subheading').textContent = hasTrial
-      ? '14 days free · No credit card required'
-      : 'Get started today';
-  });
-});
+// Plan selection no longer changes the heading/button copy — every plan starts
+// the same way, with no trial framing.
 
 function regSetCycle(cycle) {
   var isAnnual = cycle === 'annual';

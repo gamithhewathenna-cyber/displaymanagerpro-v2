@@ -111,7 +111,7 @@ $_staticBanner = Settings::get('content_home_banner', '');
                 <?php if ($_hsl['heading'] === null || $_hi === 0): ?>
                 <div class="inline-flex items-center gap-2 <?= $_badgeBg ?> border rounded-full px-4 py-1.5 text-xs sm:text-sm font-medium mb-6">
                   <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse flex-shrink-0"></span>
-                  <?= $c('badge_text', '14-day free trial · No credit card required') ?>
+                  <?= $c('badge_text', 'Starter plan is 100% free · No credit card required') ?>
                 </div>
                 <?php endif; ?>
 
@@ -412,7 +412,7 @@ $_staticBanner = Settings::get('content_home_banner', '');
         </ul>
         <a href="/register?plan=<?= Helpers::e($plan['slug']) ?>"
           class="block text-center <?= $i===1?'bg-primary-500 hover:bg-primary-600 text-white shadow-md shadow-primary-500/25':'bg-gray-50 hover:bg-gray-100 text-gray-900' ?> font-semibold py-3 px-6 rounded-xl transition-colors">
-          <?= $hasTrial ? 'Start Free Trial' : 'Get Started' ?>
+          Start Free Today!
         </a>
       </div>
       <?php endforeach; ?>

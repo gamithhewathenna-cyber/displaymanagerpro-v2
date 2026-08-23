@@ -1,7 +1,7 @@
 <?php
 $_ctaBg      = Settings::get('content_home_cta_bg', '');
 $_ctaTitle   = htmlspecialchars(ContentController::get('home', 'cta_title',   'Ready to modernise your screens?'));
-$_ctaSub     = htmlspecialchars(ContentController::get('home', 'cta_subtitle', 'Start your free 14-day trial. No credit card required. Cancel anytime.'));
+$_ctaSub     = htmlspecialchars(ContentController::get('home', 'cta_subtitle', 'Get started free today. No credit card required. Cancel anytime.'));
 $_ctaButton  = htmlspecialchars(ContentController::get('home', 'cta_button',  'Get Started Free →'));
 ?>
 <!-- CTA -->

@@ -591,7 +591,7 @@ class Mailer
         $body     = self::emailTemplate(
             "Welcome to $company!",
             "<p>Hi {$user['name']},</p>
-            <p>Your account is ready. Your 14-day free trial has started — no credit card required yet.</p>
+            <p>Your account is ready — you're all set to get started, no credit card required.</p>
             <p style='text-align:center;margin:32px 0'>
                 <a href='$dashUrl' style='background:#ec4899;color:#fff;padding:14px 28px;border-radius:8px;text-decoration:none;font-weight:600;display:inline-block'>Go to Dashboard</a>
             </p>

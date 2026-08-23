@@ -17,7 +17,7 @@
       <div>
         <label class="block text-xs font-medium text-gray-700 mb-1">Meta Description <span class="text-gray-400 font-normal">(shown below the title in search results)</span></label>
         <textarea name="seo_description" rows="2" maxlength="160"
-          placeholder="e.g. Manage all your TV screens from one cloud dashboard. 14-day free trial, no credit card required."
+          placeholder="e.g. Manage all your TV screens from one cloud dashboard. Free Starter plan, no credit card required."
           class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none"><?= htmlspecialchars($content['seo_description'] ?? '') ?></textarea>
         <p class="text-xs text-gray-400 mt-1">Recommended: 120–160 characters</p>
       </div>

@@ -88,8 +88,8 @@
           <?php endif; ?>
         </div>
         <div class="absolute -bottom-4 -right-4 bg-white rounded-2xl shadow-xl px-5 py-3 border border-gray-100">
-          <div class="text-2xl font-extrabold text-gray-900"><?= $c('s2_stat_num','14-day') ?></div>
-          <div class="text-xs text-gray-500"><?= $c('s2_stat_label','Free trial, no card needed') ?></div>
+          <div class="text-2xl font-extrabold text-gray-900"><?= $c('s2_stat_num','$0') ?></div>
+          <div class="text-xs text-gray-500"><?= $c('s2_stat_label','Starter plan, no card needed') ?></div>
         </div>
       </div>
 

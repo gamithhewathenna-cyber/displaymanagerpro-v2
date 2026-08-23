@@ -27,7 +27,7 @@
       <div class="mt-12 bg-indigo-600 rounded-2xl p-6 text-white">
         <div class="font-bold text-lg mb-2"><?= $c('cta_title','Not a customer yet?') ?></div>
         <p class="text-indigo-200 text-sm mb-4"><?= $c('cta_desc') ?></p>
-        <a href="/register" class="inline-block bg-white text-indigo-600 font-bold px-5 py-2.5 rounded-xl text-sm hover:bg-gray-50 transition-colors"><?= $c('cta_button','Start Free Trial →') ?></a>
+        <a href="/register" class="inline-block bg-white text-indigo-600 font-bold px-5 py-2.5 rounded-xl text-sm hover:bg-gray-50 transition-colors"><?= $c('cta_button','Start Free Today →') ?></a>
       </div>
     </div>
     <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 sm:p-8">

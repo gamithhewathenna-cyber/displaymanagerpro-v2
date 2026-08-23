@@ -15,7 +15,7 @@ $_img2 = Settings::get('content_industries_image2','');
       <?= $c('hero_body','DisplayNex is a cloud-based digital signage platform that helps businesses manage TV screens, digital menu boards, promotional displays, and customer communications from anywhere.') ?>
     </p>
     <div class="flex flex-wrap items-center justify-center gap-4">
-      <a href="/register" class="inline-block bg-white text-primary-600 font-bold px-8 py-3 rounded-xl hover:bg-gray-50 transition-all shadow-lg text-sm">Start Free 14-Day Trial →</a>
+      <a href="/register" class="inline-block bg-white text-primary-600 font-bold px-8 py-3 rounded-xl hover:bg-gray-50 transition-all shadow-lg text-sm">Start Free Today →</a>
       <a href="/pricing" class="inline-block border border-white/30 text-white font-semibold px-8 py-3 rounded-xl hover:bg-white/10 transition-all text-sm">View Pricing</a>
     </div>
   </div>

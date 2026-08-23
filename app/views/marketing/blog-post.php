@@ -76,7 +76,7 @@ $seoTitle    = $post['meta_title']       ?: $post['title'];
     <div class="mt-14 pt-8 border-t border-gray-100 flex items-center justify-between gap-4 flex-wrap">
       <a href="/blog" class="text-sm text-primary-600 font-semibold hover:text-primary-700 transition-colors">← News & Updates</a>
       <a href="/register" class="inline-block bg-primary-500 hover:bg-primary-600 text-white font-semibold text-sm px-6 py-2.5 rounded-xl transition-colors shadow-sm">
-        Start Free Trial →
+        Start Free Today →
       </a>
     </div>
 

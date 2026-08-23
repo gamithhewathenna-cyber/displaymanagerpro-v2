@@ -26,5 +26,5 @@
 
 <p class="text-center text-sm text-gray-500 mt-6">
   Don't have an account?
-  <a href="/register" class="text-primary-600 font-semibold hover:text-primary-700">Start free trial</a>
+  <a href="/register" class="text-primary-600 font-semibold hover:text-primary-700">Start Free Today!</a>
 </p>

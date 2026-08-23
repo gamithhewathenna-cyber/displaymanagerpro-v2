@@ -43,7 +43,7 @@ $currency = match($city['country']) {
     "@type": "Offer",
     "price": "0",
     "priceCurrency": "USD",
-    "description": "Free 14-day trial, no credit card required"
+    "description": "Free Starter plan, no credit card required"
   }
 }
 </script>
@@ -64,7 +64,7 @@ $currency = match($city['country']) {
       Update your content from anywhere — no USB drives, no on-site visits.
     </p>
     <div class="flex flex-wrap items-center justify-center gap-4">
-      <a href="/register" class="inline-block bg-white text-primary-600 font-bold px-8 py-3 rounded-xl hover:bg-gray-50 transition-all shadow-lg text-sm">Start Free 14-Day Trial →</a>
+      <a href="/register" class="inline-block bg-white text-primary-600 font-bold px-8 py-3 rounded-xl hover:bg-gray-50 transition-all shadow-lg text-sm">Start Free Today →</a>
       <a href="/pricing" class="inline-block border border-white/30 text-white font-semibold px-8 py-3 rounded-xl hover:bg-white/10 transition-all text-sm">View Pricing</a>
     </div>
     <p class="mt-4 text-sm text-gray-400">No credit card required · Cancel anytime · Works on any Smart TV</p>
@@ -159,7 +159,7 @@ $currency = match($city['country']) {
       <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
         <?php
           $steps = [
-            ['Create account',   'Sign up and choose your plan. 14-day free trial with no credit card required.'],
+            ['Create account',   'Sign up and choose your plan — Starter is free, no credit card required.'],
             ['Create a channel', 'Give it a name and choose landscape or portrait orientation.'],
             ['Upload content',   'Drag and drop your menus, promotions, or announcements.'],
             ['Display on TV',    'Open the secure URL on any Smart TV or media player. Done.'],

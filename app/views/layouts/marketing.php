@@ -218,7 +218,7 @@
       <!-- Desktop CTA buttons + mobile hamburger -->
       <div class="flex items-center gap-3">
         <a href="/login" class="hidden sm:block text-sm font-medium text-gray-600 hover:text-primary-600 transition-colors">Sign In</a>
-        <a href="/register" class="bg-primary-500 hover:bg-primary-600 text-white text-sm font-semibold px-5 py-2.5 rounded-lg transition-colors shadow-sm hidden sm:block">Start Free Trial</a>
+        <a href="/register" class="bg-primary-500 hover:bg-primary-600 text-white text-sm font-semibold px-5 py-2.5 rounded-lg transition-colors shadow-sm hidden sm:block">Start Free Today!</a>
         <!-- Mobile hamburger -->
         <button id="mobile-nav-toggle" aria-label="Toggle menu" class="lg:hidden w-10 h-10 flex flex-col items-center justify-center gap-1.5 rounded-lg hover:bg-gray-50 transition-colors">
           <span class="w-5 h-0.5 bg-gray-700 rounded transition-all" id="ham-line-1"></span>
@@ -239,7 +239,7 @@
         <a href="/blog"       class="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-gray-700 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors">News &amp; Updates</a>
         <div class="pt-3 grid grid-cols-2 gap-2">
           <a href="/login"    class="text-center border border-gray-200 text-gray-700 font-semibold text-sm py-2.5 rounded-lg hover:border-primary-300 hover:text-primary-600 transition-colors">Sign In</a>
-          <a href="/register" class="text-center bg-primary-500 hover:bg-primary-600 text-white font-semibold text-sm py-2.5 rounded-lg transition-colors">Start Free Trial</a>
+          <a href="/register" class="text-center bg-primary-500 hover:bg-primary-600 text-white font-semibold text-sm py-2.5 rounded-lg transition-colors">Start Free Today!</a>
         </div>
       </div>
     </div>
@@ -284,7 +284,7 @@
         $_footerDefaults = [
           1 => ['title' => 'Product',  'links' => "Features|/features\nPricing|/pricing\nIndustries|/industries\nFAQ|/faq"],
           2 => ['title' => 'Company',  'links' => "Contact|/contact\nPrivacy Policy|/privacy-policy\nTerms & Conditions|/terms\nRefund Policy|/refund-policy"],
-          3 => ['title' => 'Account',  'links' => "Sign In|/login\nStart Free Trial|/register"],
+          3 => ['title' => 'Account',  'links' => "Sign In|/login\nStart Free Today!|/register"],
         ];
       ?>
       <?php for ($col = 1; $col <= 3; $col++):

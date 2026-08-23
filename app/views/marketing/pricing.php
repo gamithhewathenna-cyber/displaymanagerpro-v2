@@ -2,7 +2,7 @@
   <div class="max-w-5xl mx-auto">
     <div class="text-center mb-10">
       <h1 class="text-5xl font-extrabold text-gray-900 mb-4">Simple, honest pricing</h1>
-      <p class="text-xl text-gray-500">Start free for 14 days. No credit card required. Cancel anytime.</p>
+      <p class="text-xl text-gray-500">Starter plan is 100% free. No credit card required. Cancel anytime.</p>
     </div>
 
     <!-- Billing toggle -->
@@ -85,7 +85,7 @@
         <a href="/register?plan=<?= Helpers::e($plan['slug']) ?>"
           class="plan-cta block text-center <?= $i===1 ? 'bg-primary-500 hover:bg-primary-600 text-white' : 'bg-gray-50 hover:bg-gray-100 text-gray-900' ?> font-semibold py-3 px-6 rounded-xl transition-colors"
           data-slug="<?= Helpers::e($plan['slug']) ?>">
-          <?= $hasTrial ? 'Start Free Trial' : 'Get Started' ?>
+          Start Free Today!
         </a>
       </div>
       <?php endforeach; ?>

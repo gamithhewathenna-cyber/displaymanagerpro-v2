@@ -33,7 +33,7 @@
           <input type="checkbox" name="has_trial" value="1" checked class="rounded text-primary-500">
           <span class="text-sm font-medium text-gray-700">Offer free trial for this plan</span>
         </label>
-        <p class="text-xs text-gray-400 mt-1 ml-6">When checked, the sign-up button shows "Start Free Trial". Uncheck for plans that charge immediately.</p></div>
+        <p class="text-xs text-gray-400 mt-1 ml-6">When checked, this plan shows a "14-day free trial" badge and delays the first charge. Uncheck for plans that charge immediately (or are free, like Starter).</p></div>
         <div class="sm:col-span-2"><label class="flex items-center gap-2 cursor-pointer">
           <input type="checkbox" name="is_active" value="1" checked class="rounded text-primary-500">
           <span class="text-sm font-medium text-gray-700">Plan is active (shown to customers)</span>
