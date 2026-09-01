@@ -199,6 +199,20 @@
           <input type="text" name="payhere_merchant_id" value="<?= Helpers::e(Settings::get('payhere_merchant_id','')) ?>" placeholder="1234567" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary-500"></div>
         <div class="sm:col-span-2"><label class="block text-xs font-medium text-gray-500 mb-1">Merchant Secret</label>
           <input type="password" name="payhere_merchant_secret" value="<?= Helpers::e(Settings::get('payhere_merchant_secret','')) ?>" placeholder="•••••••••••••••" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary-500"></div>
+
+        <div class="sm:col-span-2 border-t border-gray-100 pt-4 mt-1">
+          <div class="text-xs font-semibold text-gray-700 mb-1">Recurring Payments (REST API)</div>
+          <p class="text-xs text-gray-400 mb-3">
+            Separate from the Merchant ID/Secret above, which only power one-time hosted checkout. App ID/Secret authenticate PayHere's REST API — used for recurring subscription charges, cancellations, and refunds.
+            Create one in the PayHere merchant portal → Settings → Domains &amp; Credentials → Add App.
+          </p>
+        </div>
+        <div><label class="block text-xs font-medium text-gray-500 mb-1">App ID</label>
+          <input type="text" name="payhere_app_id" value="<?= Helpers::e(Settings::get('payhere_app_id','')) ?>" placeholder="4OVxxxxxxxxxxxxxxxxxxxx" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary-500"></div>
+        <div><label class="block text-xs font-medium text-gray-500 mb-1">App Secret</label>
+          <input type="password" name="payhere_app_secret" value="<?= Helpers::e(Settings::get('payhere_app_secret','')) ?>" placeholder="•••••••••••••••" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary-500"></div>
+        <p class="text-xs text-amber-600 sm:col-span-2 -mt-2">Saved for when recurring-charge support is built — not yet used by checkout.</p>
+
         <div class="sm:col-span-2"><label class="block text-xs font-medium text-gray-500 mb-1">Fallback USD → LKR Rate</label>
           <input type="number" step="0.01" min="0" name="payhere_lkr_manual_rate" value="<?= Helpers::e(Settings::get('payhere_lkr_manual_rate','')) ?>" placeholder="300.00" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary-500">
           <p class="text-xs text-gray-400 mt-1">
