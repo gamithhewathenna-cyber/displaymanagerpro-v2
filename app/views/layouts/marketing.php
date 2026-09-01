@@ -380,6 +380,10 @@
             <path fill="#009cde" d="M72 9h2.1l-.2 1c.4-.7 1.1-1.1 1.9-1.1.2 0 .4 0 .5.1l-.4 2c-.2-.1-.4-.1-.6-.1-1 0-1.7.7-1.9 1.8l-.5 3H70.7L72 9z"/>
           </svg>
         </div>
+        <!-- PayHere -->
+        <div class="bg-white rounded-md px-2.5 flex items-center justify-center" style="height:28px;">
+          <img src="/images/payment/payhere-logo.png" alt="PayHere" style="height:16px;width:auto;" loading="lazy">
+        </div>
         <!-- Visa -->
         <div class="rounded-md flex items-center justify-center px-2.5" style="height:28px;background:#1A1F71;">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 16" height="11" width="34" aria-label="Visa">
