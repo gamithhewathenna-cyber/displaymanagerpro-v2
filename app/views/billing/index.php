@@ -232,7 +232,7 @@ $trialDaysLeft= Subscription::trialDaysLeft($sub);
                  disabled:opacity-40 disabled:cursor-not-allowed">
           <span id="payhere-btn-label">Pay with PayHere</span>
         </button>
-        <p id="payhere-hint" class="text-xs text-center text-gray-400 mt-2">One-time payment, charged in LKR — does not auto-renew.</p>
+        <p id="payhere-hint" class="text-xs text-center text-gray-400 mt-2">Charged in LKR for your selected billing cycle — does not auto-renew.</p>
         <?php endif; ?>
       </form>
     </div>
@@ -355,7 +355,9 @@ $trialDaysLeft= Subscription::trialDaysLeft($sub);
         const price = parseFloat(currentCycle === 'annual' ? card.dataset.priceAnnual : card.dataset.priceMonthly) || 0;
         if (price > 0) {
           payhereBtn.disabled = false;
-          payhereHint.textContent = 'One-time payment, charged in LKR — does not auto-renew.';
+          payhereHint.textContent = currentCycle === 'annual'
+            ? 'Charged in LKR for 1 year of access — you\'ll need to pay again next year (does not auto-renew).'
+            : 'Charged in LKR for 1 month of access — you\'ll need to pay again next month (does not auto-renew).';
         } else {
           payhereBtn.disabled = true;
           payhereHint.textContent = 'No price set for this plan/cycle.';
