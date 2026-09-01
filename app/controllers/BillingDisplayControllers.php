@@ -261,11 +261,34 @@ class BillingController extends BaseController
             $this->redirect('/billing');
         }
 
-        // order_id encodes user/plan/cycle directly — the notify_url call is server-to-server
-        // from PayHere's servers, so it never carries our session cookie and can't rely on
-        // Session::get() to recover this context. Cycle is 'M'/'A' to keep the format simple.
+        // Validate coupon and apply the discount to the actual charge — unlike PayPal (which
+        // charges a pre-configured fixed-price Plan ID), PayHere's amount is fully under our
+        // control, so the discount can be applied directly here.
+        $fullUser  = User::find($user['id']);
+        $couponCode = strtoupper(trim($_POST['coupon_code'] ?? ''));
+        $couponRow  = null;
+        $discount   = 0.0;
+        if ($couponCode) {
+            [$couponRow, $couponError] = Coupon::check($couponCode, $fullUser['email'] ?? '', $plan['slug']);
+            if (!$couponRow) {
+                Session::flash('error', "Coupon error: $couponError");
+                $this->redirect('/billing');
+            }
+            $discount = Coupon::discountAmount($couponRow, $amount);
+            $amount   = round(max(0, $amount - $discount), 2);
+        }
+        if ($amount <= 0) {
+            Session::flash('error', 'This coupon fully covers the plan price. Please contact support to activate your account — PayHere requires a positive payment amount.');
+            $this->redirect('/billing');
+        }
+
+        // order_id encodes user/plan/cycle/coupon directly — the notify_url call is
+        // server-to-server from PayHere's servers, so it never carries our session cookie
+        // and can't rely on Session::get() to recover this context. Cycle is 'M'/'A', and
+        // couponId is 0 when no coupon was used, to keep the format simple and parseable.
         $cycleCode = $cycle === 'annual' ? 'A' : 'M';
-        $orderId   = 'PH-' . $user['id'] . '-' . $planId . '-' . $cycleCode . '-' . time();
+        $couponId  = $couponRow['id'] ?? 0;
+        $orderId   = 'PH-' . $user['id'] . '-' . $planId . '-' . $cycleCode . '-' . $couponId . '-' . time();
 
         // PayHere settles Sri Lankan merchant accounts in LKR — plans are priced in USD, so
         // convert before building the checkout form. The actual charge (and the hash) uses
@@ -275,7 +298,6 @@ class BillingController extends BaseController
         $currency        = 'LKR';
         $amountFormatted = $converted['lkr'];
 
-        $fullUser  = User::find($user['id']);
         $nameParts = explode(' ', trim($fullUser['name']), 2);
 
         $this->view('billing/payhere-redirect', [
@@ -295,6 +317,8 @@ class BillingController extends BaseController
             'notifyUrl'   => Helpers::baseUrl('billing/payhere/notify'),
             'usdAmount'   => number_format($amount, 2),
             'exchangeRate'=> $converted['rate'],
+            'couponCode'  => $couponRow['code'] ?? null,
+            'couponSaved' => $discount > 0 ? number_format($discount, 2) : null,
         ], null);
     }
 
@@ -332,15 +356,16 @@ class BillingController extends BaseController
             return;
         }
 
-        // order_id format: PH-{userId}-{planId}-{cycleCode}-{timestamp}
-        if (!preg_match('/^PH-(\d+)-(\d+)-([MA])-\d+$/', $orderId, $m)) {
+        // order_id format: PH-{userId}-{planId}-{cycleCode}-{couponId}-{timestamp}
+        if (!preg_match('/^PH-(\d+)-(\d+)-([MA])-(\d+)-\d+$/', $orderId, $m)) {
             error_log("PayHere notify: unrecognised order_id format: $orderId");
             http_response_code(200);
             return;
         }
-        $userId = (int)$m[1];
-        $planId = (int)$m[2];
-        $cycle  = $m[3] === 'A' ? 'annual' : 'monthly';
+        $userId   = (int)$m[1];
+        $planId   = (int)$m[2];
+        $cycle    = $m[3] === 'A' ? 'annual' : 'monthly';
+        $couponId = (int)$m[4];
 
         $amount    = (float)($_POST['payhere_amount'] ?? 0);
         $currency  = $_POST['payhere_currency'] ?? 'USD';
@@ -379,13 +404,30 @@ class BillingController extends BaseController
             Subscription::create(array_merge($data, ['user_id' => $userId]));
         }
 
+        $description = 'PayHere payment — order ' . $orderId;
+
+        // Record the coupon redemption now that payment has actually succeeded — doing this
+        // any earlier (e.g. at checkout time) would count a coupon as used even if the
+        // customer abandoned checkout without paying.
+        if ($couponId > 0) {
+            $couponRow = Coupon::find($couponId);
+            if ($couponRow) {
+                $planForDiscount = Plan::find($planId);
+                $originalPrice   = $cycle === 'annual' ? (float)($planForDiscount['price_annual'] ?? 0) : (float)($planForDiscount['price_monthly'] ?? 0);
+                $discount        = Coupon::discountAmount($couponRow, $originalPrice);
+                $payingUser      = User::find($userId);
+                Coupon::recordUse($couponId, $payingUser['email'] ?? '', $userId, $discount);
+                $description .= " (coupon: {$couponRow['code']}, saved \${$discount})";
+            }
+        }
+
         Payment::create([
             'user_id'                   => $userId,
             'stripe_payment_intent_id'  => $paymentId,
             'amount'                    => $amount,
             'currency'                  => $currency,
             'status'                    => 'succeeded',
-            'description'               => 'PayHere payment — order ' . $orderId,
+            'description'               => $description,
             'paid_at'                   => date('Y-m-d H:i:s'),
         ]);
 

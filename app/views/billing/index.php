@@ -127,6 +127,7 @@ $trialDaysLeft= Subscription::trialDaysLeft($sub);
           <label class="plan-card flex items-center gap-4 border-2 rounded-xl p-4 cursor-pointer transition-all
             <?= $isCurrent ? 'border-primary-400 bg-primary-50' : 'border-gray-100 hover:border-primary-200' ?>"
             data-plan-id="<?= $plan['id'] ?>"
+            data-plan-slug="<?= Helpers::e($plan['slug']) ?>"
             data-has-monthly="<?= $plan['stripe_price_id_monthly'] ? '1' : '0' ?>"
             data-has-annual="<?= $plan['stripe_price_id_annual'] ? '1' : '0' ?>"
             data-price-monthly="<?= (float)$plan['price_monthly'] ?>"
@@ -301,6 +302,9 @@ $trialDaysLeft= Subscription::trialDaysLeft($sub);
       cycleInput.value = cycle;
       const isAnnual = cycle === 'annual';
 
+      // The price basis changed — any previously-shown discount amount is now stale
+      if (typeof billingCouponReset === 'function') billingCouponReset();
+
       // Toggle price blocks
       document.querySelectorAll('.plan-price-monthly').forEach(el => el.classList.toggle('hidden', isAnnual));
       document.querySelectorAll('.plan-price-annual').forEach(el => el.classList.toggle('hidden', !isAnnual));
@@ -390,6 +394,9 @@ $trialDaysLeft= Subscription::trialDaysLeft($sub);
         planIdInput.value = id;
         selectedCard = card;
         evaluateCard(card);
+
+        // Discount amount (if any) was computed against the previous plan's price
+        if (typeof billingCouponReset === 'function') billingCouponReset();
       });
     });
   })();
@@ -401,9 +408,21 @@ $trialDaysLeft= Subscription::trialDaysLeft($sub);
     document.getElementById('billing-coupon-valid').value = '0';
   }
 
+  function billingGetSelectedCard() {
+    return document.querySelector('.plan-card.border-primary-400');
+  }
+
   function billingGetPlanSlug() {
-    var card = document.querySelector('.plan-card.border-primary-400');
+    var card = billingGetSelectedCard();
     return card ? (card.dataset.planSlug || '') : '';
+  }
+
+  function billingGetPlanPrice() {
+    var card = billingGetSelectedCard();
+    if (!card) return 0;
+    var cycle = document.getElementById('billing-cycle-input').value;
+    var price = cycle === 'annual' ? card.dataset.priceAnnual : card.dataset.priceMonthly;
+    return parseFloat(price) || 0;
   }
 
   function billingValidateCoupon() {
@@ -414,16 +433,25 @@ $trialDaysLeft= Subscription::trialDaysLeft($sub);
       msg.className = 'text-xs mt-1 text-red-500';
       return;
     }
+    var price = billingGetPlanPrice();
+    if (price <= 0) {
+      msg.textContent = 'Select a plan above first.';
+      msg.className = 'text-xs mt-1 text-red-500';
+      return;
+    }
     msg.textContent = 'Checking…';
     msg.className = 'text-xs mt-1 text-gray-400';
     msg.classList.remove('hidden');
 
-    var data = new URLSearchParams({ code: code, plan_slug: billingGetPlanSlug() });
+    var data = new URLSearchParams({ code: code, plan_slug: billingGetPlanSlug(), price: price });
     fetch('/coupon/validate', { method: 'POST', body: data, headers: { 'X-Requested-With': 'XMLHttpRequest' } })
       .then(function(r) { return r.json(); })
       .then(function(res) {
         if (res.valid) {
-          msg.textContent = '✓ ' + res.message;
+          var extra = (res.discount_amount != null && res.final_price != null)
+            ? ' You save $' + res.discount_amount.toFixed(2) + ' — new total: $' + res.final_price.toFixed(2) + '.'
+            : '';
+          msg.textContent = '✓ ' + res.message + extra;
           msg.className = 'text-xs mt-1 text-green-600 font-medium';
           document.getElementById('billing-coupon-valid').value = '1';
         } else {

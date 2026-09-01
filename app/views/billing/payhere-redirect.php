@@ -12,6 +12,7 @@
   .lkr-amount { font-size: 32px; font-weight: 800; color: #111827; margin-bottom: 4px; }
   .usd-amount { font-size: 13px; color: #9ca3af; margin-bottom: 20px; }
   .rate-note { font-size: 11px; color: #9ca3af; margin-top: 16px; line-height: 1.5; }
+  .coupon-note { font-size: 12px; color: #16a34a; font-weight: 600; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 6px 10px; margin-bottom: 16px; }
   .btn { display: block; width: 100%; background: #ec4899; color: #fff; font-weight: 600; padding: 13px; border: none; border-radius: 10px; font-size: 14px; cursor: pointer; text-decoration: none; }
   .btn:hover { background: #db2777; }
   .cancel-link { display: block; margin-top: 12px; font-size: 13px; color: #9ca3af; text-decoration: none; }
@@ -23,6 +24,10 @@
   <div class="plan-name"><?= Helpers::e($itemsName) ?></div>
   <div class="lkr-amount">Rs. <?= Helpers::e($amount) ?></div>
   <div class="usd-amount">≈ $<?= Helpers::e($usdAmount) ?> USD</div>
+
+  <?php if (!empty($couponCode)): ?>
+  <div class="coupon-note">✓ Coupon "<?= Helpers::e($couponCode) ?>" applied — you saved $<?= Helpers::e($couponSaved) ?></div>
+  <?php endif; ?>
 
   <form id="payhere-form" method="POST" action="<?= Helpers::e($checkoutUrl) ?>">
     <input type="hidden" name="merchant_id" value="<?= Helpers::e($merchantId) ?>">

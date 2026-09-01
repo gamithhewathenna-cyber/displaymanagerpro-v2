@@ -70,6 +70,8 @@ if (!$_activePlan) $_activePlan = $plans[0] ?? null;
           <?= $isChecked ? 'checked' : '' ?>
           data-has-trial="<?= (int)(bool)($plan['has_trial'] ?? 1) ?>"
           data-slug="<?= Helpers::e($plan['slug']) ?>"
+          data-price-monthly="<?= (float)$plan['price_monthly'] ?>"
+          data-price-annual="<?= (float)$plan['price_annual'] ?>"
           class="text-primary-500 focus:ring-primary-500">
         <div class="flex-1 flex items-center justify-between gap-2">
           <div>
@@ -126,11 +128,20 @@ if (!$_activePlan) $_activePlan = $plans[0] ?? null;
 
 <script>
 // Plan selection no longer changes the heading/button copy — every plan starts
-// the same way, with no trial framing.
+// the same way, with no trial framing. It does still reset any coupon discount
+// preview, since that amount was computed against the previously-selected plan.
+document.querySelectorAll('input[name="plan"]').forEach(function(radio) {
+  radio.addEventListener('change', function() {
+    if (typeof regCouponReset === 'function') regCouponReset();
+  });
+});
 
 function regSetCycle(cycle) {
   var isAnnual = cycle === 'annual';
   document.getElementById('register-cycle').value = cycle;
+
+  // The price basis changed — any previously-shown discount amount is now stale
+  if (typeof regCouponReset === 'function') regCouponReset();
 
   // Price blocks
   document.querySelectorAll('.reg-price-monthly').forEach(function(el) { el.classList.toggle('hidden', isAnnual); });
@@ -164,6 +175,14 @@ function regGetPlanSlug() {
   return radio ? radio.dataset.slug || '' : '';
 }
 
+function regGetPlanPrice() {
+  var radio = document.querySelector('input[name="plan"]:checked');
+  if (!radio) return 0;
+  var cycle = document.getElementById('register-cycle').value;
+  var price = cycle === 'annual' ? radio.dataset.priceAnnual : radio.dataset.priceMonthly;
+  return parseFloat(price) || 0;
+}
+
 function regGetEmail() {
   var el = document.getElementById('email');
   return el ? el.value.trim() : '';
@@ -177,6 +196,13 @@ function regValidateCoupon() {
     msg.className = 'text-xs mt-1 text-red-500';
     return;
   }
+  var price = regGetPlanPrice();
+  if (price <= 0) {
+    msg.textContent = 'This plan is free — no coupon needed.';
+    msg.className = 'text-xs mt-1 text-gray-400';
+    msg.classList.remove('hidden');
+    return;
+  }
   msg.textContent = 'Checking…';
   msg.className = 'text-xs mt-1 text-gray-400';
   msg.classList.remove('hidden');
@@ -185,13 +211,17 @@ function regValidateCoupon() {
     code: code,
     plan_slug: regGetPlanSlug(),
     email: regGetEmail(),
+    price: price,
   });
 
   fetch('/coupon/validate', { method: 'POST', body: data, headers: { 'X-Requested-With': 'XMLHttpRequest' } })
     .then(function(r) { return r.json(); })
     .then(function(res) {
       if (res.valid) {
-        msg.textContent = '✓ ' + res.message;
+        var extra = (res.discount_amount != null && res.final_price != null)
+          ? ' You save $' + res.discount_amount.toFixed(2) + ' — new total: $' + res.final_price.toFixed(2) + '.'
+          : '';
+        msg.textContent = '✓ ' + res.message + extra;
         msg.className = 'text-xs mt-1 text-green-600 font-medium';
         document.getElementById('reg-coupon-valid').value = '1';
       } else {
