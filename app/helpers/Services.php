@@ -378,6 +378,65 @@ class PayHereService
 
         return hash_equals($localSig, strtoupper($post['md5sig'] ?? ''));
     }
+
+    // ── USD → LKR conversion ─────────────────────────────────────────────────
+    // PayHere settles Sri Lankan merchant accounts in LKR, so plan prices (stored in USD)
+    // need converting before checkout. The live rate is cached for a few hours to avoid
+    // hitting the external API on every page load, with a manually-configured fallback
+    // rate for when that API is unreachable.
+
+    private const RATE_CACHE_TTL = 21600; // 6 hours
+
+    public function usdToLkrRate(): float
+    {
+        $cached   = Settings::get('payhere_lkr_rate_cached', '');
+        $cachedAt = (int)Settings::get('payhere_lkr_rate_cached_at', '0');
+
+        if ($cached !== '' && (time() - $cachedAt) < self::RATE_CACHE_TTL) {
+            return (float)$cached;
+        }
+
+        $live = $this->fetchLiveLkrRate();
+        if ($live !== null) {
+            Settings::set('payhere_lkr_rate_cached', (string)$live, 'payhere');
+            Settings::set('payhere_lkr_rate_cached_at', (string)time(), 'payhere');
+            return $live;
+        }
+
+        // API unreachable — use a stale cached rate rather than none, then the admin's
+        // manually configured fallback, then a last-resort hardcoded estimate.
+        if ($cached !== '') return (float)$cached;
+        $manual = (float)Settings::get('payhere_lkr_manual_rate', '0');
+        return $manual > 0 ? $manual : 300.0;
+    }
+
+    private function fetchLiveLkrRate(): ?float
+    {
+        $ch = curl_init('https://open.er-api.com/v6/latest/USD');
+        curl_setopt_array($ch, [
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_TIMEOUT        => 5,
+            CURLOPT_SSL_VERIFYPEER => false,
+            CURLOPT_SSL_VERIFYHOST => false,
+        ]);
+        $res = curl_exec($ch);
+        curl_close($ch);
+        if (!$res) return null;
+
+        $data = json_decode($res, true);
+        $rate = $data['rates']['LKR'] ?? null;
+        return (is_numeric($rate) && $rate > 0) ? (float)$rate : null;
+    }
+
+    // Returns ['lkr' => formatted amount string, 'rate' => rate used] for a USD amount
+    public function convertUsdToLkr(float $usdAmount): array
+    {
+        $rate = $this->usdToLkrRate();
+        return [
+            'lkr'  => number_format(round($usdAmount * $rate, 2), 2, '.', ''),
+            'rate' => $rate,
+        ];
+    }
 }
 
 /**

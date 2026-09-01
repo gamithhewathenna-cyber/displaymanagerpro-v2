@@ -266,14 +266,20 @@ class BillingController extends BaseController
         // Session::get() to recover this context. Cycle is 'M'/'A' to keep the format simple.
         $cycleCode = $cycle === 'annual' ? 'A' : 'M';
         $orderId   = 'PH-' . $user['id'] . '-' . $planId . '-' . $cycleCode . '-' . time();
-        $currency  = 'USD';
-        $amountFormatted = number_format($amount, 2, '.', '');
+
+        // PayHere settles Sri Lankan merchant accounts in LKR — plans are priced in USD, so
+        // convert before building the checkout form. The actual charge (and the hash) uses
+        // the LKR amount; the USD figure is shown alongside it purely for the customer's
+        // reference on the confirmation screen below.
+        $converted       = $payhere->convertUsdToLkr($amount);
+        $currency        = 'LKR';
+        $amountFormatted = $converted['lkr'];
 
         $fullUser  = User::find($user['id']);
         $nameParts = explode(' ', trim($fullUser['name']), 2);
 
         $this->view('billing/payhere-redirect', [
-            'title'       => 'Redirecting to PayHere…',
+            'title'       => 'Confirm Your PayHere Payment',
             'checkoutUrl' => $payhere->checkoutUrl(),
             'merchantId'  => $payhere->merchantId(),
             'orderId'     => $orderId,
@@ -287,6 +293,8 @@ class BillingController extends BaseController
             'returnUrl'   => Helpers::baseUrl('billing/payhere/return'),
             'cancelUrl'   => Helpers::baseUrl('billing/payhere/cancel'),
             'notifyUrl'   => Helpers::baseUrl('billing/payhere/notify'),
+            'usdAmount'   => number_format($amount, 2),
+            'exchangeRate'=> $converted['rate'],
         ], null);
     }
 

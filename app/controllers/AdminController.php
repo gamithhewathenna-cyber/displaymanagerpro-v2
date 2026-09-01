@@ -351,7 +351,7 @@ class AdminController extends BaseController
             'general'     => ['company_name','company_url','app_url','app_env'],
             'mail'        => ['smtp_host','smtp_port','smtp_user','smtp_pass','smtp_from_email','smtp_from_name','smtp_encryption'],
             'paypal'      => ['paypal_mode','paypal_client_id','paypal_secret','paypal_webhook_id'],
-            'payhere'     => ['payhere_mode','payhere_merchant_id','payhere_merchant_secret'],
+            'payhere'     => ['payhere_mode','payhere_merchant_id','payhere_merchant_secret','payhere_lkr_manual_rate'],
             'storage'     => ['storage_driver','s3_bucket','s3_region','s3_access_key','s3_secret_key','s3_url',
                               'r2_bucket','r2_account_id','r2_access_key','r2_secret_key','r2_url'],
             'media'       => ['max_upload_size_kb'],

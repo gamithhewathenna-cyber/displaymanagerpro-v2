@@ -199,6 +199,17 @@
           <input type="text" name="payhere_merchant_id" value="<?= Helpers::e(Settings::get('payhere_merchant_id','')) ?>" placeholder="1234567" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary-500"></div>
         <div class="sm:col-span-2"><label class="block text-xs font-medium text-gray-500 mb-1">Merchant Secret</label>
           <input type="password" name="payhere_merchant_secret" value="<?= Helpers::e(Settings::get('payhere_merchant_secret','')) ?>" placeholder="•••••••••••••••" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary-500"></div>
+        <div class="sm:col-span-2"><label class="block text-xs font-medium text-gray-500 mb-1">Fallback USD → LKR Rate</label>
+          <input type="number" step="0.01" min="0" name="payhere_lkr_manual_rate" value="<?= Helpers::e(Settings::get('payhere_lkr_manual_rate','')) ?>" placeholder="300.00" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary-500">
+          <p class="text-xs text-gray-400 mt-1">
+            PayHere charges are shown and processed in LKR — the live rate is fetched automatically and cached for 6 hours.
+            This fallback is only used if that lookup fails.
+            <?php $_cachedRate = Settings::get('payhere_lkr_rate_cached', ''); $_cachedAt = (int)Settings::get('payhere_lkr_rate_cached_at', '0'); ?>
+            <?php if ($_cachedRate !== ''): ?>
+              <br>Current live rate: <strong>1 USD = <?= number_format((float)$_cachedRate, 2) ?> LKR</strong> (fetched <?= $_cachedAt ? date('d M Y, H:i', $_cachedAt) : 'unknown' ?>).
+            <?php endif; ?>
+          </p>
+        </div>
       </div>
       <div class="bg-blue-50 border border-blue-200 rounded-xl p-3 text-xs text-blue-700 space-y-1 overflow-x-auto">
         <div>Notify URL: <code class="font-mono font-bold break-all"><?= Helpers::baseUrl('billing/payhere/notify') ?></code></div>
