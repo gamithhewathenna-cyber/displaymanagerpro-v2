@@ -659,6 +659,23 @@ class Mailer
         return self::send($user['email'], $user['name'], "Welcome to $company", $body);
     }
 
+    public static function sendInactivityReminder(array $user, int $inactiveDays): bool
+    {
+        $company = Settings::get('company_name', APP_NAME);
+        $loginUrl = Helpers::appUrl() . '/login';
+        $body = self::emailTemplate(
+            "Your $company account has been deactivated",
+            "<p>Hi {$user['name']},</p>
+            <p>You haven't signed in to your $company account for $inactiveDays days, so we have deactivated it.</p>
+            <p>To reactivate your account, reply to this email and we'll restore it for you.</p>
+            <p style='text-align:center;margin:32px 0'>
+                <a href='$loginUrl' style='background:#ec4899;color:#fff;padding:14px 28px;border-radius:8px;text-decoration:none;font-weight:600;display:inline-block'>Sign In</a>
+            </p>
+            <p>Questions? Reply to this email and we'll help.</p>"
+        );
+        return self::send($user['email'], $user['name'], "Your $company account is inactive", $body);
+    }
+
     public static function sendPaymentInvoice(array $user, array $payment, string $planName, string $billingCycle): bool
     {
         $company   = Settings::get('company_name', APP_NAME);
